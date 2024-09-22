@@ -79,5 +79,5 @@ jobs:
           script: |
             sudo docker ps
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/xcellent-be
-            sudo docker run -d -p 8081:8081 ${{ secrets.DOCKER_USERNAME }}/xcellent-be
+            sudo docker run -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/xcellent-be
             sudo docker image prune -f
