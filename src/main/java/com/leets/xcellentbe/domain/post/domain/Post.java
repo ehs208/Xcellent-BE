@@ -32,7 +32,7 @@ public class Post {
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "writer_id")
 	private User writer;
 
 	@NotNull

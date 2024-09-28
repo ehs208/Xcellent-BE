@@ -36,7 +36,7 @@ public class DM extends BaseTimeEntity {
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "participant_id")
 	private User participant;
 
 	@NotNull
