@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 public class Hashtag {
 
 	@Id
+	@Column(name = "hashtag_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long HashtagId;
 
