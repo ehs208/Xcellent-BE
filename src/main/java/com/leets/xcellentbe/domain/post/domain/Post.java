@@ -48,7 +48,7 @@ public class Post {
 	private Boolean isPinned;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "post_id")
+	@JoinColumn(name = "repost_id")
 	private Post rePost;
 
 	@OneToMany(fetch = FetchType.LAZY)
