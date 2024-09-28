@@ -31,7 +31,7 @@ public class Comment extends BaseTimeEntity {
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writer_id")
+	@JoinColumn(name = "writer_id")
 	private User writer;
 
 	@Column(length = 50)
@@ -39,7 +39,7 @@ public class Comment extends BaseTimeEntity {
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
+	@JoinColumn(name = "post_id")
 	private Post post;
 
 	@NotNull
