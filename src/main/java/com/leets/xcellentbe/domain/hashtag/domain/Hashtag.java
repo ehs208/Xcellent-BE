@@ -1,5 +1,7 @@
 package com.leets.xcellentbe.domain.hashtag.domain;
 
+import java.util.UUID;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,8 +19,8 @@ public class Hashtag {
 
 	@Id
 	@Column(name = "hashtag_id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long HashtagId;
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private UUID HashtagId;
 
 	@NotNull
 	@Column(length = 30)
