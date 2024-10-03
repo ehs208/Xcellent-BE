@@ -4,7 +4,7 @@ import com.leets.xcellentbe.global.error.ErrorCode;
 import com.leets.xcellentbe.global.error.exception.CommonException;
 
 public class ExpiredTokenException extends CommonException {
-	public ExpiredTokenException(String message) {
+	public ExpiredTokenException() {
 		super(ErrorCode.EXPIRED_TOKEN);
 	}
 }
