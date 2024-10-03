@@ -14,7 +14,8 @@ public enum ErrorCode {
 	CHAT_ROOM_NOT_FOUND(404, "CHAT_ROOM_NOT_FOUND", "채팅방을 찾을 수 없습니다."),
 	CHAT_ROOM_UNAUTHORIZED(401, "CHAT_ROOM_UNAUTHORIZED","권한이 없는 채팅방입니다."),
 	USER_NOT_FOUND(404, "USER_NOT_FOUND", "유저를 찾을 수 없습니다."),
-	FAILED_SEARCH(404, "FAILED_SEARCH", "검색할 수 없습니다.");
+	FAILED_SEARCH(404, "FAILED_SEARCH", "검색할 수 없습니다."),
+	REJECT_DUPLICATION(409,"REJECT_DUPLICATION","중복된 값입니다.");
 
 	private final int status;
 	private final String code;
