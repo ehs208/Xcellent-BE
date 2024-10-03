@@ -10,25 +10,11 @@ import com.leets.xcellentbe.global.error.exception.custom.*;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-	@ExceptionHandler(ArticleNotFoundException.class)
-	public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ArticleNotFoundException ex) {
-		ErrorCode errorCode = ErrorCode.ARTICLE_NOT_FOUND;
+	@ExceptionHandler(CommonException.class) // Custom Exception을 포괄적으로 처리
+	public ResponseEntity<ErrorResponse> handleCommonException(CommonException ex) {
+		ErrorCode errorCode = ex.getErrorCode(); // 전달된 예외에서 에러 코드 가져오기
 		ErrorResponse errorResponse = new ErrorResponse(errorCode);
-		return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
-	}
-
-	@ExceptionHandler(IllegalArgumentException.class)
-	public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
-		ErrorCode errorCode = ErrorCode.INVALID_INPUT_VALUE;
-		ErrorResponse errorResponse = new ErrorResponse(errorCode);
-		return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-	}
-
-	@ExceptionHandler(FailedSearchException.class)
-	public ResponseEntity<ErrorResponse> handleFailedSearchException(FailedSearchException ex) {
-		ErrorCode errorCode = ErrorCode.FAILED_SEARCH;
-		ErrorResponse errorResponse = new ErrorResponse(errorCode);
-		return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(errorCode.getStatus()));
 	}
 
 	@ExceptionHandler(Exception.class)
