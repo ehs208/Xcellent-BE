@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import com.leets.xcellentbe.global.error.*;
-import com.leets.xcellentbe.global.error.exception.custom.*;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
