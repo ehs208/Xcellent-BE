@@ -9,6 +9,10 @@ application.yaml
 application-dev.yaml
 application-local.yaml
 
+### macOS ###
+.DS_Store
+.AppleDouble
+.LSOverride
 
 ### STS ###
 .apt_generated

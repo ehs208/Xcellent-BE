@@ -52,7 +52,7 @@ public class SecurityConfig {
 				authorize ->
 					authorize
 						.requestMatchers("/v3/api-docs", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**",
-							"/swagger/**").permitAll()
+							"/swagger/**", "/api/user/**").permitAll()
 						.anyRequest().authenticated()
 			)
 

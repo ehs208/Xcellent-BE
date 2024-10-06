@@ -1,6 +1,6 @@
 package com.leets.xcellentbe.domain.follow.domain;
 
-import com.leets.xcellentbe.domain.user.domain.User;
+import com.leets.xcellentbe.domain.user.User;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
