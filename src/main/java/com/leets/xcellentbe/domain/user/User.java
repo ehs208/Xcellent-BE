@@ -9,6 +9,8 @@ import com.leets.xcellentbe.domain.shared.UserStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -67,6 +69,7 @@ public class User extends BaseTimeEntity {
 
 	@NotNull
 	@Column
+	@Enumerated(EnumType.STRING)
 	private UserStatus userStatus;
 
 	@Builder

@@ -2,6 +2,7 @@ package com.leets.xcellentbe.global.error.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import com.leets.xcellentbe.global.error.*;
 
@@ -21,4 +22,5 @@ public class GlobalExceptionHandler {
 		ErrorResponse errorResponse = new ErrorResponse(errorCode);
 		return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+
 }
