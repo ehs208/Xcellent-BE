@@ -1,16 +1,24 @@
 package com.leets.xcellentbe.global.auth.login.handler;
 
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.leets.xcellentbe.domain.user.repository.UserRepository;
 import com.leets.xcellentbe.global.auth.jwt.JwtService;
+import com.leets.xcellentbe.global.response.GlobalResponseDto;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,6 +37,10 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 		Authentication authentication) throws IOException {
 
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.registerModule(new JavaTimeModule());
+		mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
 		String email = extractUsername(authentication); // 인증 정보에서 Username(email) 추출
 		String accessToken = jwtService.createAccessToken(email); // JwtService의 createAccessToken을 사용하여 AccessToken 발급
 		String refreshToken = jwtService.createRefreshToken(); // JwtService의 createRefreshToken을 사용하여 RefreshToken 발급
@@ -41,10 +53,13 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 				userRepository.saveAndFlush(user);
 			});
 
+		GlobalResponseDto<String> responseDto = GlobalResponseDto.success();
 		response.setStatus(HttpServletResponse.SC_OK);
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
-		response.getWriter().write("{\"message\": \"로그인 성공\"}");
+
+		String json = mapper.writeValueAsString(responseDto);
+		response.getWriter().write(json);
 
 		log.info("로그인에 성공하였습니다. 이메일 : {}", email);
 		log.info("로그인에 성공하였습니다. AccessToken : {}", accessToken);

@@ -15,7 +15,8 @@ public enum ErrorCode {
 	CHAT_ROOM_NOT_FOUND(404, "CHAT_ROOM_NOT_FOUND", "채팅방을 찾을 수 없습니다."),
 	USER_NOT_FOUND(404, "USER_NOT_FOUND", "유저를 찾을 수 없습니다."),
 	REJECT_DUPLICATION(409,"REJECT_DUPLICATION","중복된 값입니다."),
-	INTERNAL_SERVER_ERROR(500, "INTERNAL_SERVER_ERROR", "서버 오류가 발생했습니다.");
+	INTERNAL_SERVER_ERROR(500, "INTERNAL_SERVER_ERROR", "서버 오류가 발생했습니다."),
+	FAIL_LOGIN(401, "LOGIN_FAIL", "로그인에 실패하였습니다.");
 
 	private final int status;
 	private final String code;
