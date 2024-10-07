@@ -8,6 +8,7 @@ build/
 application.yaml
 application-dev.yaml
 application-local.yaml
+application-jwt.yaml
 
 ### macOS ###
 .DS_Store

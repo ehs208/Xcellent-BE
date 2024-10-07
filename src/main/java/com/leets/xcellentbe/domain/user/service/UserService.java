@@ -19,7 +19,7 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 
-	public Void register(UserSignUpDto userSignUpDto) {
+	public String register(UserSignUpDto userSignUpDto) {
 
 		if (userRepository.findByEmail(userSignUpDto.getEmail()).isPresent()) {
 			throw new UserNotFoundException();
@@ -34,6 +34,6 @@ public class UserService {
 		user.passwordEncode(passwordEncoder);
 		userRepository.save(user);
 
-		return null;
+		return "회원가입이 완료되었습니다.";
 	}
 }

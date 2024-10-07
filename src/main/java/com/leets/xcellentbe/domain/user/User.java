@@ -97,4 +97,8 @@ public class User extends BaseTimeEntity {
 			.description(description)
 			.build();
 	}
+
+	public void updateRefreshToken(String updateRefreshToken) {
+		this.refreshToken = updateRefreshToken;
+	}
 }

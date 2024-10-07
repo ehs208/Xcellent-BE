@@ -20,7 +20,7 @@ public class UserController {
 
 	@PostMapping("/register")
 	@Operation(summary = "회원가입", description = "회원가입을 합니다.")
-	public ResponseEntity<Void> register(@RequestBody UserSignUpDto userSignUpDto) {
+	public ResponseEntity register(@RequestBody UserSignUpDto userSignUpDto) {
 		return ResponseEntity.ok(userservice.register(userSignUpDto));
 	}
 
