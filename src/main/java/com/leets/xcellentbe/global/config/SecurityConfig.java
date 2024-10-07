@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -12,18 +15,33 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 import java.util.Arrays;
+
+import com.leets.xcellentbe.domain.user.repository.UserRepository;
+import com.leets.xcellentbe.global.auth.jwt.JwtService;
+import com.leets.xcellentbe.global.auth.login.CustomJsonAuthenticationFilter;
+import com.leets.xcellentbe.global.auth.login.LoginService;
+import com.leets.xcellentbe.global.auth.login.handler.LoginFailureHandler;
+import com.leets.xcellentbe.global.auth.login.handler.LoginSuccessHandler;
+import com.leets.xcellentbe.global.auth.jwt.JwtAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
+	private final LoginService loginService;
+	private final JwtService jwtService;
+	private final UserRepository userRepository;
+	private final ObjectMapper objectMapper;
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -52,10 +70,12 @@ public class SecurityConfig {
 				authorize ->
 					authorize
 						.requestMatchers("/v3/api-docs", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**",
-							"/swagger/**", "/api/user/**").permitAll()
+							"/swagger/**", "/api/auth/register", "/api/auth/login").permitAll()
 						.anyRequest().authenticated()
 			)
 
+			.addFilterAfter(customJsonAuthenticationFilter(), LogoutFilter.class)
+			.addFilterBefore(jwtAuthenticationFilter(), CustomJsonAuthenticationFilter.class)
 			.build();
 	}
 
@@ -73,4 +93,50 @@ public class SecurityConfig {
 	       source.registerCorsConfiguration("/**", configuration);
 	       return source;
 	   }
+
+	@Bean
+	public AuthenticationManager authenticationManager() {
+		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+		provider.setPasswordEncoder(passwordEncoder());
+		provider.setUserDetailsService(loginService);
+		return new ProviderManager(provider);
+	}
+
+	/**
+	 * 로그인 성공 시 호출되는 LoginSuccessJWTProviderHandler 빈 등록
+	 */
+	@Bean
+	public LoginSuccessHandler loginSuccessHandler() {
+		return new LoginSuccessHandler(jwtService, userRepository);
+	}
+
+	/**
+	 * 로그인 실패 시 호출되는 LoginFailureHandler 빈 등록
+	 */
+	@Bean
+	public LoginFailureHandler loginFailureHandler() {
+		return new LoginFailureHandler();
+	}
+
+	/**
+	 * CustomJsonUsernamePasswordAuthenticationFilter 빈 등록
+	 * 커스텀 필터를 사용하기 위해 만든 커스텀 필터를 Bean으로 등록
+	 * setAuthenticationManager(authenticationManager())로 위에서 등록한 AuthenticationManager(ProviderManager) 설정
+	 * 로그인 성공 시 호출할 handler, 실패 시 호출할 handler로 위에서 등록한 handler 설정
+	 */
+	@Bean
+	public CustomJsonAuthenticationFilter customJsonAuthenticationFilter() {
+		CustomJsonAuthenticationFilter customJsonLoginFilter
+			= new CustomJsonAuthenticationFilter(objectMapper);
+		customJsonLoginFilter.setAuthenticationManager(authenticationManager());
+		customJsonLoginFilter.setAuthenticationFailureHandler(loginFailureHandler());
+		customJsonLoginFilter.setAuthenticationSuccessHandler(loginSuccessHandler());
+		return customJsonLoginFilter;
+	}
+
+	@Bean
+	public JwtAuthenticationFilter jwtAuthenticationFilter() {
+		JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtService, userRepository);
+		return jwtAuthenticationFilter;
+	}
 }

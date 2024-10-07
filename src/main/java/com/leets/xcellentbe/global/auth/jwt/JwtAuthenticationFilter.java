@@ -1,4 +1,4 @@
-package com.leets.xcellentbe.global.jwt;
+package com.leets.xcellentbe.global.auth.jwt;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +36,7 @@ import com.leets.xcellentbe.domain.user.User;
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-	private static final String NO_CHECK_URL = "/login"; // "/login"으로 들어오는 요청은 Filter 작동 X
+	private static final String NO_CHECK_URL = "/auth/login"; // "/login"으로 들어오는 요청은 Filter 작동 X
 
 	private final JwtService jwtService;
 	private final UserRepository userRepository;
@@ -142,7 +142,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		// if (password == null) { // OAuth2 사용시 소셜로그인 비밀번호 생성 코드
 		// 	password = PasswordUtil.generateRandomPassword();
 		// }
-
 		UserDetails userDetailsUser = org.springframework.security.core.userdetails.User.builder()
 			.username(myUser.getEmail())
 			.password(password)

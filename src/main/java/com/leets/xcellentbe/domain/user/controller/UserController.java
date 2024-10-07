@@ -13,12 +13,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class UserController {
 	private final UserService userservice;
 
-	@PostMapping("/register")
+	@PostMapping("/auth/register")
 	@Operation(summary = "회원가입", description = "회원가입을 합니다.")
 	public ResponseEntity register(@RequestBody UserSignUpDto userSignUpDto) {
 		return ResponseEntity.ok(userservice.register(userSignUpDto));

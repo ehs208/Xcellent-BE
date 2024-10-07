@@ -1,5 +1,8 @@
 package com.leets.xcellentbe.domain.user.service;
 
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -36,4 +39,5 @@ public class UserService {
 
 		return "회원가입이 완료되었습니다.";
 	}
+
 }

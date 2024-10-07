@@ -1,4 +1,4 @@
-package com.leets.xcellentbe.global.jwt;;
+package com.leets.xcellentbe.global.auth.jwt;;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
