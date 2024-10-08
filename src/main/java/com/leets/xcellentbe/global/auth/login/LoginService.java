@@ -1,6 +1,7 @@
 package com.leets.xcellentbe.global.auth.login;
 
 import com.leets.xcellentbe.domain.user.User;
+import com.leets.xcellentbe.domain.user.exception.UserNotFoundException;
 import com.leets.xcellentbe.domain.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ public class LoginService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		User user = userRepository.findByEmail(email)
-			.orElseThrow(() -> new UsernameNotFoundException("해당 이메일이 존재하지 않습니다."));
+			.orElseThrow(UserNotFoundException::new);
 
 		return org.springframework.security.core.userdetails.User.builder()
 			.username(user.getEmail())

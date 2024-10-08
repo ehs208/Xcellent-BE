@@ -1,6 +1,8 @@
 package com.leets.xcellentbe.global.auth.login.handler;
 
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 
@@ -12,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import com.leets.xcellentbe.domain.user.exception.UserNotFoundException;
 import com.leets.xcellentbe.global.error.ErrorCode;
 import com.leets.xcellentbe.global.response.GlobalResponseDto;
 
@@ -30,7 +33,8 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 		mapper.registerModule(new JavaTimeModule());
 		mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-		GlobalResponseDto<String> responseDto = GlobalResponseDto.fail(ErrorCode.FAIL_LOGIN, "로그인 실패");
+		ErrorCode errorCode = exception instanceof BadCredentialsException ? ErrorCode.FAIL_LOGIN : ErrorCode.USER_NOT_FOUND;
+		GlobalResponseDto<String> responseDto = GlobalResponseDto.fail(ErrorCode.FAIL_LOGIN,  errorCode.getMessage());
 
 		response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 		response.setCharacterEncoding("UTF-8");
@@ -38,6 +42,6 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
 		String json = mapper.writeValueAsString(responseDto);
 		response.getWriter().write(json);
-		log.info("로그인에 실패했습니다. 메시지 : {}", exception.getMessage());
+		log.info("로그인에 실패했습니다. 메시지 : {}", errorCode.getMessage());
 	}
 }
