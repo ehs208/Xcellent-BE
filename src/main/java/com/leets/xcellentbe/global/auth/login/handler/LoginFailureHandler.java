@@ -34,9 +34,9 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 		mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
 		ErrorCode errorCode = exception instanceof BadCredentialsException ? ErrorCode.FAIL_LOGIN : ErrorCode.USER_NOT_FOUND;
-		GlobalResponseDto<String> responseDto = GlobalResponseDto.fail(ErrorCode.FAIL_LOGIN,  errorCode.getMessage());
+		GlobalResponseDto<String> responseDto = GlobalResponseDto.fail(ErrorCode.valueOf(errorCode.getCode()),  errorCode.getMessage());
 
-		response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+		response.setStatus(errorCode.getStatus());
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("application/json");
 
