@@ -31,7 +31,7 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 		mapper.registerModule(new JavaTimeModule());
 		mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-		ErrorCode errorCode = exception instanceof BadCredentialsException ? ErrorCode.FAIL_LOGIN : ErrorCode.USER_NOT_FOUND;
+		ErrorCode errorCode = exception instanceof BadCredentialsException ? ErrorCode.LOGIN_FAIL : ErrorCode.USER_NOT_FOUND;
 		GlobalResponseDto<String> responseDto = GlobalResponseDto.fail(ErrorCode.valueOf(errorCode.getCode()),  errorCode.getMessage());
 
 		response.setStatus(errorCode.getStatus());
