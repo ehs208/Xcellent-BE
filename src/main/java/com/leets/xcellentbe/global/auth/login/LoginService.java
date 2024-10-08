@@ -1,5 +1,7 @@
 package com.leets.xcellentbe.global.auth.login;
 
+import static org.springframework.security.core.userdetails.User.*;
+
 import com.leets.xcellentbe.domain.user.User;
 import com.leets.xcellentbe.domain.user.exception.UserNotFoundException;
 import com.leets.xcellentbe.domain.user.repository.UserRepository;
@@ -21,7 +23,7 @@ public class LoginService implements UserDetailsService {
 		User user = userRepository.findByEmail(email)
 			.orElseThrow(UserNotFoundException::new);
 
-		return org.springframework.security.core.userdetails.User.builder()
+		return builder()
 			.username(user.getEmail())
 			.password(user.getPassword())
 			.build();
