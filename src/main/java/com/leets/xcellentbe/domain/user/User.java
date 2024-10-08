@@ -1,11 +1,13 @@
 package com.leets.xcellentbe.domain.user;
 
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.leets.xcellentbe.domain.shared.BaseTimeEntity;
 import com.leets.xcellentbe.domain.shared.UserStatus;
+
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -72,8 +74,10 @@ public class User extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	private UserStatus userStatus;
 
+	private LocalDate userBirthDay;
+
 	@Builder
-	private User(String customId, String email, String userName, String password, String phoneNumber, String description) {
+	private User(String customId, String email, String userName, String password, String phoneNumber, String description, LocalDate userBirthDay) {
 		this.customId = customId;
 		this.email = email;
 		this.userName = userName;
@@ -81,20 +85,21 @@ public class User extends BaseTimeEntity {
 		this.phoneNumber= phoneNumber;
 		this.description = description;
 		this.userStatus = UserStatus.ACTIVE;
+		this.userBirthDay = userBirthDay;
 	}
 
 	public void passwordEncode(PasswordEncoder passwordEncoder) { //비밀번호 암호화 메소드
 		this.password = passwordEncoder.encode(this.password);
 	}
 
-	public static User create(String customId, String email, String userName, String password, String phoneNumber, String description) {
+	public static User create(String customId, String email, String userName, String password, String phoneNumber, LocalDate userBirthDay) {
 		return User.builder()
 			.customId(customId)
 			.email(email)
 			.userName(userName)
 			.password(password)
 			.phoneNumber(phoneNumber)
-			.description(description)
+			.userBirthDay(userBirthDay)
 			.build();
 	}
 

@@ -1,5 +1,7 @@
 package com.leets.xcellentbe.domain.user.dto;
 
+import java.time.LocalDate;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +14,6 @@ public class UserSignUpDto {
 	private String userName;
 	private String password;
 	private String phoneNumber;
-	private String description;
+	private LocalDate userBirthDay;
 
 }
