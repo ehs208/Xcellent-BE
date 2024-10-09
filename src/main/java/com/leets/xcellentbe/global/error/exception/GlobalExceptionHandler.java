@@ -16,11 +16,11 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(errorCode.getStatus()));
 	}
 
-	// @ExceptionHandler(Exception.class)
-	// public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
-	// 	ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
-	// 	ErrorResponse errorResponse = new ErrorResponse(errorCode);
-	// 	return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-	// }
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
+		ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
+		ErrorResponse errorResponse = new ErrorResponse(errorCode);
+		return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 
 }
