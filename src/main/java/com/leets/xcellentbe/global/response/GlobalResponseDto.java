@@ -36,6 +36,18 @@ public class GlobalResponseDto<T> {
 		mapper.registerModule(new JavaTimeModule());
 		return mapper.writeValueAsString(this);
 	}
+
+	// 201 Create 성공 응답
+	public static <T> GlobalResponseDto<T> success(T result, int code) {
+		return GlobalResponseDto.<T>builder()
+			.isSuccess(true)
+			.code(code)
+			.timestamp(LocalDateTime.now())
+			.message("성공")
+			.result(result)
+			.build();
+	}
+
 	// 성공 응답
 	public static <T> GlobalResponseDto<T> success(T result) {
 		return GlobalResponseDto.<T>builder()
