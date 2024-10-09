@@ -7,7 +7,7 @@ import com.leets.xcellentbe.domain.user.User;
 import com.leets.xcellentbe.domain.user.exception.UserAlreadyExistsException;
 
 import com.leets.xcellentbe.domain.user.repository.UserRepository;
-import com.leets.xcellentbe.domain.user.dto.UserSignUpDto;
+import com.leets.xcellentbe.domain.user.dto.UserSignUpRequestDto;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,17 +20,17 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 
-	public String register(UserSignUpDto userSignUpDto) {
+	public String register(UserSignUpRequestDto userSignUpRequestDto) {
 
-		if (userRepository.findByEmail(userSignUpDto.getEmail()).isPresent()) {
+		if (userRepository.findByEmail(userSignUpRequestDto.getEmail()).isPresent()) {
 			throw new UserAlreadyExistsException();
 		}
-		if (userRepository.findByCustomId(userSignUpDto.getCustomId()).isPresent()) {
+		if (userRepository.findByCustomId(userSignUpRequestDto.getCustomId()).isPresent()) {
 			throw new UserAlreadyExistsException();
 		}
 
-		User user = User.create(userSignUpDto.getCustomId(), userSignUpDto.getEmail(), userSignUpDto.getUserName(),
-				userSignUpDto.getPassword(), userSignUpDto.getPhoneNumber(), userSignUpDto.getUserBirthDay());
+		User user = User.create(userSignUpRequestDto.getCustomId(), userSignUpRequestDto.getEmail(), userSignUpRequestDto.getUserName(),
+				userSignUpRequestDto.getPassword(), userSignUpRequestDto.getPhoneNumber(), userSignUpRequestDto.getUserBirthDay());
 
 		user.passwordEncode(passwordEncoder);
 		userRepository.save(user);
