@@ -18,12 +18,12 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class UserController {
-	private final UserService userservice;
+	private final UserService userService;
 
 	@PostMapping("/auth/register")
 	@Operation(summary = "회원가입", description = "회원가입을 합니다.")
 	public ResponseEntity<GlobalResponseDto<String>> register(@RequestBody UserSignUpRequestDto userSignUpRequestDto) {
-		return ResponseEntity.ok(GlobalResponseDto.success(userservice.register(userSignUpRequestDto)));
+		return ResponseEntity.ok(GlobalResponseDto.success(userService.register(userSignUpRequestDto)));
 	}
 
 	@Operation(summary = "로그인", description = "사용자의 이메일과 비밀번호로 로그인합니다.")
