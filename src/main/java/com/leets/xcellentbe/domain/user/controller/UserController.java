@@ -22,7 +22,7 @@ public class UserController {
 
 	@PostMapping("/auth/register")
 	@Operation(summary = "회원가입", description = "회원가입을 합니다.")
-	public ResponseEntity register(@RequestBody UserSignUpRequestDto userSignUpRequestDto) {
+	public ResponseEntity<GlobalResponseDto<String>> register(@RequestBody UserSignUpRequestDto userSignUpRequestDto) {
 		return ResponseEntity.ok(GlobalResponseDto.success(userservice.register(userSignUpRequestDto)));
 	}
 
