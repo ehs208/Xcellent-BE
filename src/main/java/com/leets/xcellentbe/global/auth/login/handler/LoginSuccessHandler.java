@@ -1,6 +1,8 @@
 package com.leets.xcellentbe.global.auth.login.handler;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,7 +53,11 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 				userRepository.saveAndFlush(user);
 			});
 
-		GlobalResponseDto<String> responseDto = GlobalResponseDto.success();
+		Map<String, String> tokenMap = new HashMap<>();
+		tokenMap.put("refreshToken", refreshToken);
+		tokenMap.put("accessToken", accessToken);
+
+		GlobalResponseDto<Map<String, String>> responseDto = GlobalResponseDto.success(tokenMap);
 		response.setStatus(HttpServletResponse.SC_OK);
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
