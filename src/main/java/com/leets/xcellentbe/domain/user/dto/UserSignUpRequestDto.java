@@ -14,6 +14,8 @@ public class UserSignUpRequestDto {
 	private String userName;
 	private String password;
 	private String phoneNumber;
-	private LocalDate userBirthDay;
+	private int userBirthYear;
+	private int userBirthMonth;
+	private int userBirthDay;
 
 }

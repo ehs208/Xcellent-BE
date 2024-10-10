@@ -18,6 +18,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -75,10 +76,19 @@ public class User extends BaseTimeEntity {
 	private UserStatus userStatus;
 
 	@NotNull
-	private LocalDate userBirthDay;
+	@Column(length=4)
+	private int userBirthYear;
+
+	@Column(length=2)
+	@NotNull
+	private int userBirthMonth;
+
+	@Column(length=2)
+	@NotNull
+	private int userBirthDay;
 
 	@Builder
-	private User(String customId, String email, String userName, String password, String phoneNumber, String description, LocalDate userBirthDay) {
+	private User(String customId, String email, String userName, String password, String phoneNumber, String description, int userBirthDay, int userBirthMonth, int userBirthYear) {
 		this.customId = customId;
 		this.email = email;
 		this.userName = userName;
@@ -86,6 +96,8 @@ public class User extends BaseTimeEntity {
 		this.phoneNumber= phoneNumber;
 		this.description = description;
 		this.userStatus = UserStatus.ACTIVE;
+		this.userBirthMonth = userBirthMonth;
+		this.userBirthYear = userBirthYear;
 		this.userBirthDay = userBirthDay;
 	}
 
@@ -93,7 +105,7 @@ public class User extends BaseTimeEntity {
 		this.password = passwordEncoder.encode(this.password);
 	}
 
-	public static User create(String customId, String email, String userName, String password, String phoneNumber, LocalDate userBirthDay) {
+	public static User create(String customId, String email, String userName, String password, String phoneNumber, int userBirthMonth, int userBirthYear, int userBirthDay) {
 		return User.builder()
 			.customId(customId)
 			.email(email)
@@ -101,6 +113,8 @@ public class User extends BaseTimeEntity {
 			.password(password)
 			.phoneNumber(phoneNumber)
 			.userBirthDay(userBirthDay)
+			.userBirthYear(userBirthYear)
+			.userBirthMonth(userBirthMonth)
 			.build();
 	}
 

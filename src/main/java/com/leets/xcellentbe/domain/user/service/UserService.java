@@ -30,7 +30,7 @@ public class UserService {
 		}
 
 		User user = User.create(userSignUpRequestDto.getCustomId(), userSignUpRequestDto.getEmail(), userSignUpRequestDto.getUserName(),
-				userSignUpRequestDto.getPassword(), userSignUpRequestDto.getPhoneNumber(), userSignUpRequestDto.getUserBirthDay());
+				userSignUpRequestDto.getPassword(), userSignUpRequestDto.getPhoneNumber(), userSignUpRequestDto.getUserBirthYear(), userSignUpRequestDto.getUserBirthDay(), userSignUpRequestDto.getUserBirthMonth());
 
 		user.passwordEncode(passwordEncoder);
 		userRepository.save(user);
