@@ -29,7 +29,7 @@ public class UserController {
 	}
 
 	@Operation(summary = "로그인", description = "사용자의 이메일과 비밀번호로 로그인합니다.")
-	@PostMapping("/login")
+	@PostMapping("/auth/login")
 	public String login(@RequestBody UserLoginRequestDto userLoginRequestDto) {
 		// 로그인 로직 처리
 		return "로그인 성공";
