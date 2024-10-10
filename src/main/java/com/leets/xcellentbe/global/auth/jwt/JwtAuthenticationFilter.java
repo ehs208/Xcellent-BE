@@ -16,8 +16,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import com.leets.xcellentbe.domain.user.repository.UserRepository;
-import com.leets.xcellentbe.domain.user.User;
+import com.leets.xcellentbe.domain.user.domain.repository.UserRepository;
+import com.leets.xcellentbe.domain.user.domain.User;
 
 /**
  * Jwt 인증 필터

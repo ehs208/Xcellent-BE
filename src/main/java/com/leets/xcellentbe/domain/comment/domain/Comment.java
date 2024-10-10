@@ -5,7 +5,7 @@ import java.util.UUID;
 import com.leets.xcellentbe.domain.post.domain.Post;
 import com.leets.xcellentbe.domain.shared.BaseTimeEntity;
 import com.leets.xcellentbe.domain.shared.DeletedStatus;
-import com.leets.xcellentbe.domain.user.User;
+import com.leets.xcellentbe.domain.user.domain.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

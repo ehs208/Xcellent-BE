@@ -2,7 +2,7 @@ package com.leets.xcellentbe.global.auth.jwt;;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.leets.xcellentbe.domain.user.repository.UserRepository;
+import com.leets.xcellentbe.domain.user.domain.repository.UserRepository;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -25,7 +25,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 import java.util.Arrays;
 
-import com.leets.xcellentbe.domain.user.repository.UserRepository;
+import com.leets.xcellentbe.domain.user.domain.repository.UserRepository;
 import com.leets.xcellentbe.global.auth.jwt.JwtService;
 import com.leets.xcellentbe.global.auth.login.CustomJsonAuthenticationFilter;
 import com.leets.xcellentbe.global.auth.login.LoginService;

@@ -1,4 +1,4 @@
-package com.leets.xcellentbe.domain.user;
+package com.leets.xcellentbe.domain.user.domain;
 
 import java.time.LocalDateTime;
 import java.time.LocalDate;

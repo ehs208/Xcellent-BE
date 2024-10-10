@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import com.leets.xcellentbe.domain.hashtag.domain.Hashtag;
 import com.leets.xcellentbe.domain.shared.DeletedStatus;
-import com.leets.xcellentbe.domain.user.User;
+import com.leets.xcellentbe.domain.user.domain.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

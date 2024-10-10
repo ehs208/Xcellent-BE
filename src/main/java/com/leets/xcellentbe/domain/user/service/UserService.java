@@ -3,10 +3,10 @@ package com.leets.xcellentbe.domain.user.service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.leets.xcellentbe.domain.user.User;
+import com.leets.xcellentbe.domain.user.domain.User;
 import com.leets.xcellentbe.domain.user.exception.UserAlreadyExistsException;
 
-import com.leets.xcellentbe.domain.user.repository.UserRepository;
+import com.leets.xcellentbe.domain.user.domain.repository.UserRepository;
 import com.leets.xcellentbe.domain.user.dto.UserSignUpRequestDto;
 
 import jakarta.transaction.Transactional;

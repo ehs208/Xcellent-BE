@@ -1,7 +1,6 @@
 package com.leets.xcellentbe.global.auth.login.handler;
 
 import java.io.IOException;
-import java.time.format.DateTimeFormatter;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,8 +14,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.leets.xcellentbe.domain.user.repository.UserRepository;
+import com.leets.xcellentbe.domain.user.domain.repository.UserRepository;
 import com.leets.xcellentbe.global.auth.jwt.JwtService;
 import com.leets.xcellentbe.global.response.GlobalResponseDto;
 
