@@ -85,10 +85,10 @@ public class SecurityConfig {
 
 	       configuration.setAllowedOrigins(Arrays.asList());
 	       configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "fDELETE"));
-	       configuration.setAllowedHeaders(Arrays.asList("*"));
-	       configuration.setExposedHeaders(Arrays.asList("Authorization, Authorization_refresh"));
+		   configuration.setAllowedHeaders(Arrays.asList("*"));
+		   configuration.setExposedHeaders(Arrays.asList("Authorization, Authorization_refresh"));
 		   configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:8080", "https://develop.d333radwds380a.amplifyapp.com"));
-	       configuration.setAllowCredentials(true);
+		   configuration.setAllowCredentials(true);
 
 	       UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 	       source.registerCorsConfiguration("/**", configuration);
