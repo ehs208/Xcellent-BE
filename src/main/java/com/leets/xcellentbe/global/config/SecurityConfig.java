@@ -21,6 +21,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import static org.springframework.security.config.Customizer.withDefaults;
 
 import java.util.Arrays;
@@ -79,21 +80,22 @@ public class SecurityConfig {
 			.build();
 	}
 
-	   @Bean
-	   public CorsConfigurationSource corsConfigurationSource() {
-	       CorsConfiguration configuration = new CorsConfiguration();
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
 
-	       configuration.setAllowedOrigins(Arrays.asList());
-		   configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "fDELETE"));
-		   configuration.setAllowedHeaders(Arrays.asList("*"));
-		   configuration.setExposedHeaders(Arrays.asList("Authorization, Authorization_refresh"));
-		   configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:8080", "https://develop.d333radwds380a.amplifyapp.com"));
-		   configuration.setAllowCredentials(true);
+		configuration.setAllowedOrigins(Arrays.asList());
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "fDELETE"));
+		configuration.setAllowedHeaders(Arrays.asList("*"));
+		configuration.setExposedHeaders(Arrays.asList("Authorization, Authorization_refresh"));
+		configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:8080",
+			"https://develop.d333radwds380a.amplifyapp.com"));
+		configuration.setAllowCredentials(true);
 
-	       UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-	       source.registerCorsConfiguration("/**", configuration);
-	       return source;
-	   }
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+		return source;
+	}
 
 	@Bean
 	public AuthenticationManager authenticationManager() {
