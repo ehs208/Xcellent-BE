@@ -25,7 +25,7 @@ public class UserController {
 	@Operation(summary = "회원가입", description = "회원가입을 합니다.")
 	public ResponseEntity<GlobalResponseDto<String>> register(@RequestBody UserSignUpRequestDto userSignUpRequestDto) {
 		return ResponseEntity.status(HttpStatus.CREATED)
-			.body(GlobalResponseDto.success(userService.register(userSignUpRequestDto), 201));
+			.body(GlobalResponseDto.success(userService.register(userSignUpRequestDto), HttpStatus.CREATED.value()));
 	}
 
 	@Operation(summary = "로그인", description = "사용자의 이메일과 비밀번호로 로그인합니다.")
