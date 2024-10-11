@@ -33,6 +33,7 @@ import com.leets.xcellentbe.global.auth.login.LoginService;
 import com.leets.xcellentbe.global.auth.login.handler.LoginFailureHandler;
 import com.leets.xcellentbe.global.auth.login.handler.LoginSuccessHandler;
 import com.leets.xcellentbe.global.auth.jwt.JwtAuthenticationFilter;
+import com.leets.xcellentbe.global.auth.login.oauth.OAuthLoginSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -43,6 +44,7 @@ public class SecurityConfig {
 	private final JwtService jwtService;
 	private final UserRepository userRepository;
 	private final ObjectMapper objectMapper;
+	private final OAuthLoginSuccessHandler oAuthLoginSuccessHandler;
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -51,7 +53,7 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		return http
+		http
 			.formLogin(AbstractHttpConfigurer::disable)
 			.httpBasic(AbstractHttpConfigurer::disable)
 			.cors(withDefaults())
@@ -74,10 +76,12 @@ public class SecurityConfig {
 							"/swagger/**", "/api/auth/register", "/api/auth/login").permitAll()
 						.anyRequest().authenticated()
 			)
+			.oauth2Login(oauth2 -> oauth2.successHandler(oAuthLoginSuccessHandler));
+			// .failureHandler(oAuth2LoginFailureHandler)
+			http.addFilterAfter(customJsonAuthenticationFilter(), LogoutFilter.class);
+			http.addFilterBefore(jwtAuthenticationFilter(), CustomJsonAuthenticationFilter.class);
 
-			.addFilterAfter(customJsonAuthenticationFilter(), LogoutFilter.class)
-			.addFilterBefore(jwtAuthenticationFilter(), CustomJsonAuthenticationFilter.class)
-			.build();
+			return http.build();
 	}
 
 	@Bean
