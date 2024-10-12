@@ -140,7 +140,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	public void saveAuthentication(User myUser) {
 		String password = myUser.getPassword();
 		// if (password == null) { // OAuth2 사용시 소셜로그인 비밀번호 생성 코드
-		// 	password = PasswordUtil.generateRandomPassword();
+		// 	password = PasswordUtils.generateRandomPassword();
 		// }
 		UserDetails userDetailsUser = org.springframework.security.core.userdetails.User.builder()
 			.username(myUser.getEmail())

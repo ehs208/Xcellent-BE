@@ -15,6 +15,8 @@ public class OAuthAttributes {
 	private String nameAttributeKey;
 	private GoogleOAuthUserInfo googleOAuthUserInfo;
 
+	PasswordUtil passwordUtil = new PasswordUtil();
+
 	@Builder
 	private OAuthAttributes(String nameAttributeKey, GoogleOAuthUserInfo googleOAuthUserInfo) {
 		this.nameAttributeKey = nameAttributeKey;
@@ -31,7 +33,7 @@ public class OAuthAttributes {
 	public User toEntity(GoogleOAuthUserInfo googleOAuthUserInfo) {
 		return User.builder()
 			.email(googleOAuthUserInfo.getEmail())
-			.password("password")
+			.password(passwordUtil.generateHashedRandomPassword())
 			.customId("customId")
 			.userName("userName")
 			.userRole(Role.GUEST)
