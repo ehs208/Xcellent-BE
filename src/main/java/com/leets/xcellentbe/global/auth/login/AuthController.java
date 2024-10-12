@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthController {
 	private final UserService userService;
+	private final EmailService emailService;
 
 	@PostMapping("/register")
 	@Operation(summary = "회원가입", description = "회원가입을 합니다.")
@@ -34,4 +35,20 @@ public class AuthController {
 		// 로그인 로직 처리
 		return "로그인 성공";
 	}
+
+	@PostMapping("/email/send")
+	public ResponseEntity<GlobalResponseDto<String>> mailSend(@RequestBody EmailRequestDto emailRequestDto) {
+		return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success(emailService.joinEmail(emailRequestDto.getEmail())));
+	}
+
+	@PostMapping("/email/check")
+	public ResponseEntity<GlobalResponseDto<String>> AuthCheck(@RequestBody EmailCheckDto emailCheckDto) {
+		Boolean Checked = emailService.checkAuthNum(emailCheckDto.getEmail(), emailCheckDto.getAuthNum());
+		if (Checked) {
+			return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success("인증 성공"));
+		} else {
+			throw new NullPointerException("뭔가 잘못!");
+		}
+	}
 }
+
