@@ -86,6 +86,12 @@ jobs:
           port: 22
           key: ${{ secrets.PRIVATE_KEY }}
           script: |
+            # 기존 컨테이너 중지 및 제거
+            if [ "$(sudo docker ps -q -f name=xcellent-be)" ]; then
+            sudo docker stop xcellent-be
+            sudo docker rm xcellent-be
+            fi
+
             sudo docker ps
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/xcellent-be
             sudo docker run -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/xcellent-be
