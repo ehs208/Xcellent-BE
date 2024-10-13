@@ -17,6 +17,7 @@ public enum ErrorCode {
 	ARTICLE_NOT_FOUND(404, "ARTICLE_NOT_FOUND", "게시물을 찾을 수 없습니다."),
 	CHAT_ROOM_NOT_FOUND(404, "CHAT_ROOM_NOT_FOUND", "채팅방을 찾을 수 없습니다."),
 	REJECT_DUPLICATION(409,"REJECT_DUPLICATION","중복된 값입니다."),
+	AUTH_CODE_ALREADY_SENT(429, "AUTH_CODE_ALREADY_SENT", "이미 인증번호를 전송했습니다."),
 	INTERNAL_SERVER_ERROR(500, "INTERNAL_SERVER_ERROR", "서버 오류가 발생했습니다.");
 
 

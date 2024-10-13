@@ -1,4 +1,4 @@
-package com.leets.xcellentbe.global.auth.login;
+package com.leets.xcellentbe.global.auth.email;
 
 import java.time.Duration;
 

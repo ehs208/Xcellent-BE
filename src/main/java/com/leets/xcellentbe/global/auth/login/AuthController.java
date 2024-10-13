@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.leets.xcellentbe.domain.user.dto.UserLoginRequestDto;
 import com.leets.xcellentbe.domain.user.dto.UserSignUpRequestDto;
 import com.leets.xcellentbe.domain.user.service.UserService;
+import com.leets.xcellentbe.global.auth.email.EmailCheckDto;
+import com.leets.xcellentbe.global.auth.email.EmailRequestDto;
+import com.leets.xcellentbe.global.auth.email.EmailService;
+import com.leets.xcellentbe.global.error.exception.custom.InvalidInputValueException;
 import com.leets.xcellentbe.global.response.GlobalResponseDto;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -48,7 +52,7 @@ public class AuthController {
 		if (Checked) {
 			return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success("인증 성공"));
 		} else {
-			throw new NullPointerException("유효하지 않은 인증번호입니다.");
+			throw new InvalidInputValueException();
 		}
 	}
 }

@@ -1,4 +1,4 @@
-package com.leets.xcellentbe.global.auth.login;
+package com.leets.xcellentbe.global.auth.email;
 
 import jakarta.validation.constraints.Email;
 import lombok.Getter;
