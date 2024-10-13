@@ -14,7 +14,7 @@ public class EmailConfig {
 	@Value("${mail.username}")
 	private String username;
 
-	@Value("${jwt.mail.password}")
+	@Value("${mail.password}")
 	private String password;
 
 	@Bean
