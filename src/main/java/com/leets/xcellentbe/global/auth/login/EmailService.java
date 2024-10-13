@@ -32,24 +32,27 @@ public class EmailService {
 	//mail을 어디서 보내는지, 어디로 보내는지 , 인증 번호를 html 형식으로 어떻게 보내는지 작성합니다.
 	public String joinEmail(String email) {
 		makeRandomNumber();
-		String setFrom = "dionisos198@naver.com"; // email-config에 설정한 자신의 이메일 주소를 입력
 		String toMail = email;
 		String title = "회원 가입 인증 이메일 입니다."; // 이메일 제목
 		String content =
 				"인증 번호는 " + authNumber + "입니다." +
 				"<br>" +
 				"인증번호를 제대로 입력해주세요"; //이메일 내용 삽입
-		mailSend(setFrom, toMail, title, content);
+		mailSend(toMail, title, content);
 		return Integer.toString(authNumber);
 	}
 
 	//이메일을 전송합니다.
-	public void mailSend(String setFrom, String toMail, String title, String content) {
+	public void mailSend(String toMail, String title, String content) {
+
+		if(redisService.getData(toMail)!=null){
+			throw new IllegalArgumentException("이미 인증번호가 발송되었습니다.");
+		}
+
 		MimeMessage message = mailSender.createMimeMessage();//JavaMailSender 객체를 사용하여 MimeMessage 객체를 생성
 		try {
 			MimeMessageHelper helper = new MimeMessageHelper(message,true,"utf-8");//이메일 메시지와 관련된 설정을 수행합니다.
 			// true를 전달하여 multipart 형식의 메시지를 지원하고, "utf-8"을 전달하여 문자 인코딩을 설정
-			helper.setFrom(setFrom);//이메일의 발신자 주소 설정
 			helper.setTo(toMail);//이메일의 수신자 주소 설정
 			helper.setSubject(title);//이메일의 제목을 설정
 			helper.setText(content,true);//이메일의 내용 설정 두 번째 매개 변수에 true를 설정하여 html 설정으로한다.
@@ -58,16 +61,16 @@ public class EmailService {
 			// 이러한 경우 MessagingException이 발생
 			e.printStackTrace();//e.printStackTrace()는 예외를 기본 오류 스트림에 출력하는 메서드
 		}
-		redisService.setDataExpire(Integer.toString(authNumber),toMail,60*5L);
+		redisService.setDataExpire(toMail,Integer.toString(authNumber),60*5L);
 	}
 
 	public boolean checkAuthNum(String email,String authNum){
 		System.out.println(authNum);
 		System.out.println(email);
-		if(redisService.getData(authNum)==null){
+		if(redisService.getData(email)==null){
 			return false;
 		}
-		else if(redisService.getData(authNum).equals(email)){
+		else if(redisService.getData(email).equals(authNum)){
 			return true;
 		}
 		else{

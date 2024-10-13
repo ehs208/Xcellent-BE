@@ -38,7 +38,8 @@ public class AuthController {
 
 	@PostMapping("/email/send")
 	public ResponseEntity<GlobalResponseDto<String>> mailSend(@RequestBody EmailRequestDto emailRequestDto) {
-		return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success(emailService.joinEmail(emailRequestDto.getEmail())));
+		emailService.joinEmail(emailRequestDto.getEmail());
+		return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success());
 	}
 
 	@PostMapping("/email/check")
@@ -47,7 +48,7 @@ public class AuthController {
 		if (Checked) {
 			return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success("인증 성공"));
 		} else {
-			throw new NullPointerException("뭔가 잘못!");
+			throw new NullPointerException("유효하지 않은 인증번호입니다.");
 		}
 	}
 }
