@@ -78,7 +78,7 @@ jobs:
         run: |
           cd ./src/main/resources
           touch ./application-oauth.yml
-          echo "${{ secrets.YML.OAUTH }}" > ./application-oauth.yml
+          echo "${{ secrets.YML_OAUTH }}" > ./application-oauth.yml
         shell: bash
 
       # gradle build
