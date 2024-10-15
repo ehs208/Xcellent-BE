@@ -17,6 +17,7 @@ import com.leets.xcellentbe.global.error.exception.custom.InvalidInputValueExcep
 import com.leets.xcellentbe.global.response.GlobalResponseDto;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -41,7 +42,8 @@ public class AuthController {
 	}
 
 	@PostMapping("/email/send")
-	public ResponseEntity<GlobalResponseDto<String>> mailSend(@RequestBody EmailRequestDto emailRequestDto) {
+	public ResponseEntity<GlobalResponseDto<String>> mailSend(@RequestBody EmailRequestDto emailRequestDto) throws
+		MessagingException {
 		emailService.joinEmail(emailRequestDto.getEmail());
 		return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success());
 	}
