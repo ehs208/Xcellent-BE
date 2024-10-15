@@ -48,12 +48,8 @@ public class CustomOAuthUserService implements OAuth2UserService<OAuth2UserReque
 	}
 
 	private User getUser(OAuthAttributes attributes) {
-		User findUser = userRepository.findByEmail(attributes.getGoogleOAuthUserInfo().getEmail()).orElse(null);
-
-		if(findUser == null) {
-			return saveUser(attributes);
-		}
-		return findUser;
+		return userRepository.findByEmail(attributes.getGoogleOAuthUserInfo().getEmail())
+			.orElseGet(() -> saveUser(attributes));
 	}
 
 	private User saveUser(OAuthAttributes attributes) {
