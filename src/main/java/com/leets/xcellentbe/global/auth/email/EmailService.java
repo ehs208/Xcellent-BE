@@ -10,6 +10,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import java.util.Random;
 
+import com.leets.xcellentbe.global.error.exception.custom.InvalidInputValueException;
+
 @Transactional
 @RequiredArgsConstructor
 @Service
@@ -61,13 +63,17 @@ public class EmailService {
 		redisService.setDataExpire(toMail,Integer.toString(authNumber));
 	}
 
-	public boolean checkAuthNum(String email, String authNum) {
+	public String checkAuthNum(String email, String authNum) {
 		String storedAuthNum = redisService.getData(email);
 
 		if (storedAuthNum == null) {
-			return false;
+			return "인증번호가 만료되었습니다.";
 		}
-
-		return storedAuthNum.equals(authNum);
+		else if(!storedAuthNum.equals(authNum)){
+			throw new InvalidInputValueException();
+		}
+		else {
+			return "인증에 성공하였습니다.";
+		}
 	}
 }

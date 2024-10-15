@@ -48,12 +48,7 @@ public class AuthController {
 
 	@PostMapping("/email/check")
 	public ResponseEntity<GlobalResponseDto<String>> AuthCheck(@RequestBody EmailCheckDto emailCheckDto) {
-		Boolean Checked = emailService.checkAuthNum(emailCheckDto.getEmail(), emailCheckDto.getAuthNum());
-		if (Checked) {
-			return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success("인증 성공"));
-		} else {
-			throw new InvalidInputValueException();
-		}
+		return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success(emailService.checkAuthNum(emailCheckDto.getEmail(), emailCheckDto.getAuthNum())));
 	}
 }
 
