@@ -7,7 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.leets.xcellentbe.domain.shared.BaseTimeEntity;
 import com.leets.xcellentbe.domain.shared.UserStatus;
-
+import com.leets.xcellentbe.domain.user.Role;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -76,6 +76,12 @@ public class User extends BaseTimeEntity {
 	private UserStatus userStatus;
 
 	@NotNull
+	@Column
+	@Enumerated(EnumType.STRING)
+	private Role userRole;
+
+
+	@NotNull
 	@Column(length=4)
 	private int userBirthYear;
 
@@ -88,7 +94,7 @@ public class User extends BaseTimeEntity {
 	private int userBirthDay;
 
 	@Builder
-	private User(String customId, String email, String userName, String password, String phoneNumber, String description, int userBirthDay, int userBirthMonth, int userBirthYear) {
+	private User(String customId, String email, String userName, String password, String phoneNumber, String description, int userBirthDay, int userBirthMonth, int userBirthYear, String socialEmail, Role userRole) {
 		this.customId = customId;
 		this.email = email;
 		this.userName = userName;
@@ -96,6 +102,7 @@ public class User extends BaseTimeEntity {
 		this.phoneNumber= phoneNumber;
 		this.description = description;
 		this.userStatus = UserStatus.ACTIVE;
+		this.userRole = userRole;
 		this.userBirthMonth = userBirthMonth;
 		this.userBirthYear = userBirthYear;
 		this.userBirthDay = userBirthDay;
@@ -115,6 +122,15 @@ public class User extends BaseTimeEntity {
 			.userBirthDay(userBirthDay)
 			.userBirthYear(userBirthYear)
 			.userBirthMonth(userBirthMonth)
+			.userRole(Role.USER)
+			.build();
+	}
+
+	public static User socialCreate(String email, String socialEmail) {
+		return User.builder()
+			.email(email)
+			.userRole(Role.GUEST)
+			.socialEmail(socialEmail)
 			.build();
 	}
 

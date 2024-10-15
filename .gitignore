@@ -9,6 +9,8 @@ application.yaml
 application-dev.yaml
 application-local.yaml
 application-jwt.yaml
+application-oauth.yaml
+application-mail.yaml
 
 ### macOS ###
 .DS_Store

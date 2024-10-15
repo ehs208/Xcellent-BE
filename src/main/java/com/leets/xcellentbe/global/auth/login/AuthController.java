@@ -10,9 +10,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.leets.xcellentbe.domain.user.dto.UserLoginRequestDto;
 import com.leets.xcellentbe.domain.user.dto.UserSignUpRequestDto;
 import com.leets.xcellentbe.domain.user.service.UserService;
+import com.leets.xcellentbe.global.auth.email.EmailCheckDto;
+import com.leets.xcellentbe.global.auth.email.EmailRequestDto;
+import com.leets.xcellentbe.global.auth.email.EmailService;
+import com.leets.xcellentbe.global.error.exception.custom.InvalidInputValueException;
 import com.leets.xcellentbe.global.response.GlobalResponseDto;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -20,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthController {
 	private final UserService userService;
+	private final EmailService emailService;
 
 	@PostMapping("/register")
 	@Operation(summary = "회원가입", description = "회원가입을 합니다.")
@@ -34,4 +40,17 @@ public class AuthController {
 		// 로그인 로직 처리
 		return "로그인 성공";
 	}
+
+	@PostMapping("/email/send")
+	public ResponseEntity<GlobalResponseDto<String>> mailSend(@RequestBody EmailRequestDto emailRequestDto) throws
+		MessagingException {
+		emailService.joinEmail(emailRequestDto.getEmail());
+		return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success());
+	}
+
+	@PostMapping("/email/check")
+	public ResponseEntity<GlobalResponseDto<String>> AuthCheck(@RequestBody EmailCheckDto emailCheckDto) {
+		return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success(emailService.checkAuthNum(emailCheckDto.getEmail(), emailCheckDto.getAuthNum())));
+	}
 }
+
