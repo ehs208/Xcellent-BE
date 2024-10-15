@@ -66,17 +66,13 @@ public class EmailService {
 		redisService.setDataExpire(toMail,Integer.toString(authNumber),60*5L);
 	}
 
-	public boolean checkAuthNum(String email,String authNum){
-		System.out.println(authNum);
-		System.out.println(email);
-		if(redisService.getData(email)==null){
+	public boolean checkAuthNum(String email, String authNum) {
+		String storedAuthNum = redisService.getData(email);
+
+		if (storedAuthNum == null) {
 			return false;
 		}
-		else if(redisService.getData(email).equals(authNum)){
-			return true;
-		}
-		else{
-			return false;
-		}
+
+		return storedAuthNum.equals(authNum);
 	}
 }
