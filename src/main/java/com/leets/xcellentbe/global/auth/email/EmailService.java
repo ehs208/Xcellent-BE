@@ -58,7 +58,7 @@ public class EmailService {
 			// 이러한 경우 MessagingException이 발생
 			e.printStackTrace();//e.printStackTrace()는 예외를 기본 오류 스트림에 출력하는 메서드
 		}
-		redisService.setDataExpire(toMail,Integer.toString(authNumber),60*5L);
+		redisService.setDataExpire(toMail,Integer.toString(authNumber));
 	}
 
 	public boolean checkAuthNum(String email, String authNum) {
