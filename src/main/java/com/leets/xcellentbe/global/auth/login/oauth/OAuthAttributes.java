@@ -12,15 +12,15 @@ import com.leets.xcellentbe.domain.user.domain.User;
 @Getter
 public class OAuthAttributes {
 
-	private String nameAttributeKey;
-	private GoogleOAuthUserInfo googleOAuthUserInfo;
-
-	PasswordUtil passwordUtil = new PasswordUtil();
+	private final String nameAttributeKey;
+	private final GoogleOAuthUserInfo googleOAuthUserInfo;
+	private final PasswordUtil passwordUtil;
 
 	@Builder
-	private OAuthAttributes(String nameAttributeKey, GoogleOAuthUserInfo googleOAuthUserInfo) {
+	private OAuthAttributes(String nameAttributeKey, GoogleOAuthUserInfo googleOAuthUserInfo, PasswordUtil passwordUtil) {
 		this.nameAttributeKey = nameAttributeKey;
 		this.googleOAuthUserInfo = googleOAuthUserInfo;
+		this.passwordUtil = passwordUtil;
 	}
 
 	public static OAuthAttributes of(String userNameAttributeName, Map<String, Object> attributes) {
