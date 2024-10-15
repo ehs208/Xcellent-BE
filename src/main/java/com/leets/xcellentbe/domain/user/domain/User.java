@@ -55,8 +55,6 @@ public class User extends BaseTimeEntity {
 	@Column(length = 50)
 	private String email;
 
-	private String socialEmail; // 소셜 로그인 이메일
-
 	@Column(length = 20)
 	private String phoneNumber;
 
