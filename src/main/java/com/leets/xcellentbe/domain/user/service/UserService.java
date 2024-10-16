@@ -12,6 +12,7 @@ import com.leets.xcellentbe.domain.user.exception.UserAlreadyExistsException;
 import com.leets.xcellentbe.domain.user.domain.repository.UserRepository;
 import com.leets.xcellentbe.domain.user.dto.UserSignUpRequestDto;
 
+import com.leets.xcellentbe.domain.user.exception.UserNotFoundException;
 import com.leets.xcellentbe.global.auth.jwt.JwtService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -75,6 +76,11 @@ public class UserService {
 			.filter(jwtService::isTokenValid)
 			.flatMap(accessToken -> jwtService.extractEmail(accessToken))
 			.flatMap(email -> userRepository.findByEmail(email));
+
+		if (user.isEmpty()) {
+			throw new UserNotFoundException();
+		}
+
 		return user;
 	}
 
