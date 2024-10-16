@@ -29,7 +29,7 @@ public class EmailService {
 
 
 	//mail을 어디서 보내는지, 어디로 보내는지 , 인증 번호를 html 형식으로 어떻게 보내는지 작성합니다.
-	public String joinEmail(String email) throws MessagingException {
+	public String joinEmail(String email)  {
 		makeRandomNumber();
 		String toMail = email;
 		String title = "회원 가입 인증 이메일 입니다."; // 이메일 제목
@@ -42,7 +42,7 @@ public class EmailService {
 	}
 
 	//이메일을 전송합니다.
-	public void mailSend(String toMail, String title, String content) throws MessagingException {
+	public void mailSend(String toMail, String title, String content) {
 
 		if(redisService.getData(toMail)!=null){
 			throw new AuthCodeAlreadySentException();
