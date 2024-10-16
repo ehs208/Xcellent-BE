@@ -73,7 +73,7 @@ public class SecurityConfig {
 				authorize ->
 					authorize
 						.requestMatchers("/v3/api-docs", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**",
-							"/swagger/**", "/api/auth/register", "/api/auth/login", "/index.html", "/api/auth/**").permitAll()
+							"/swagger/**", "/index.html", "/api/auth/**").permitAll()
 						.anyRequest().authenticated()
 			)
 			.oauth2Login(oauth2 -> oauth2.successHandler(oAuthLoginSuccessHandler));
