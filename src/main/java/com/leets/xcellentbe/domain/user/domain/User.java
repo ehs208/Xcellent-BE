@@ -126,12 +126,18 @@ public class User extends BaseTimeEntity {
 			.build();
 	}
 
-	public static User socialCreate(String email, String socialEmail) {
-		return User.builder()
-			.email(email)
-			.userRole(Role.GUEST)
-			.socialEmail(socialEmail)
-			.build();
+	public void updateProfile(String userName, String phoneNumber, String customId, int userBirthYear, int userBirthDay, int userBirthMonth, String profileImageUrl, String backgroundProfileImageUrl, String description, String websiteUrl, String location) {
+		this.userName = userName;
+		this.customId = customId;
+		this.profileImageUrl = profileImageUrl;
+		this.backgroundProfileImageUrl = backgroundProfileImageUrl;
+		this.description = description;
+		this.websiteUrl = websiteUrl;
+		this.location = location;
+		this.phoneNumber = phoneNumber;
+		this.userBirthYear = userBirthYear;
+		this.userBirthDay = userBirthDay;
+		this.userBirthMonth = userBirthMonth;
 	}
 
 	public void updateRefreshToken(String updateRefreshToken) {
