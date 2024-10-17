@@ -20,13 +20,13 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.valueOf(errorCode.getStatus())).body(GlobalResponseDto.fail(errorCode, errorResponse.getMessage()));
 	}
 
-	// @ExceptionHandler(Exception.class)
-	// public ResponseEntity<GlobalResponseDto> handleGenericException(Exception ex) {
-	// 	ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
-	// 	ErrorResponse errorResponse = new ErrorResponse(errorCode);
-	// 	showErrorLog(errorCode);
-	// 	return ResponseEntity.status(HttpStatus.valueOf(errorCode.getStatus())).body(GlobalResponseDto.fail(errorCode, errorResponse.getMessage()));
-	// }
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<GlobalResponseDto> handleGenericException(Exception ex) {
+		ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
+		ErrorResponse errorResponse = new ErrorResponse(errorCode);
+		showErrorLog(errorCode);
+		return ResponseEntity.status(HttpStatus.valueOf(errorCode.getStatus())).body(GlobalResponseDto.fail(errorCode, errorResponse.getMessage()));
+	}
 
 
 	private static void showErrorLog(ErrorCode errorCode) {
