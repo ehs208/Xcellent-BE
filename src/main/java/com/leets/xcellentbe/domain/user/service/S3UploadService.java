@@ -62,7 +62,7 @@ public class S3UploadService {
 		}
 	}
 
-	private Optional<File> convert(MultipartFile file) throws  IOException {
+	private Optional<File> convert(MultipartFile file) throws IOException {
 		File convertFile = new File(file.getOriginalFilename()); // 업로드한 파일의 이름
 		if(convertFile.createNewFile()) {
 			try (FileOutputStream fos = new FileOutputStream(convertFile)) {
@@ -73,8 +73,8 @@ public class S3UploadService {
 		return Optional.empty();
 	}
 
-	public void removeFile(String fileUrl) {
+	public void removeFile(String fileUrl, String filePath) {
 		String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
-		amazonS3Client.deleteObject(bucket, fileName);
+		amazonS3Client.deleteObject(bucket, filePath + fileName);
 	}
 }

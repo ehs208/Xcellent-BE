@@ -2,6 +2,7 @@ package com.leets.xcellentbe.domain.user.service;
 
 import java.util.Optional;
 
+import org.hibernate.engine.transaction.jta.platform.internal.SunOneJtaPlatform;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -78,9 +79,8 @@ public class UserService {
 		String priorUrl = user.getProfileImageUrl();
 		String url = s3UploadService.upload(multipartFile, "profile-image");
 		user.updateProfileImage(url);
-
 		if (priorUrl != null) {
-			s3UploadService.removeFile(priorUrl);
+			s3UploadService.removeFile(priorUrl, "profile-image/");
 		}
 
 		return url;
@@ -94,7 +94,7 @@ public class UserService {
 		user.updateBackgroundImage(url);
 
 		if (priorUrl != null) {
-			s3UploadService.removeFile(priorUrl);
+			s3UploadService.removeFile(priorUrl, "background-image/");
 		}
 
 		return url;
