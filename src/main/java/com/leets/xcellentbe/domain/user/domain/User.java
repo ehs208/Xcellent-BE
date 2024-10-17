@@ -126,11 +126,9 @@ public class User extends BaseTimeEntity {
 			.build();
 	}
 
-	public void updateProfile(String userName, String phoneNumber, String customId, int userBirthYear, int userBirthDay, int userBirthMonth, String profileImageUrl, String backgroundProfileImageUrl, String description, String websiteUrl, String location) {
+	public void updateProfile(String userName, String phoneNumber, String customId, int userBirthYear, int userBirthDay, int userBirthMonth, String description, String websiteUrl, String location) {
 		this.userName = userName;
 		this.customId = customId;
-		this.profileImageUrl = profileImageUrl;
-		this.backgroundProfileImageUrl = backgroundProfileImageUrl;
 		this.description = description;
 		this.websiteUrl = websiteUrl;
 		this.location = location;
@@ -138,6 +136,14 @@ public class User extends BaseTimeEntity {
 		this.userBirthYear = userBirthYear;
 		this.userBirthDay = userBirthDay;
 		this.userBirthMonth = userBirthMonth;
+	}
+
+	public void updateProfileImage(String updateProfileImageUrl) {
+		this.profileImageUrl = updateProfileImageUrl;
+	}
+
+	public void updateBackgroundImage(String updateBackgroundImageUrl) {
+		this.backgroundProfileImageUrl = updateBackgroundImageUrl;
 	}
 
 	public void updateRefreshToken(String updateRefreshToken) {

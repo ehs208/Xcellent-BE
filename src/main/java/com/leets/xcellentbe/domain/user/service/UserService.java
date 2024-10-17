@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.leets.xcellentbe.domain.user.domain.User;
 import com.leets.xcellentbe.domain.user.dto.UserProfileRequestDto;
@@ -29,6 +30,7 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtService jwtService;
+	private final S3UploadService s3UploadService;
 
 	// 회원가입 메소드
 	public String register(UserSignUpRequestDto userSignUpRequestDto) {
@@ -67,7 +69,35 @@ public class UserService {
 	// 사용자 정보 수정 메소드
 	public void updateProfile(HttpServletRequest request, UserProfileRequestDto userProfileRequestDto) {
 		Optional<User> user = getUser(request);
-		user.get().updateProfile(userProfileRequestDto.getUserName(), userProfileRequestDto.getPhoneNumber(), userProfileRequestDto.getCustomId(), userProfileRequestDto.getUserBirthYear(), userProfileRequestDto.getUserBirthDay(), userProfileRequestDto.getUserBirthMonth(), userProfileRequestDto.getProfileImageUrl(), userProfileRequestDto.getBackgroundProfileImageUrl(), userProfileRequestDto.getDescription(), userProfileRequestDto.getWebsiteUrl(), userProfileRequestDto.getLocation());
+		user.get().updateProfile(userProfileRequestDto.getUserName(), userProfileRequestDto.getPhoneNumber(), userProfileRequestDto.getCustomId(), userProfileRequestDto.getUserBirthYear(), userProfileRequestDto.getUserBirthDay(), userProfileRequestDto.getUserBirthMonth(), userProfileRequestDto.getDescription(), userProfileRequestDto.getWebsiteUrl(), userProfileRequestDto.getLocation());
+	}
+
+	// 프로필 이미지 변경 메소드
+	public String updateProfileImage(MultipartFile multipartFile, HttpServletRequest request) {
+		Optional<User> user = getUser(request);
+		String priorUrl = user.get().getProfileImageUrl();
+		String url = s3UploadService.upload(multipartFile, "profile-image");
+		user.get().updateProfileImage(url);
+
+		if (priorUrl != null) {
+			s3UploadService.removeFile(priorUrl);
+		}
+
+		return url;
+	}
+
+	// 배경 이미지 변경 메소드
+	public String updateBackgroundProfileImage(MultipartFile multipartFile, HttpServletRequest request) {
+		Optional<User> user = getUser(request);
+		String priorUrl = user.get().getBackgroundProfileImageUrl();
+		String url = s3UploadService.upload(multipartFile, "background-image");
+		user.get().updateBackgroundImage(url);
+
+		if (priorUrl != null) {
+			s3UploadService.removeFile(priorUrl);
+		}
+
+		return url;
 	}
 
 	//JWT 토큰 해독하여 사용자 정보 반환 메소드
