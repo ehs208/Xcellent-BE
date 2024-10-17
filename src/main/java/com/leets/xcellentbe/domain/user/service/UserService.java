@@ -53,31 +53,31 @@ public class UserService {
 
 	// 사용자 정보 조회 메소드
 	public UserProfileResponseDto getProfile(HttpServletRequest request) {
-		Optional<User> user = getUser(request);
+		User user = getUser(request);
 		return UserProfileResponseDto.builder()
-			.customId(user.get().getCustomId())
-			.email(user.get().getEmail())
-			.userName(user.get().getUserName())
-			.phoneNumber(user.get().getPhoneNumber())
-			.userBirthYear(user.get().getUserBirthYear())
-			.userBirthDay(user.get().getUserBirthDay())
-			.userBirthMonth(user.get().getUserBirthMonth())
+			.customId(user.getCustomId())
+			.email(user.getEmail())
+			.userName(user.getUserName())
+			.phoneNumber(user.getPhoneNumber())
+			.userBirthYear(user.getUserBirthYear())
+			.userBirthDay(user.getUserBirthDay())
+			.userBirthMonth(user.getUserBirthMonth())
 			.build();
 	}
 
 
 	// 사용자 정보 수정 메소드
 	public void updateProfile(HttpServletRequest request, UserProfileRequestDto userProfileRequestDto) {
-		Optional<User> user = getUser(request);
-		user.get().updateProfile(userProfileRequestDto.getUserName(), userProfileRequestDto.getPhoneNumber(), userProfileRequestDto.getCustomId(), userProfileRequestDto.getUserBirthYear(), userProfileRequestDto.getUserBirthDay(), userProfileRequestDto.getUserBirthMonth(), userProfileRequestDto.getDescription(), userProfileRequestDto.getWebsiteUrl(), userProfileRequestDto.getLocation());
+		User user = getUser(request);
+		user.updateProfile(userProfileRequestDto.getUserName(), userProfileRequestDto.getPhoneNumber(), userProfileRequestDto.getCustomId(), userProfileRequestDto.getUserBirthYear(), userProfileRequestDto.getUserBirthDay(), userProfileRequestDto.getUserBirthMonth(), userProfileRequestDto.getDescription(), userProfileRequestDto.getWebsiteUrl(), userProfileRequestDto.getLocation());
 	}
 
 	// 프로필 이미지 변경 메소드
 	public String updateProfileImage(MultipartFile multipartFile, HttpServletRequest request) {
-		Optional<User> user = getUser(request);
-		String priorUrl = user.get().getProfileImageUrl();
+		User user = getUser(request);
+		String priorUrl = user.getProfileImageUrl();
 		String url = s3UploadService.upload(multipartFile, "profile-image");
-		user.get().updateProfileImage(url);
+		user.updateProfileImage(url);
 
 		if (priorUrl != null) {
 			s3UploadService.removeFile(priorUrl);
@@ -88,10 +88,10 @@ public class UserService {
 
 	// 배경 이미지 변경 메소드
 	public String updateBackgroundProfileImage(MultipartFile multipartFile, HttpServletRequest request) {
-		Optional<User> user = getUser(request);
-		String priorUrl = user.get().getBackgroundProfileImageUrl();
+		User user = getUser(request);
+		String priorUrl = user.getBackgroundProfileImageUrl();
 		String url = s3UploadService.upload(multipartFile, "background-image");
-		user.get().updateBackgroundImage(url);
+		user.updateBackgroundImage(url);
 
 		if (priorUrl != null) {
 			s3UploadService.removeFile(priorUrl);
@@ -101,7 +101,7 @@ public class UserService {
 	}
 
 	//JWT 토큰 해독하여 사용자 정보 반환 메소드
-	private Optional<User> getUser(HttpServletRequest request) {
+	private User getUser(HttpServletRequest request) {
 		Optional<User> user = jwtService.extractAccessToken(request)
 			.filter(jwtService::isTokenValid)
 			.flatMap(accessToken -> jwtService.extractEmail(accessToken))
@@ -111,7 +111,7 @@ public class UserService {
 			throw new UserNotFoundException();
 		}
 
-		return user;
+		return user.get();
 	}
 
 }

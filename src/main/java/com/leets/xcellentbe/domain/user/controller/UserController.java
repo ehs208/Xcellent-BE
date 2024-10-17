@@ -34,7 +34,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserController {
 	private final UserService userService;
-	private final S3UploadService s3UploadService;
 
 	@GetMapping("/info")
 	@Operation(summary = "프로필 조회", description = "사용자의 프로필 내용을 조회합니다.")
