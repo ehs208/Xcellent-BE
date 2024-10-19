@@ -42,7 +42,7 @@ public class UserController {
 			.body(GlobalResponseDto.success(userService.getProfile(request)));
 	}
 
-	@PutMapping("/info")
+	@PatchMapping("/info")
 	@Operation(summary = "프로필 수정", description = "사용자의 프로필을 수정합니다.")
 	public ResponseEntity<GlobalResponseDto<String>> updateProfile(@RequestBody UserProfileRequestDto userProfileRequestDto, HttpServletRequest request) {
 		userService.updateProfile(request,userProfileRequestDto);
