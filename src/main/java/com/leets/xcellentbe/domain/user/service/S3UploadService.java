@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.leets.xcellentbe.global.error.exception.custom.InternalServerErrorException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +33,7 @@ public class S3UploadService {
 				orElseThrow(() -> new RuntimeException());
 			return upload(uploadFile, dirName);
 		} catch(IOException e) {
-			throw new RuntimeException();
+			throw new InternalServerErrorException();
 		}
 
 	}
