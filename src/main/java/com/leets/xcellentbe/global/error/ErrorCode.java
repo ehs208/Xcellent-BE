@@ -8,6 +8,7 @@ import lombok.Getter;
 public enum ErrorCode {
 
 	INVALID_INPUT_VALUE(400, "INVALID_INPUT_VALUE", "유효하지 않은 입력값입니다."),
+	INVALID_FILE_FORMAT(400, "INVALID_FILE_FORMAT", "올바르지 않은 파일 형식입니다."),
 	INVALID_TOKEN(401, "INVALID_TOKEN", "유효하지 않은 토큰입니다."),
 	LOGIN_FAIL(401, "LOGIN_FAIL", "로그인에 실패하였습니다."),
 	CHAT_ROOM_FORBIDDEN(403, "CHAT_ROOM_FORBIDDEN","권한이 없는 채팅방입니다."),

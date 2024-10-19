@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.leets.xcellentbe.domain.user.exception.InvalidFileFormat;
 import com.leets.xcellentbe.global.error.exception.custom.InternalServerErrorException;
 
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,11 @@ public class S3UploadService {
 
 	// MultipartFile을 전달받아 File로 전환한 후 S3에 업로드
 	public String upload(MultipartFile multipartFile, String dirName) { // dirName의 디렉토리가 S3 Bucket 내부에 생성됨
+		String fileName = multipartFile.getOriginalFilename();
+		if ((fileName.endsWith(".png") || fileName.endsWith(".jpg"))) {
+			throw new InvalidFileFormat();
+		}
+
 		try {
 			File uploadFile = convert(multipartFile).
 				orElseThrow(() -> new RuntimeException());
