@@ -49,7 +49,7 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success());
 	}
 
-	@PostMapping("/profile-image")
+	@PatchMapping("/profile-image")
 	@Operation(summary = "프로필 이미지 수정", description = "사용자의 프로필 이미지를 수정합니다.")
 	public ResponseEntity<GlobalResponseDto<String>> updateProfileImage(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
 			return ResponseEntity.status(HttpStatus.OK)
@@ -57,7 +57,7 @@ public class UserController {
 
 	}
 
-	@PostMapping("/background-image")
+	@PatchMapping("/background-image")
 	@Operation(summary = "배경 이미지 수정", description = "사용자의 배경 이미지를 수정합니다.")
 	public ResponseEntity<GlobalResponseDto<String>> updateBackgroundImage (@RequestParam("file") MultipartFile file, HttpServletRequest request){
 			return ResponseEntity.status(HttpStatus.OK)
