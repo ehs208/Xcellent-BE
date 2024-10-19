@@ -1,5 +1,7 @@
 package com.leets.xcellentbe.domain.user.dto;
 
+import com.leets.xcellentbe.domain.user.domain.User;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,5 +38,22 @@ public class UserProfileResponseDto {
 		this.userBirthYear = userBirthYear;
 		this.userBirthMonth = userBirthMonth;
 		this.userBirthDay = userBirthDay;
+	}
+
+	public static UserProfileResponseDto from(User user) {
+		return UserProfileResponseDto.builder()
+			.email(user.getEmail())
+			.customId(user.getCustomId())
+			.userName(user.getUserName())
+			.profileImageUrl(user.getProfileImageUrl())
+			.backgroundProfileImageUrl(user.getBackgroundProfileImageUrl())
+			.phoneNumber(user.getPhoneNumber())
+			.description(user.getDescription())
+			.websiteUrl(user.getWebsiteUrl())
+			.location(user.getLocation())
+			.userBirthYear(user.getUserBirthYear())
+			.userBirthMonth(user.getUserBirthMonth())
+			.userBirthDay(user.getUserBirthDay())
+			.build();
 	}
 }

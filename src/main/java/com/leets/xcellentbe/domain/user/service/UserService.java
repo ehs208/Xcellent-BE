@@ -55,15 +55,7 @@ public class UserService {
 	// 사용자 정보 조회 메소드
 	public UserProfileResponseDto getProfile(HttpServletRequest request) {
 		User user = getUser(request);
-		return UserProfileResponseDto.builder()
-			.customId(user.getCustomId())
-			.email(user.getEmail())
-			.userName(user.getUserName())
-			.phoneNumber(user.getPhoneNumber())
-			.userBirthYear(user.getUserBirthYear())
-			.userBirthDay(user.getUserBirthDay())
-			.userBirthMonth(user.getUserBirthMonth())
-			.build();
+		return UserProfileResponseDto.from(user);
 	}
 
 
