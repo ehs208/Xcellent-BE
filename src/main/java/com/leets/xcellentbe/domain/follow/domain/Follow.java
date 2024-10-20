@@ -11,6 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -32,4 +33,19 @@ public class Follow {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "follower_id")
 	private User follower;
+
+	@Builder
+	private Follow(User following, User follower) {
+		this.following = following;
+		this.follower = follower;
+	}
+
+	public static Follow create(User follower, User following) {
+		return Follow.builder()
+			.follower(follower)
+			.following(following)
+			.build();
+	}
 }
+
+

@@ -1,8 +1,12 @@
 package com.leets.xcellentbe.domain.follow.domain.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.leets.xcellentbe.domain.follow.domain.Follow;
+import com.leets.xcellentbe.domain.user.domain.User;
 
 public interface FollowRepository extends JpaRepository<Follow, Long> {
+	Optional<Follow> findByFollowerAndFollowing(User user, User targetUser);
 }
