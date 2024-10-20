@@ -2,24 +2,20 @@ package com.leets.xcellentbe.domain.user.service;
 
 import java.util.Optional;
 
-import org.hibernate.engine.transaction.jta.platform.internal.SunOneJtaPlatform;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.leets.xcellentbe.domain.user.domain.User;
-import com.leets.xcellentbe.domain.user.dto.UserProfileRequestDto;
-import com.leets.xcellentbe.domain.user.exception.UserAlreadyExistsException;
-
 import com.leets.xcellentbe.domain.user.domain.repository.UserRepository;
+import com.leets.xcellentbe.domain.user.dto.UserProfileRequestDto;
+import com.leets.xcellentbe.domain.user.dto.UserProfileResponseDto;
 import com.leets.xcellentbe.domain.user.dto.UserSignUpRequestDto;
-
+import com.leets.xcellentbe.domain.user.exception.UserAlreadyExistsException;
 import com.leets.xcellentbe.domain.user.exception.UserNotFoundException;
 import com.leets.xcellentbe.global.auth.jwt.JwtService;
 
 import jakarta.servlet.http.HttpServletRequest;
-
-import com.leets.xcellentbe.domain.user.dto.UserProfileResponseDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -43,8 +39,11 @@ public class UserService {
 			throw new UserAlreadyExistsException();
 		}
 
-		User user = User.create(userSignUpRequestDto.getCustomId(), userSignUpRequestDto.getEmail(), userSignUpRequestDto.getUserName(),
-				userSignUpRequestDto.getPassword(), userSignUpRequestDto.getPhoneNumber(), userSignUpRequestDto.getUserBirthYear(), userSignUpRequestDto.getUserBirthDay(), userSignUpRequestDto.getUserBirthMonth());
+		User user = User.create(userSignUpRequestDto.getCustomId(), userSignUpRequestDto.getEmail(),
+			userSignUpRequestDto.getUserName(),
+			userSignUpRequestDto.getPassword(), userSignUpRequestDto.getPhoneNumber(),
+			userSignUpRequestDto.getUserBirthYear(), userSignUpRequestDto.getUserBirthDay(),
+			userSignUpRequestDto.getUserBirthMonth());
 
 		user.passwordEncode(passwordEncoder);
 		userRepository.save(user);
@@ -59,17 +58,19 @@ public class UserService {
 	}
 
 	// 특정 사용자 정보 조회 메소드
-	public UserProfileResponseDto getProfileWithoutToken(String customId)
-	{
+	public UserProfileResponseDto getProfileWithoutToken(String customId) {
 		User user = userRepository.findByCustomId(customId).orElseThrow(UserNotFoundException::new);
 		return UserProfileResponseDto.from(user);
 	}
 
-
 	// 사용자 정보 수정 메소드
 	public void updateProfile(HttpServletRequest request, UserProfileRequestDto userProfileRequestDto) {
 		User user = getUser(request);
-		user.updateProfile(userProfileRequestDto.getUserName(), userProfileRequestDto.getPhoneNumber(), userProfileRequestDto.getCustomId(), userProfileRequestDto.getUserBirthYear(), userProfileRequestDto.getUserBirthDay(), userProfileRequestDto.getUserBirthMonth(), userProfileRequestDto.getDescription(), userProfileRequestDto.getWebsiteUrl(), userProfileRequestDto.getLocation());
+		user.updateProfile(userProfileRequestDto.getUserName(), userProfileRequestDto.getPhoneNumber(),
+			userProfileRequestDto.getCustomId(), userProfileRequestDto.getUserBirthYear(),
+			userProfileRequestDto.getUserBirthDay(), userProfileRequestDto.getUserBirthMonth(),
+			userProfileRequestDto.getDescription(), userProfileRequestDto.getWebsiteUrl(),
+			userProfileRequestDto.getLocation());
 	}
 
 	// 프로필 이미지 변경 메소드
