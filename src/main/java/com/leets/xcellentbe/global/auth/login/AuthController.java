@@ -41,13 +41,14 @@ public class AuthController {
 		return "로그인 성공";
 	}
 
+	@Operation(summary = "이메일 인증", description = "이메일 인증을 합니다.")
 	@PostMapping("/email/send")
-	public ResponseEntity<GlobalResponseDto<String>> mailSend(@RequestBody EmailRequestDto emailRequestDto) throws
-		MessagingException {
+	public ResponseEntity<GlobalResponseDto<String>> mailSend(@RequestBody EmailRequestDto emailRequestDto) {
 		emailService.joinEmail(emailRequestDto.getEmail());
 		return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success());
 	}
 
+	@Operation(summary = "이메일 인증 확인", description = "이메일 인증을 확인합니다.")
 	@PostMapping("/email/check")
 	public ResponseEntity<GlobalResponseDto<String>> AuthCheck(@RequestBody EmailCheckDto emailCheckDto) {
 		return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success(emailService.checkAuthNum(emailCheckDto.getEmail(), emailCheckDto.getAuthNum())));
