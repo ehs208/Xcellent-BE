@@ -10,6 +10,7 @@ import com.leets.xcellentbe.domain.shared.UserStatus;
 import com.leets.xcellentbe.domain.user.Role;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -80,48 +81,34 @@ public class User extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	private Role userRole;
 
-
-	@NotNull
-	@Column(length=4)
-	private int userBirthYear;
-
-	@Column(length=2)
-	@NotNull
-	private int userBirthMonth;
-
-	@Column(length=2)
-	@NotNull
-	private int userBirthDay;
+	@Embedded
+	private BirthDay userBirth;
 
 	@Builder
-	private User(String customId, String email, String userName, String password, String phoneNumber, String description, int userBirthDay, int userBirthMonth, int userBirthYear, String socialEmail, Role userRole) {
+	private User(String customId, String email, String userName, String password, String phoneNumber, String description, BirthDay userBirth , Role userRole) {
 		this.customId = customId;
 		this.email = email;
 		this.userName = userName;
 		this.password = password;
-		this.phoneNumber= phoneNumber;
+		this.phoneNumber = phoneNumber;
 		this.description = description;
 		this.userStatus = UserStatus.ACTIVE;
 		this.userRole = userRole;
-		this.userBirthMonth = userBirthMonth;
-		this.userBirthYear = userBirthYear;
-		this.userBirthDay = userBirthDay;
+		this.userBirth = userBirth;
 	}
 
 	public void passwordEncode(PasswordEncoder passwordEncoder) { //비밀번호 암호화 메소드
 		this.password = passwordEncoder.encode(this.password);
 	}
 
-	public static User create(String customId, String email, String userName, String password, String phoneNumber, int userBirthMonth, int userBirthYear, int userBirthDay) {
+	public static User create(String customId, String email, String userName, String password, String phoneNumber, int userBirthYear, int userBirthDay, int userBirthMonth) {
 		return User.builder()
 			.customId(customId)
 			.email(email)
 			.userName(userName)
 			.password(password)
 			.phoneNumber(phoneNumber)
-			.userBirthDay(userBirthDay)
-			.userBirthYear(userBirthYear)
-			.userBirthMonth(userBirthMonth)
+			.userBirth(BirthDay.builder().day(userBirthDay).year(userBirthYear).month(userBirthMonth).build())
 			.userRole(Role.USER)
 			.build();
 	}
@@ -133,9 +120,7 @@ public class User extends BaseTimeEntity {
 		this.websiteUrl = websiteUrl;
 		this.location = location;
 		this.phoneNumber = phoneNumber;
-		this.userBirthYear = userBirthYear;
-		this.userBirthDay = userBirthDay;
-		this.userBirthMonth = userBirthMonth;
+		this.userBirth = userBirth;
 	}
 
 	public void updateProfileImage(String updateProfileImageUrl) {
