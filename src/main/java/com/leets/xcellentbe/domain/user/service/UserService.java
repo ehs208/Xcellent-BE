@@ -52,9 +52,16 @@ public class UserService {
 		return "회원가입이 완료되었습니다.";
 	}
 
-	// 사용자 정보 조회 메소드
+	// 본인 정보 조회 메소드
 	public UserProfileResponseDto getProfile(HttpServletRequest request) {
 		User user = getUser(request);
+		return UserProfileResponseDto.from(user);
+	}
+
+	// 특정 사용자 정보 조회 메소드
+	public UserProfileResponseDto getProfileWithoutToken(String customId)
+	{
+		User user = userRepository.findByCustomId(customId).orElseThrow(UserNotFoundException::new);
 		return UserProfileResponseDto.from(user);
 	}
 
