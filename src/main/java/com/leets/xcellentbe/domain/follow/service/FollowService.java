@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import com.leets.xcellentbe.domain.follow.domain.Follow;
 import com.leets.xcellentbe.domain.follow.domain.repository.FollowRepository;
 import com.leets.xcellentbe.domain.follow.dto.FollowRequestDto;
-import com.leets.xcellentbe.domain.follow.dto.FollowerAndFollowingResponseDto;
+import com.leets.xcellentbe.domain.follow.dto.FollowInfoResponseDto;
 import com.leets.xcellentbe.domain.follow.exception.FollowOperationError;
 import com.leets.xcellentbe.domain.user.domain.User;
 import com.leets.xcellentbe.domain.user.domain.repository.UserRepository;
@@ -61,21 +61,21 @@ public class FollowService {
 	}
 
 	// 팔로잉 목록 조회
-	public Page<FollowerAndFollowingResponseDto> getFollowingList(String customId, int pageNo) {
+	public Page<FollowInfoResponseDto> getFollowingList(String customId, int pageNo) {
 		User user = findUserByCustomId(customId);
 		Pageable pageable = createPageable(pageNo);
 
 		return followRepository.findByFollower(user, pageable)
-			.map(FollowerAndFollowingResponseDto::from);
+			.map(FollowInfoResponseDto::from);
 	}
 
 	// 팔로워 목록 조회
-	public Page<FollowerAndFollowingResponseDto> getFollowerList(String customId, int pageNo) {
+	public Page<FollowInfoResponseDto> getFollowerList(String customId, int pageNo) {
 		User user = findUserByCustomId(customId);
 		Pageable pageable = createPageable(pageNo);
 
 		return followRepository.findByFollowing(user, pageable)
-			.map(FollowerAndFollowingResponseDto::from);
+			.map(FollowInfoResponseDto::from);
 	}
 
 	// 커스텀아이디로 유저 검색

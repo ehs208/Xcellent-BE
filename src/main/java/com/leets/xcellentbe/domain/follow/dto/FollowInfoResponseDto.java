@@ -7,19 +7,19 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class FollowerAndFollowingResponseDto {
+public class FollowInfoResponseDto {
 	private String customId;
 	private String userName;
 
 	@Builder
-	public FollowerAndFollowingResponseDto(String customId, String userName) {
+	public FollowInfoResponseDto(String customId, String userName) {
 		this.customId = customId;
 		this.userName = userName;
 	}
 
-	public static FollowerAndFollowingResponseDto from(Follow follow) {
+	public static FollowInfoResponseDto from(Follow follow) {
 		User user = follow.getFollowing();
-		return FollowerAndFollowingResponseDto.builder()
+		return FollowInfoResponseDto.builder()
 			.customId(user.getCustomId())
 			.userName(user.getUserName())
 			.build();
