@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.leets.xcellentbe.domain.follow.domain.Follow;
 import com.leets.xcellentbe.domain.follow.domain.repository.FollowRepository;
 import com.leets.xcellentbe.domain.follow.dto.FollowRequestDto;
+import com.leets.xcellentbe.domain.follow.exception.FollowOperationError;
 import com.leets.xcellentbe.domain.user.domain.User;
 import com.leets.xcellentbe.domain.user.domain.repository.UserRepository;
 import com.leets.xcellentbe.domain.user.exception.UserNotFoundException;
@@ -30,6 +31,12 @@ public class FollowService {
 		User targetUser = userRepository.findByCustomId(requestDto.getCustomId())
 			.orElseThrow(UserNotFoundException::new);
 
+		boolean isFollowing = followRepository.findByFollowerAndFollowing(user, targetUser).isPresent();
+
+		if (isFollowing) {
+			throw new FollowOperationError();
+		}
+
 		Follow follow = Follow.create(user, targetUser);
 		followRepository.save(follow);
 	}
@@ -39,8 +46,10 @@ public class FollowService {
 		User targetUser = userRepository.findByCustomId(requestDto.getCustomId())
 			.orElseThrow(UserNotFoundException::new);
 
-		Optional<Follow> follow = followRepository.findByFollowerAndFollowing(user, targetUser);
-		followRepository.delete(follow.get()); // TODO: Optional.get() is dangerous
+		Follow follow = followRepository.findByFollowerAndFollowing(user, targetUser)
+			.orElseThrow(FollowOperationError::new);
+
+		followRepository.delete(follow);
 	}
 
 	//JWT 토큰 해독하여 사용자 정보 반환 메소드

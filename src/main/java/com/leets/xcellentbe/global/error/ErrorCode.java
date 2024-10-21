@@ -14,6 +14,7 @@ public enum ErrorCode {
 	CHAT_ROOM_FORBIDDEN(403, "CHAT_ROOM_FORBIDDEN","권한이 없는 채팅방입니다."),
 	USER_NOT_FOUND(404, "USER_NOT_FOUND", "유저를 찾을 수 없습니다."),
 	EXPIRED_TOKEN(403, "EXPIRED_TOKEN", "만료된 토큰입니다."),
+	FOLLOW_OPERATION_ERROR(409, "FOLLOW_OPERATION_ERROR", "적절하지 않은 팔로우 요청입니다."),
 	USER_ALREADY_EXISTS(412 , "ALREADY_EXISTS_EXCEPTION" , "이미 존재하는 사용자입니다." ),
 	ARTICLE_NOT_FOUND(404, "ARTICLE_NOT_FOUND", "게시물을 찾을 수 없습니다."),
 	CHAT_ROOM_NOT_FOUND(404, "CHAT_ROOM_NOT_FOUND", "채팅방을 찾을 수 없습니다."),
