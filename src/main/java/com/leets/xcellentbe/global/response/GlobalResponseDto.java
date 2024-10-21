@@ -1,5 +1,7 @@
 package com.leets.xcellentbe.global.response;
 
+import java.time.LocalDateTime;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,8 +11,6 @@ import com.leets.xcellentbe.global.error.ErrorCode;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
@@ -30,11 +30,6 @@ public class GlobalResponseDto<T> {
 		this.timestamp = timestamp;
 		this.message = message;
 		this.result = result;
-	}
-	public String toJson() throws JsonProcessingException {
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.registerModule(new JavaTimeModule());
-		return mapper.writeValueAsString(this);
 	}
 
 	// 201 Create 성공 응답
@@ -58,6 +53,7 @@ public class GlobalResponseDto<T> {
 			.result(result)
 			.build();
 	}
+
 	//성공 응답 result 없이
 	public static <T> GlobalResponseDto<T> success() {
 		return GlobalResponseDto.<T>builder()
@@ -68,6 +64,7 @@ public class GlobalResponseDto<T> {
 			.result(null)
 			.build();
 	}
+
 	// 실패 응답
 	public static <T> GlobalResponseDto<T> fail(ErrorCode code, String message) {
 		return GlobalResponseDto.<T>builder()
@@ -77,5 +74,11 @@ public class GlobalResponseDto<T> {
 			.message(message)
 			.result(null)
 			.build();
+	}
+
+	public String toJson() throws JsonProcessingException {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.registerModule(new JavaTimeModule());
+		return mapper.writeValueAsString(this);
 	}
 }

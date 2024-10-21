@@ -9,8 +9,9 @@ public class GoogleOAuthUserInfo {
 	public GoogleOAuthUserInfo(Map<String, Object> attributes) {
 		this.attributes = attributes;
 	}
+
 	public String getEmail() {
-		return (String) attributes.get("email");
+		return (String)attributes.get("email");
 	}
 
 }

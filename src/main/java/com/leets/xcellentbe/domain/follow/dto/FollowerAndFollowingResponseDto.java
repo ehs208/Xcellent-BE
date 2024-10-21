@@ -1,7 +1,5 @@
 package com.leets.xcellentbe.domain.follow.dto;
 
-import java.util.List;
-
 import com.leets.xcellentbe.domain.follow.domain.Follow;
 import com.leets.xcellentbe.domain.user.domain.User;
 
@@ -12,7 +10,6 @@ import lombok.Getter;
 public class FollowerAndFollowingResponseDto {
 	private String customId;
 	private String userName;
-
 
 	@Builder
 	public FollowerAndFollowingResponseDto(String customId, String userName) {

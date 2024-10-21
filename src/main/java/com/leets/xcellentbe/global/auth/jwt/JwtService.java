@@ -1,40 +1,28 @@
-package com.leets.xcellentbe.global.auth.jwt;;
+package com.leets.xcellentbe.global.auth.jwt;
+
+import java.util.Date;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.leets.xcellentbe.domain.user.domain.repository.UserRepository;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import java.util.Date;
-import java.util.Optional;
+;
 
 @Service
 @RequiredArgsConstructor
 @Getter
 @Slf4j
 public class JwtService {
-
-	@Value("${jwt.secretKey}")
-	private String secretKey;
-
-	@Value("${jwt.access.expiration}")
-	private Long accessTokenExpirationPeriod;
-
-	@Value("${jwt.refresh.expiration}")
-	private Long refreshTokenExpirationPeriod;
-
-	@Value("${jwt.access.header}")
-	private String accessHeader;
-
-	@Value("${jwt.refresh.header}")
-	private String refreshHeader;
 
 	/**
 	 * JWT의 Subject와 Claim으로 email 사용 -> 클레임의 name을 "email"으로 설정
@@ -44,8 +32,17 @@ public class JwtService {
 	private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
 	private static final String EMAIL_CLAIM = "email";
 	private static final String BEARER = "Bearer ";
-
 	private final UserRepository userRepository;
+	@Value("${jwt.secretKey}")
+	private String secretKey;
+	@Value("${jwt.access.expiration}")
+	private Long accessTokenExpirationPeriod;
+	@Value("${jwt.refresh.expiration}")
+	private Long refreshTokenExpirationPeriod;
+	@Value("${jwt.access.header}")
+	private String accessHeader;
+	@Value("${jwt.refresh.header}")
+	private String refreshHeader;
 
 	/**
 	 * AccessToken 생성 메소드

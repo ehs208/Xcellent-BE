@@ -1,20 +1,20 @@
 package com.leets.xcellentbe.global.auth.login.handler;
 
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
 
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.leets.xcellentbe.global.error.ErrorCode;
 import com.leets.xcellentbe.global.response.GlobalResponseDto;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * JWT 로그인 실패 시 처리하는 핸들러
@@ -31,8 +31,10 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 		mapper.registerModule(new JavaTimeModule());
 		mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-		ErrorCode errorCode = exception instanceof BadCredentialsException ? ErrorCode.LOGIN_FAIL : ErrorCode.USER_NOT_FOUND;
-		GlobalResponseDto<String> responseDto = GlobalResponseDto.fail(ErrorCode.valueOf(errorCode.getCode()),  errorCode.getMessage());
+		ErrorCode errorCode =
+			exception instanceof BadCredentialsException ? ErrorCode.LOGIN_FAIL : ErrorCode.USER_NOT_FOUND;
+		GlobalResponseDto<String> responseDto = GlobalResponseDto.fail(ErrorCode.valueOf(errorCode.getCode()),
+			errorCode.getMessage());
 
 		response.setStatus(errorCode.getStatus());
 		response.setCharacterEncoding("UTF-8");

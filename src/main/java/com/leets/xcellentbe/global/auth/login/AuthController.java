@@ -13,11 +13,9 @@ import com.leets.xcellentbe.domain.user.service.UserService;
 import com.leets.xcellentbe.global.auth.email.EmailCheckDto;
 import com.leets.xcellentbe.global.auth.email.EmailRequestDto;
 import com.leets.xcellentbe.global.auth.email.EmailService;
-import com.leets.xcellentbe.global.error.exception.custom.InvalidInputValueException;
 import com.leets.xcellentbe.global.response.GlobalResponseDto;
 
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -51,7 +49,9 @@ public class AuthController {
 	@Operation(summary = "이메일 인증 확인", description = "이메일 인증을 확인합니다.")
 	@PostMapping("/email/check")
 	public ResponseEntity<GlobalResponseDto<String>> AuthCheck(@RequestBody EmailCheckDto emailCheckDto) {
-		return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success(emailService.checkAuthNum(emailCheckDto.getEmail(), emailCheckDto.getAuthNum())));
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(GlobalResponseDto.success(
+				emailService.checkAuthNum(emailCheckDto.getEmail(), emailCheckDto.getAuthNum())));
 	}
 }
 

@@ -1,6 +1,7 @@
 package com.leets.xcellentbe.global.auth.login.oauth;
 
 import java.security.SecureRandom;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -13,6 +14,14 @@ public class PasswordUtil {
 
 	public PasswordUtil() {
 		this.passwordEncoder = new BCryptPasswordEncoder();
+	}
+
+	public static void main(String[] args) {
+		PasswordUtil passwordUtil = new PasswordUtil();
+
+		// 랜덤 비밀번호 생성 및 해싱
+		String hashedPassword = passwordUtil.generateHashedRandomPassword();
+		System.out.println("해싱된 랜덤 비밀번호: " + hashedPassword);
 	}
 
 	// 랜덤 비밀번호 생성 및 해싱하여 반환
@@ -37,13 +46,5 @@ public class PasswordUtil {
 	// 비밀번호 해싱
 	private String hashPassword(String password) {
 		return passwordEncoder.encode(password);
-	}
-
-	public static void main(String[] args) {
-		PasswordUtil passwordUtil = new PasswordUtil();
-
-		// 랜덤 비밀번호 생성 및 해싱
-		String hashedPassword = passwordUtil.generateHashedRandomPassword();
-		System.out.println("해싱된 랜덤 비밀번호: " + hashedPassword);
 	}
 }

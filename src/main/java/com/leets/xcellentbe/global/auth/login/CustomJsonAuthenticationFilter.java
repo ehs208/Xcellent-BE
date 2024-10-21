@@ -1,6 +1,9 @@
 package com.leets.xcellentbe.global.auth.login;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -9,11 +12,10 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.StreamUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 /**
  * 스프링 시큐리티의 폼 기반의 UsernamePasswordAuthenticationFilter를 참고하여 만든 커스텀 필터
@@ -57,9 +59,12 @@ public class CustomJsonAuthenticationFilter extends AbstractAuthenticationProces
 	 * (여기서 AuthenticationManager 객체는 ProviderManager -> SecurityConfig에서 설정)
 	 */
 	@Override
-	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException {
-		if(request.getContentType() == null || !request.getContentType().equals(CONTENT_TYPE)  ) {
-			throw new AuthenticationServiceException("Authentication Content-Type not supported: " + request.getContentType());
+	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws
+		AuthenticationException,
+		IOException {
+		if (request.getContentType() == null || !request.getContentType().equals(CONTENT_TYPE)) {
+			throw new AuthenticationServiceException(
+				"Authentication Content-Type not supported: " + request.getContentType());
 		}
 
 		String messageBody = StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8);
@@ -69,7 +74,8 @@ public class CustomJsonAuthenticationFilter extends AbstractAuthenticationProces
 		String email = usernamePasswordMap.get(USERNAME_KEY);
 		String password = usernamePasswordMap.get(PASSWORD_KEY);
 
-		UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(email, password);//principal 과 credentials 전달
+		UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(email,
+			password);//principal 과 credentials 전달
 
 		return this.getAuthenticationManager().authenticate(authRequest);
 	}

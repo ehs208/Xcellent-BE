@@ -4,7 +4,7 @@ import com.leets.xcellentbe.global.error.ErrorCode;
 import com.leets.xcellentbe.global.error.exception.CommonException;
 
 public class UserAlreadyExistsException extends CommonException {
-    public UserAlreadyExistsException() {
-        super(ErrorCode.USER_ALREADY_EXISTS);
-    }
+	public UserAlreadyExistsException() {
+		super(ErrorCode.USER_ALREADY_EXISTS);
+	}
 }

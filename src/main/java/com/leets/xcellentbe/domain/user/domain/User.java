@@ -1,7 +1,6 @@
 package com.leets.xcellentbe.domain.user.domain;
 
 import java.time.LocalDateTime;
-import java.time.LocalDate;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -19,7 +18,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -85,7 +83,8 @@ public class User extends BaseTimeEntity {
 	private BirthDay userBirth;
 
 	@Builder
-	private User(String customId, String email, String userName, String password, String phoneNumber, String description, BirthDay userBirth , Role userRole) {
+	private User(String customId, String email, String userName, String password, String phoneNumber,
+		String description, BirthDay userBirth, Role userRole) {
 		this.customId = customId;
 		this.email = email;
 		this.userName = userName;
@@ -97,11 +96,8 @@ public class User extends BaseTimeEntity {
 		this.userBirth = userBirth;
 	}
 
-	public void passwordEncode(PasswordEncoder passwordEncoder) { //비밀번호 암호화 메소드
-		this.password = passwordEncoder.encode(this.password);
-	}
-
-	public static User create(String customId, String email, String userName, String password, String phoneNumber, int userBirthYear, int userBirthDay, int userBirthMonth) {
+	public static User create(String customId, String email, String userName, String password, String phoneNumber,
+		int userBirthYear, int userBirthDay, int userBirthMonth) {
 		return User.builder()
 			.customId(customId)
 			.email(email)
@@ -113,7 +109,12 @@ public class User extends BaseTimeEntity {
 			.build();
 	}
 
-	public void updateProfile(String userName, String phoneNumber, String customId, int userBirthYear, int userBirthDay, int userBirthMonth, String description, String websiteUrl, String location) {
+	public void passwordEncode(PasswordEncoder passwordEncoder) { //비밀번호 암호화 메소드
+		this.password = passwordEncoder.encode(this.password);
+	}
+
+	public void updateProfile(String userName, String phoneNumber, String customId, int userBirthYear, int userBirthDay,
+		int userBirthMonth, String description, String websiteUrl, String location) {
 		this.userName = userName;
 		this.customId = customId;
 		this.description = description;

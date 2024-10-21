@@ -1,6 +1,5 @@
 package com.leets.xcellentbe.domain.follow.service;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -33,6 +32,7 @@ public class FollowService {
 	private final JwtService jwtService;
 	private final FollowRepository followRepository;
 
+	// 팔로우
 	public void followUser(FollowRequestDto requestDto, HttpServletRequest request) {
 		User user = getUser(request);
 		User targetUser = userRepository.findByCustomId(requestDto.getCustomId())
@@ -48,6 +48,7 @@ public class FollowService {
 		followRepository.save(follow);
 	}
 
+	// 언팔로우
 	public void unfollowUser(FollowRequestDto requestDto, HttpServletRequest request) {
 		User user = getUser(request);
 		User targetUser = userRepository.findByCustomId(requestDto.getCustomId())
@@ -59,26 +60,33 @@ public class FollowService {
 		followRepository.delete(follow);
 	}
 
+	// 팔로잉 목록 조회
 	public Page<FollowerAndFollowingResponseDto> getFollowingList(String customId, int pageNo) {
-		Pageable pageable = PageRequest.of(pageNo, PAGE_SIZE, Sort.by(Sort.Direction.DESC, "following"));
+		User user = findUserByCustomId(customId);
+		Pageable pageable = createPageable(pageNo);
 
-		User user = userRepository.findByCustomId(customId)
-			.orElseThrow(UserNotFoundException::new);
-
-		Page<FollowerAndFollowingResponseDto> page = followRepository.findByFollower(user, pageable).map(FollowerAndFollowingResponseDto::from);
-
-		return page;
-
+		return followRepository.findByFollower(user, pageable)
+			.map(FollowerAndFollowingResponseDto::from);
 	}
+
+	// 팔로워 목록 조회
 	public Page<FollowerAndFollowingResponseDto> getFollowerList(String customId, int pageNo) {
-		Pageable pageable = PageRequest.of(pageNo, PAGE_SIZE, Sort.by(Sort.Direction.DESC, "following"));
+		User user = findUserByCustomId(customId);
+		Pageable pageable = createPageable(pageNo);
 
-		User user = userRepository.findByCustomId(customId)
+		return followRepository.findByFollowing(user, pageable)
+			.map(FollowerAndFollowingResponseDto::from);
+	}
+
+	// 커스텀아이디로 유저 검색
+	private User findUserByCustomId(String customId) {
+		return userRepository.findByCustomId(customId)
 			.orElseThrow(UserNotFoundException::new);
+	}
 
-		Page<FollowerAndFollowingResponseDto> page = followRepository.findByFollowing(user, pageable).map(FollowerAndFollowingResponseDto::from);
-
-		return page;
+	// 페이지네이션 객체 생성
+	private Pageable createPageable(int pageNo) {
+		return PageRequest.of(pageNo, PAGE_SIZE, Sort.by(Sort.Direction.DESC, "following"));
 	}
 
 	//JWT 토큰 해독하여 사용자 정보 반환 메소드

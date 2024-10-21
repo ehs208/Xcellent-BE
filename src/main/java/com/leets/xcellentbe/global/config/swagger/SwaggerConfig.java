@@ -19,26 +19,26 @@ import io.swagger.v3.oas.models.servers.Server;
 	version = "v1.0.0"))
 @Configuration
 public class SwaggerConfig {
-    @Bean
-    public OpenAPI openAPI() {
-        SecurityScheme securityScheme = getSecurityScheme();
-        SecurityRequirement securityRequirement = getSecurityRequireMent();
+	@Bean
+	public OpenAPI openAPI() {
+		SecurityScheme securityScheme = getSecurityScheme();
+		SecurityRequirement securityRequirement = getSecurityRequireMent();
 
-        Server server = new Server();
+		Server server = new Server();
 		server.setUrl("/");
 
-        return new OpenAPI()
-                .servers(List.of(server))
-                .components(new Components().addSecuritySchemes("jwt token", securityScheme))
-                .security(List.of(securityRequirement));
-    }
+		return new OpenAPI()
+			.servers(List.of(server))
+			.components(new Components().addSecuritySchemes("jwt token", securityScheme))
+			.security(List.of(securityRequirement));
+	}
 
-    private SecurityScheme getSecurityScheme() {
-        return new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")
-                .in(SecurityScheme.In.HEADER).name("Authorization");
-    }
+	private SecurityScheme getSecurityScheme() {
+		return new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")
+			.in(SecurityScheme.In.HEADER).name("Authorization");
+	}
 
-    private SecurityRequirement getSecurityRequireMent() {
-        return new SecurityRequirement().addList("bearer");
-    }
+	private SecurityRequirement getSecurityRequireMent() {
+		return new SecurityRequirement().addList("bearer");
+	}
 }

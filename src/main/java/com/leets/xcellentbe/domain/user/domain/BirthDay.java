@@ -1,7 +1,5 @@
 package com.leets.xcellentbe.domain.user.domain;
 
-import org.hibernate.grammars.hql.HqlParser;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
@@ -15,15 +13,15 @@ import lombok.NoArgsConstructor;
 public class BirthDay {
 
 	@NotNull
-	@Column(length=4)
+	@Column(length = 4)
 	private int year;
 
 	@NotNull
-	@Column(length=2)
+	@Column(length = 2)
 	private int month;
 
 	@NotNull
-	@Column(length=2)
+	@Column(length = 2)
 	private int day;
 
 	@Builder
