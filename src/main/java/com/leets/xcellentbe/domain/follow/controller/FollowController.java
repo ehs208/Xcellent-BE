@@ -1,14 +1,20 @@
 package com.leets.xcellentbe.domain.follow.controller;
 
+import java.util.List;
+
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.leets.xcellentbe.domain.follow.dto.FollowRequestDto;
+import com.leets.xcellentbe.domain.follow.dto.FollowerAndFollowingResponseDto;
 import com.leets.xcellentbe.domain.follow.service.FollowService;
 import com.leets.xcellentbe.global.response.GlobalResponseDto;
 
@@ -38,5 +44,19 @@ public class FollowController {
 		followService.unfollowUser(requestDto, request);
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(GlobalResponseDto.success());
+	}
+
+	@GetMapping("/following")
+	@Operation(summary = "팔로잉 조회", description = "사용자가 팔로우하는 사용자 목록을 조회합니다.")
+	public ResponseEntity<GlobalResponseDto<Page<FollowerAndFollowingResponseDto>>> getFollowingList(@RequestParam(required = false, defaultValue = "0") int pageNo, @RequestParam String customId) {
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(GlobalResponseDto.success(followService.getFollowingList(customId, pageNo)));
+	}
+
+	@GetMapping("/follower")
+	@Operation(summary = "팔로워 조회", description = "사용자를 팔로우하는 사용자 목록을 조회합니다.")
+	public ResponseEntity<GlobalResponseDto<Page<FollowerAndFollowingResponseDto>>> getFollowerList(@RequestParam(required = false, defaultValue = "0") int pageNo, @RequestParam String customId) {
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(GlobalResponseDto.success(followService.getFollowerList(customId, pageNo)));
 	}
 }
