@@ -1,7 +1,5 @@
 package com.leets.xcellentbe.domain.user.service;
 
-import java.util.Optional;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -102,16 +100,13 @@ public class UserService {
 
 	//JWT 토큰 해독하여 사용자 정보 반환 메소드
 	private User getUser(HttpServletRequest request) {
-		Optional<User> user = jwtService.extractAccessToken(request)
+		User user = jwtService.extractAccessToken(request)
 			.filter(jwtService::isTokenValid)
-			.flatMap(accessToken -> jwtService.extractEmail(accessToken))
-			.flatMap(email -> userRepository.findByEmail(email));
+			.flatMap(jwtService::extractEmail)
+			.flatMap(userRepository::findByEmail)
+			.orElseThrow(UserNotFoundException::new);
 
-		if (user.isEmpty()) {
-			throw new UserNotFoundException();
-		}
-
-		return user.get();
+		return user;
 	}
 
 }
