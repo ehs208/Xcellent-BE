@@ -121,7 +121,7 @@ public class User extends BaseTimeEntity {
 		this.websiteUrl = websiteUrl;
 		this.location = location;
 		this.phoneNumber = phoneNumber;
-		this.userBirth = userBirth;
+		this.userBirth = BirthDay.builder().day(userBirthDay).year(userBirthYear).month(userBirthMonth).build();
 	}
 
 	public void updateProfileImage(String updateProfileImageUrl) {
