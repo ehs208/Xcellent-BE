@@ -1,7 +1,5 @@
 package com.leets.xcellentbe.domain.follow.service;
 
-import java.util.Optional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -10,8 +8,8 @@ import org.springframework.stereotype.Service;
 
 import com.leets.xcellentbe.domain.follow.domain.Follow;
 import com.leets.xcellentbe.domain.follow.domain.repository.FollowRepository;
-import com.leets.xcellentbe.domain.follow.dto.FollowRequestDto;
 import com.leets.xcellentbe.domain.follow.dto.FollowInfoResponseDto;
+import com.leets.xcellentbe.domain.follow.dto.FollowRequestDto;
 import com.leets.xcellentbe.domain.follow.exception.FollowOperationError;
 import com.leets.xcellentbe.domain.user.domain.User;
 import com.leets.xcellentbe.domain.user.domain.repository.UserRepository;
@@ -91,15 +89,12 @@ public class FollowService {
 
 	//JWT 토큰 해독하여 사용자 정보 반환 메소드
 	private User getUser(HttpServletRequest request) {
-		Optional<User> user = jwtService.extractAccessToken(request)
+		User user = jwtService.extractAccessToken(request)
 			.filter(jwtService::isTokenValid)
-			.flatMap(accessToken -> jwtService.extractEmail(accessToken))
-			.flatMap(userRepository::findByEmail);
+			.flatMap(jwtService::extractEmail)
+			.flatMap(userRepository::findByEmail)
+			.orElseThrow(UserNotFoundException::new);
 
-		if (user.isEmpty()) {
-			throw new UserNotFoundException();
-		}
-
-		return user.get();
+		return user;
 	}
 }
