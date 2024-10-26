@@ -19,13 +19,14 @@ public class GlobalExceptionHandler {
 		log.error("errorCode: {}, message: {}", errorCode.getCode(), errorCode.getMessage());
 	}
 
-	// @ExceptionHandler(Exception.class)
-	// public ResponseEntity<GlobalResponseDto> handleGenericException(Exception ex) {
-	// 	ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
-	// 	ErrorResponse errorResponse = new ErrorResponse(errorCode);
-	// 	showErrorLog(errorCode);
-	// 	return ResponseEntity.status(HttpStatus.valueOf(errorCode.getStatus())).body(GlobalResponseDto.fail(errorCode, errorResponse.getMessage()));
-	// }
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<GlobalResponseDto> handleGenericException(Exception ex) {
+		ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
+		ErrorResponse errorResponse = new ErrorResponse(errorCode);
+		showErrorLog(errorCode);
+		return ResponseEntity.status(HttpStatus.valueOf(errorCode.getStatus()))
+			.body(GlobalResponseDto.fail(errorCode, errorResponse.getMessage()));
+	}
 
 	@ExceptionHandler(CommonException.class) // Custom Exception을 포괄적으로 처리
 	public ResponseEntity<GlobalResponseDto<String>> handleCommonException(CommonException ex) {
