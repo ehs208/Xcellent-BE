@@ -33,12 +33,9 @@ public class FollowService {
 	// 팔로우
 	public void followUser(FollowRequestDto requestDto, HttpServletRequest request) {
 		User user = getUser(request);
-		User targetUser = userRepository.findByCustomId(requestDto.getCustomId())
-			.orElseThrow(UserNotFoundException::new);
+		User targetUser = getTargetUser(requestDto);
 
-		boolean isFollowing = followRepository.findByFollowerAndFollowing(user, targetUser).isPresent();
-
-		if (isFollowing) {
+		if (isFollowing(user, targetUser)) {
 			throw new FollowOperationError();
 		}
 
@@ -46,16 +43,33 @@ public class FollowService {
 		followRepository.save(follow);
 	}
 
+	// 이미 팔로우 중인지 확인
+	private boolean isFollowing(User user, User targetUser) {
+		return followRepository.findByFollowerAndFollowing(user, targetUser).isPresent();
+	}
+
 	// 언팔로우
 	public void unfollowUser(FollowRequestDto requestDto, HttpServletRequest request) {
 		User user = getUser(request);
-		User targetUser = userRepository.findByCustomId(requestDto.getCustomId())
-			.orElseThrow(UserNotFoundException::new);
+		User targetUser = getTargetUser(requestDto);
 
-		Follow follow = followRepository.findByFollowerAndFollowing(user, targetUser)
-			.orElseThrow(FollowOperationError::new);
+		Follow follow = getFollowRelation(user, targetUser);
 
 		followRepository.delete(follow);
+	}
+
+	// 팔로우 관계 조회
+	private Follow getFollowRelation(User user, User targetUser) {
+		Follow follow = followRepository.findByFollowerAndFollowing(user, targetUser)
+			.orElseThrow(FollowOperationError::new);
+		return follow;
+	}
+
+	// 팔로우(언팔로우) 대상 유저 조회
+	private User getTargetUser(FollowRequestDto requestDto) {
+		User targetUser = userRepository.findByCustomId(requestDto.getCustomId())
+			.orElseThrow(UserNotFoundException::new);
+		return targetUser;
 	}
 
 	// 팔로잉 목록 조회
