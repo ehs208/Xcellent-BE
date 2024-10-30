@@ -1,9 +1,10 @@
 package com.leets.xcellentbe.global.auth.login.oauth;
 
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
-import org.springframework.security.core.GrantedAuthority;
 import java.util.Collection;
 import java.util.Map;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 
 import com.leets.xcellentbe.domain.user.Role;
 

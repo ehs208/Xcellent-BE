@@ -1,13 +1,12 @@
 package com.leets.xcellentbe.global.auth.login.oauth;
 
-import lombok.Builder;
-import lombok.Getter;
-
 import java.util.Map;
-import java.util.UUID;
 
 import com.leets.xcellentbe.domain.user.Role;
 import com.leets.xcellentbe.domain.user.domain.User;
+
+import lombok.Builder;
+import lombok.Getter;
 
 @Getter
 public class OAuthAttributes {
@@ -17,7 +16,8 @@ public class OAuthAttributes {
 	private final PasswordUtil passwordUtil;
 
 	@Builder
-	private OAuthAttributes(String nameAttributeKey, GoogleOAuthUserInfo googleOAuthUserInfo, PasswordUtil passwordUtil) {
+	private OAuthAttributes(String nameAttributeKey, GoogleOAuthUserInfo googleOAuthUserInfo,
+		PasswordUtil passwordUtil) {
 		this.nameAttributeKey = nameAttributeKey;
 		this.googleOAuthUserInfo = googleOAuthUserInfo;
 		this.passwordUtil = passwordUtil;

@@ -1,12 +1,10 @@
 package com.leets.xcellentbe.domain.user.dto;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
-
 public class UserProfileRequestDto {
 	private String customId;
 	private String userName;

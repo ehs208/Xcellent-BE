@@ -1,25 +1,19 @@
 package com.leets.xcellentbe.domain.user.service;
 
-import java.util.Optional;
-
-import org.hibernate.engine.transaction.jta.platform.internal.SunOneJtaPlatform;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.leets.xcellentbe.domain.user.domain.User;
-import com.leets.xcellentbe.domain.user.dto.UserProfileRequestDto;
-import com.leets.xcellentbe.domain.user.exception.UserAlreadyExistsException;
-
 import com.leets.xcellentbe.domain.user.domain.repository.UserRepository;
+import com.leets.xcellentbe.domain.user.dto.UserProfileRequestDto;
+import com.leets.xcellentbe.domain.user.dto.UserProfileResponseDto;
 import com.leets.xcellentbe.domain.user.dto.UserSignUpRequestDto;
-
+import com.leets.xcellentbe.domain.user.exception.UserAlreadyExistsException;
 import com.leets.xcellentbe.domain.user.exception.UserNotFoundException;
 import com.leets.xcellentbe.global.auth.jwt.JwtService;
 
 import jakarta.servlet.http.HttpServletRequest;
-
-import com.leets.xcellentbe.domain.user.dto.UserProfileResponseDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -43,8 +37,11 @@ public class UserService {
 			throw new UserAlreadyExistsException();
 		}
 
-		User user = User.create(userSignUpRequestDto.getCustomId(), userSignUpRequestDto.getEmail(), userSignUpRequestDto.getUserName(),
-				userSignUpRequestDto.getPassword(), userSignUpRequestDto.getPhoneNumber(), userSignUpRequestDto.getUserBirthYear(), userSignUpRequestDto.getUserBirthDay(), userSignUpRequestDto.getUserBirthMonth());
+		User user = User.create(userSignUpRequestDto.getCustomId(), userSignUpRequestDto.getEmail(),
+			userSignUpRequestDto.getUserName(),
+			userSignUpRequestDto.getPassword(), userSignUpRequestDto.getPhoneNumber(),
+			userSignUpRequestDto.getUserBirthYear(), userSignUpRequestDto.getUserBirthDay(),
+			userSignUpRequestDto.getUserBirthMonth());
 
 		user.passwordEncode(passwordEncoder);
 		userRepository.save(user);
@@ -52,17 +49,26 @@ public class UserService {
 		return "회원가입이 완료되었습니다.";
 	}
 
-	// 사용자 정보 조회 메소드
+	// 본인 정보 조회 메소드
 	public UserProfileResponseDto getProfile(HttpServletRequest request) {
 		User user = getUser(request);
 		return UserProfileResponseDto.from(user);
 	}
 
+	// 특정 사용자 정보 조회 메소드
+	public UserProfileResponseDto getProfileWithoutToken(String customId) {
+		User user = userRepository.findByCustomId(customId).orElseThrow(UserNotFoundException::new);
+		return UserProfileResponseDto.from(user);
+	}
 
 	// 사용자 정보 수정 메소드
 	public void updateProfile(HttpServletRequest request, UserProfileRequestDto userProfileRequestDto) {
 		User user = getUser(request);
-		user.updateProfile(userProfileRequestDto.getUserName(), userProfileRequestDto.getPhoneNumber(), userProfileRequestDto.getCustomId(), userProfileRequestDto.getUserBirthYear(), userProfileRequestDto.getUserBirthDay(), userProfileRequestDto.getUserBirthMonth(), userProfileRequestDto.getDescription(), userProfileRequestDto.getWebsiteUrl(), userProfileRequestDto.getLocation());
+		user.updateProfile(userProfileRequestDto.getUserName(), userProfileRequestDto.getPhoneNumber(),
+			userProfileRequestDto.getCustomId(), userProfileRequestDto.getUserBirthYear(),
+			userProfileRequestDto.getUserBirthDay(), userProfileRequestDto.getUserBirthMonth(),
+			userProfileRequestDto.getDescription(), userProfileRequestDto.getWebsiteUrl(),
+			userProfileRequestDto.getLocation());
 	}
 
 	// 프로필 이미지 변경 메소드
@@ -94,16 +100,13 @@ public class UserService {
 
 	//JWT 토큰 해독하여 사용자 정보 반환 메소드
 	private User getUser(HttpServletRequest request) {
-		Optional<User> user = jwtService.extractAccessToken(request)
+		User user = jwtService.extractAccessToken(request)
 			.filter(jwtService::isTokenValid)
-			.flatMap(accessToken -> jwtService.extractEmail(accessToken))
-			.flatMap(email -> userRepository.findByEmail(email));
+			.flatMap(jwtService::extractEmail)
+			.flatMap(userRepository::findByEmail)
+			.orElseThrow(UserNotFoundException::new);
 
-		if (user.isEmpty()) {
-			throw new UserNotFoundException();
-		}
-
-		return user.get();
+		return user;
 	}
 
 }

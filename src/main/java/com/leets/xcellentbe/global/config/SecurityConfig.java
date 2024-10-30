@@ -1,6 +1,8 @@
 package com.leets.xcellentbe.global.config;
 
-import lombok.RequiredArgsConstructor;
+import static org.springframework.security.config.Customizer.*;
+
+import java.util.Arrays;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,19 +23,16 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import static org.springframework.security.config.Customizer.withDefaults;
-
-import java.util.Arrays;
-
 import com.leets.xcellentbe.domain.user.domain.repository.UserRepository;
+import com.leets.xcellentbe.global.auth.jwt.JwtAuthenticationFilter;
 import com.leets.xcellentbe.global.auth.jwt.JwtService;
 import com.leets.xcellentbe.global.auth.login.CustomJsonAuthenticationFilter;
 import com.leets.xcellentbe.global.auth.login.LoginService;
 import com.leets.xcellentbe.global.auth.login.handler.LoginFailureHandler;
 import com.leets.xcellentbe.global.auth.login.handler.LoginSuccessHandler;
-import com.leets.xcellentbe.global.auth.jwt.JwtAuthenticationFilter;
 import com.leets.xcellentbe.global.auth.login.oauth.OAuthLoginSuccessHandler;
+
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
@@ -77,11 +76,11 @@ public class SecurityConfig {
 						.anyRequest().authenticated()
 			)
 			.oauth2Login(oauth2 -> oauth2.successHandler(oAuthLoginSuccessHandler));
-			// .failureHandler(oAuth2LoginFailureHandler)
-			http.addFilterAfter(customJsonAuthenticationFilter(), LogoutFilter.class);
-			http.addFilterBefore(jwtAuthenticationFilter(), CustomJsonAuthenticationFilter.class);
+		// .failureHandler(oAuth2LoginFailureHandler)
+		http.addFilterAfter(customJsonAuthenticationFilter(), LogoutFilter.class);
+		http.addFilterBefore(jwtAuthenticationFilter(), CustomJsonAuthenticationFilter.class);
 
-			return http.build();
+		return http.build();
 	}
 
 	@Bean

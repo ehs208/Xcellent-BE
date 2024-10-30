@@ -38,7 +38,7 @@ public class S3UploadService {
 			File uploadFile = convert(multipartFile).
 				orElseThrow(() -> new RuntimeException());
 			return upload(uploadFile, dirName);
-		} catch(IOException e) {
+		} catch (IOException e) {
 			throw new InternalServerErrorException();
 		}
 
@@ -56,22 +56,22 @@ public class S3UploadService {
 	private String putS3(File uploadFile, String fileName) {
 		amazonS3Client.putObject(
 			new PutObjectRequest(bucket, fileName, uploadFile)
-				.withCannedAcl(CannedAccessControlList.PublicRead)	// PublicRead 권한으로 업로드 됨
+				.withCannedAcl(CannedAccessControlList.PublicRead)    // PublicRead 권한으로 업로드 됨
 		);
 		return amazonS3Client.getUrl(bucket, fileName).toString();
 	}
 
 	private void removeNewFile(File targetFile) {
-		if(targetFile.delete()) {
+		if (targetFile.delete()) {
 			log.info("파일이 삭제되었습니다.");
-		}else {
+		} else {
 			log.info("파일이 삭제되지 못했습니다.");
 		}
 	}
 
 	private Optional<File> convert(MultipartFile file) throws IOException {
 		File convertFile = new File(file.getOriginalFilename()); // 업로드한 파일의 이름
-		if(convertFile.createNewFile()) {
+		if (convertFile.createNewFile()) {
 			try (FileOutputStream fos = new FileOutputStream(convertFile)) {
 				fos.write(file.getBytes());
 			}

@@ -51,9 +51,9 @@ public class UserProfileResponseDto {
 			.description(user.getDescription())
 			.websiteUrl(user.getWebsiteUrl())
 			.location(user.getLocation())
-			.userBirthYear(user.getUserBirthYear())
-			.userBirthMonth(user.getUserBirthMonth())
-			.userBirthDay(user.getUserBirthDay())
+			.userBirthYear(user.getUserBirth().getYear())
+			.userBirthMonth(user.getUserBirth().getMonth())
+			.userBirthDay(user.getUserBirth().getDay())
 			.build();
 	}
 }
