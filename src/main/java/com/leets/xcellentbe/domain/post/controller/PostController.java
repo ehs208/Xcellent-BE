@@ -17,7 +17,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/post")
+@RequestMapping("/articles")
 @RequiredArgsConstructor
 public class PostController {
 
