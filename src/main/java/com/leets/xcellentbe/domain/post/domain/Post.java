@@ -28,7 +28,7 @@ public class Post {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-	private UUID PostId;
+	private UUID postId;
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
