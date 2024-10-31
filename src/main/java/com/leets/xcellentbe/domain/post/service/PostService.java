@@ -27,6 +27,6 @@ public class PostService {
 	public List<ArticlesResponseDto> getArticles(String customId) {
 		User user = userRepository.findByCustomId(customId).orElseThrow(UserNotFoundException::new);
 		List<Post> post = postRepository.findByWriterAndDeletedStatus(user, NOT_DELETED);
-		return ArticlesResponseDto.from(post);
+		return post.stream().map(ArticlesResponseDto::from).toList();
 	}
 }

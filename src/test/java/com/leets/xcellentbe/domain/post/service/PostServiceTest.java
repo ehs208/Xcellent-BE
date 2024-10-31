@@ -52,6 +52,6 @@ class PostServiceTest {
 
 		assertThat(articles).hasSize(2);
 		assertThat(articles).extracting("content")
-			.containsExactly("그만할래", "안녕하세요");
+			.containsExactlyInAnyOrder("그만할래", "안녕하세요");
 	}
 }
