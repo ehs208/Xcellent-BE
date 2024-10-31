@@ -4,6 +4,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.leets.xcellentbe.domain.post.domain.repository.PostRepository;
 import com.leets.xcellentbe.domain.user.domain.User;
 import com.leets.xcellentbe.domain.user.domain.repository.UserRepository;
 import com.leets.xcellentbe.domain.user.dto.UserProfileRequestDto;
@@ -26,6 +27,7 @@ public class UserService {
 	private final PasswordEncoder passwordEncoder;
 	private final JwtService jwtService;
 	private final S3UploadService s3UploadService;
+	private final PostRepository postRepository;
 
 	// 회원가입 메소드
 	public String register(UserSignUpRequestDto userSignUpRequestDto) {

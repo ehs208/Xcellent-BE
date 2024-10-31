@@ -54,4 +54,14 @@ public class Post {
 	@OneToMany(fetch = FetchType.LAZY)
 	@JoinColumn(name = "hashtag_id")
 	private List<Hashtag> hashtags;
+
+	public Post(User writer, String content, DeletedStatus deletedStatus, Boolean isPinned, Post rePost,
+		List<Hashtag> hashtags) {
+		this.writer = writer;
+		this.content = content;
+		this.deletedStatus = deletedStatus;
+		this.isPinned = isPinned;
+		this.rePost = rePost;
+		this.hashtags = hashtags;
+	}
 }
