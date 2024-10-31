@@ -23,7 +23,7 @@ public class PostController {
 
 	private final PostService postService;
 
-	@GetMapping("/{customId}/articles")
+	@GetMapping("/{customId}/list")
 	@Operation(summary = "특정 사용자의 게시글 조회", description = "특정 사용자의 게시글을 조회합니다.")
 	public ResponseEntity<GlobalResponseDto<List<ArticlesResponseDto>>> getArticles(@PathVariable String customId) {
 		return ResponseEntity.status(HttpStatus.OK)
