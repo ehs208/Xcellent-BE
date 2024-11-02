@@ -1,8 +1,8 @@
-package com.leets.xcellentbe.domain.postMedia.domain;
+package com.leets.xcellentbe.domain.articleMedia.domain;
 
 import java.util.UUID;
 
-import com.leets.xcellentbe.domain.post.domain.Post;
+import com.leets.xcellentbe.domain.article.domain.Article;
 import com.leets.xcellentbe.domain.shared.BaseTimeEntity;
 
 import jakarta.persistence.Column;
@@ -21,11 +21,11 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostMedia extends BaseTimeEntity {
+public class ArticleMedia extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-	private UUID PostMediaId;
+	private UUID ArticleMediaId;
 
 	@NotNull
 	@Column
@@ -33,6 +33,6 @@ public class PostMedia extends BaseTimeEntity {
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "post_id")
-	private Post post;
+	@JoinColumn(name = "article_id")
+	private Article article;
 }

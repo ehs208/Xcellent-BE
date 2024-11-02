@@ -1,4 +1,4 @@
-package com.leets.xcellentbe.domain.post.domain;
+package com.leets.xcellentbe.domain.article.domain;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,11 +24,11 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Post {
+public class Article {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-	private UUID PostId;
+	private UUID ArticleId;
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -49,7 +49,7 @@ public class Post {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "repost_id")
-	private Post rePost;
+	private Article rePost;
 
 	@OneToMany(fetch = FetchType.LAZY)
 	@JoinColumn(name = "hashtag_id")

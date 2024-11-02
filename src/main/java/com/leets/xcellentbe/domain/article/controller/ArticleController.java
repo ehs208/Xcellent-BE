@@ -1,4 +1,4 @@
-package com.leets.xcellentbe.domain.post.controller;
+package com.leets.xcellentbe.domain.article.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/post")
+@RequestMapping("/article")
 @RequiredArgsConstructor
-public class PostController {
+public class ArticleController {
 }

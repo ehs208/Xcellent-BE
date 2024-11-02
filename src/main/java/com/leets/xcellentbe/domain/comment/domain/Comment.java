@@ -2,7 +2,7 @@ package com.leets.xcellentbe.domain.comment.domain;
 
 import java.util.UUID;
 
-import com.leets.xcellentbe.domain.post.domain.Post;
+import com.leets.xcellentbe.domain.article.domain.Article;
 import com.leets.xcellentbe.domain.shared.BaseTimeEntity;
 import com.leets.xcellentbe.domain.shared.DeletedStatus;
 import com.leets.xcellentbe.domain.user.domain.User;
@@ -40,7 +40,7 @@ public class Comment extends BaseTimeEntity {
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "post_id")
-	private Post post;
+	private Article post;
 
 	@NotNull
 	@Column
