@@ -24,8 +24,8 @@ public class PostService {
 	private final PostRepository postRepository;
 
 	public List<ArticlesResponseDto> getArticles(String customId) {
-		User user = userRepository.findByCustomId(customId).orElseThrow(UserNotFoundException::new);
-		List<Object[]> posts = postRepository.findPostsByWriter(user);
+		User user = getUser(customId);
+		List<Object[]> posts = getPosts(user);
 
 		return posts.stream()
 			.map(post -> ArticlesResponseDto.from((Post)post[0], (String)post[1]))
@@ -33,13 +33,25 @@ public class PostService {
 	}
 
 	public List<ArticlesResponseDto> getArticlesWithMedia(String customId) {
-		User user = userRepository.findByCustomId(customId).orElseThrow(UserNotFoundException::new);
-		List<Object[]> posts = postRepository.findPostsByWriter(user);
-		
+		User user = getUser(customId);
+		List<Object[]> posts = getPosts(user);
+
 		return posts.stream()
 			.filter(post -> post[1] != null)
 			.map(post -> ArticlesResponseDto.from((Post)post[0], (String)post[1]))
 			.collect(Collectors.toList());
+	}
+
+	// 유저 정보로 게시글 조회
+	private List<Object[]> getPosts(User user) {
+		List<Object[]> posts = postRepository.findPostsByWriter(user);
+		return posts;
+	}
+
+	// 유저 정보 조회
+	private User getUser(String customId) {
+		User user = userRepository.findByCustomId(customId).orElseThrow(UserNotFoundException::new);
+		return user;
 	}
 }
 
