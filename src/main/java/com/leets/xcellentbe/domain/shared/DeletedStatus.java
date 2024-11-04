@@ -9,5 +9,5 @@ public enum DeletedStatus {
 	DELETED("DELETED"),
 	NOT_DELETED("NOT_DELETED");
 
-	private final String userStatus;
+	private final String deletedStatus;
 }
