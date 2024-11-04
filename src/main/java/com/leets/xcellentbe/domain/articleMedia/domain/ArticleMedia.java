@@ -15,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -35,4 +36,21 @@ public class ArticleMedia extends BaseTimeEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "article_id")
 	private Article article;
+
+	@Builder
+	private ArticleMedia(Article article, String filePath) {
+		this.article = article;
+		this.filePath = filePath;
+	}
+
+	public static ArticleMedia createArticleMedia (Article article, String filePath) {
+		return ArticleMedia.builder()
+			.article(article)
+			.filePath(filePath)
+			.build();
+	}
+
+	public void updateArticleMedia(String filePath) {
+		this.filePath = filePath;
+	}
 }
