@@ -17,23 +17,27 @@ public class ArticlesResponseDto {
 	private Boolean isPinned;
 	private List<Hashtag> hashtags;
 	private Post rePost;
+	private String filePath;
 
 	@Builder
-	private ArticlesResponseDto(String writer, String content, Boolean isPinned, List<Hashtag> hashtags, Post rePost) {
+	private ArticlesResponseDto(String writer, String content, Boolean isPinned, List<Hashtag> hashtags, Post rePost,
+		String filePath) {
 		this.writer = writer;
 		this.content = content;
 		this.isPinned = isPinned;
 		this.hashtags = hashtags;
 		this.rePost = rePost;
+		this.filePath = filePath;
 	}
-	
-	public static ArticlesResponseDto from(Post post) {
+
+	public static ArticlesResponseDto from(Post post, String filePath) {
 		return ArticlesResponseDto.builder()
 			.writer(post.getWriter().getUserName())
 			.content(post.getContent())
 			.isPinned(post.getIsPinned())
 			.hashtags(post.getHashtags())
 			.rePost(post.getRePost())
+			.filePath(filePath)
 			.build();
 	}
 }

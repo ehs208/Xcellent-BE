@@ -1,8 +1,7 @@
 package com.leets.xcellentbe.domain.post.service;
 
-import static com.leets.xcellentbe.domain.shared.DeletedStatus.*;
-
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +25,11 @@ public class PostService {
 
 	public List<ArticlesResponseDto> getArticles(String customId) {
 		User user = userRepository.findByCustomId(customId).orElseThrow(UserNotFoundException::new);
-		List<Post> post = postRepository.findByWriterAndDeletedStatus(user, NOT_DELETED);
-		return post.stream().map(ArticlesResponseDto::from).toList();
+		List<Object[]> posts = postRepository.findPostsByWriter(user);
+
+		return posts.stream()
+			.map(post -> ArticlesResponseDto.from((Post)post[0], (String)post[1]))
+			.collect(Collectors.toList());
 	}
 }
+
