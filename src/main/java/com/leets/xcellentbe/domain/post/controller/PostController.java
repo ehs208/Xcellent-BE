@@ -30,11 +30,11 @@ public class PostController {
 			.body(GlobalResponseDto.success(postService.getArticles(customId)));
 	}
 
-	// @GetMapping("/{customId}/list/media")
-	// @Operation(summary = "특정 사용자의 미디어 게시글 조회", description = "특정 사용자의 미디어 게시글을 조회합니다.")
-	// public ResponseEntity<GlobalResponseDto<List<ArticleWithMediaResponseDto>>> getMediaArticles(
-	// 	@PathVariable String customId) {
-	// 	return ResponseEntity.status(HttpStatus.OK)
-	// 		.body(GlobalResponseDto.success(postService.getMediaArticles(customId)));
-	// }
+	@GetMapping("/{customId}/list/media")
+	@Operation(summary = "특정 사용자의 미디어 게시글 조회", description = "특정 사용자의 미디어 게시글을 조회합니다.")
+	public ResponseEntity<GlobalResponseDto<List<ArticlesResponseDto>>> getMediaArticles(
+		@PathVariable String customId) {
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(GlobalResponseDto.success(postService.getArticlesWithMedia(customId)));
+	}
 }

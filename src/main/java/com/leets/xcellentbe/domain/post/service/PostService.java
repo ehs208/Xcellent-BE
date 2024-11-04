@@ -31,5 +31,15 @@ public class PostService {
 			.map(post -> ArticlesResponseDto.from((Post)post[0], (String)post[1]))
 			.collect(Collectors.toList());
 	}
+
+	public List<ArticlesResponseDto> getArticlesWithMedia(String customId) {
+		User user = userRepository.findByCustomId(customId).orElseThrow(UserNotFoundException::new);
+		List<Object[]> posts = postRepository.findPostsByWriter(user);
+		
+		return posts.stream()
+			.filter(post -> post[1] != null)
+			.map(post -> ArticlesResponseDto.from((Post)post[0], (String)post[1]))
+			.collect(Collectors.toList());
+	}
 }
 

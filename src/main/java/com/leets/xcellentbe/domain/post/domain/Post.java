@@ -54,7 +54,8 @@ public class Post {
 	@JoinColumn(name = "repost_id")
 	private Post rePost;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "hashtag_id")
+	@OneToMany(fetch = FetchType.LAZY)
+	@JoinColumn(name = "hashtag_id")
 	private List<Hashtag> hashtags;
 
 	public Post(User writer, String content, DeletedStatus deletedStatus, Boolean isPinned, Post rePost,
