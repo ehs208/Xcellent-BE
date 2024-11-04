@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.leets.xcellentbe.domain.post.dto.ArticleWithMediaResponseDto;
 import com.leets.xcellentbe.domain.post.dto.ArticlesResponseDto;
 import com.leets.xcellentbe.domain.post.service.PostService;
 import com.leets.xcellentbe.global.response.GlobalResponseDto;
@@ -17,7 +18,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/articles")
+@RequestMapping("/api/articles")
 @RequiredArgsConstructor
 public class PostController {
 
@@ -28,5 +29,13 @@ public class PostController {
 	public ResponseEntity<GlobalResponseDto<List<ArticlesResponseDto>>> getArticles(@PathVariable String customId) {
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(GlobalResponseDto.success(postService.getArticles(customId)));
+	}
+
+	@GetMapping("/{customId}/list/media")
+	@Operation(summary = "특정 사용자의 미디어 게시글 조회", description = "특정 사용자의 미디어 게시글을 조회합니다.")
+	public ResponseEntity<GlobalResponseDto<List<ArticleWithMediaResponseDto>>> getMediaArticles(
+		@PathVariable String customId) {
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(GlobalResponseDto.success(postService.getMediaArticles(customId)));
 	}
 }
