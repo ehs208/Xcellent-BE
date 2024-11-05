@@ -19,10 +19,6 @@ import com.leets.xcellentbe.domain.chatRoom.dto.ChatRoomDto;
 import com.leets.xcellentbe.domain.chatRoom.service.ChatRoomService;
 import com.leets.xcellentbe.domain.dm.dto.request.DMRequest;
 import com.leets.xcellentbe.domain.dm.dto.response.DMResponse;
-import com.leets.xcellentbe.domain.user.domain.User;
-import com.leets.xcellentbe.domain.user.domain.repository.UserRepository;
-import com.leets.xcellentbe.domain.user.exception.UserNotFoundException;
-import com.leets.xcellentbe.global.auth.jwt.JwtService;
 import com.leets.xcellentbe.global.response.GlobalResponseDto;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,52 +30,36 @@ import lombok.RequiredArgsConstructor;
 public class ChatRoomController {
 
 	private final ChatRoomService chatRoomService;
-	private final UserRepository userRepository;
-	private final JwtService jwtService; // Add JwtService to extract user details
 
 	@PostMapping()
 	@Operation(summary = "채팅방 생성", description = "채팅방을 생성합니다.")
 	public ResponseEntity<GlobalResponseDto<DMResponse>> createChatRoom(@RequestBody DMRequest dmRequest,
 		@AuthenticationPrincipal UserDetails userDetails) {
-		String email = userDetails.getUsername();
-		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
-
 		return ResponseEntity.status(HttpStatus.CREATED)
-			.body(GlobalResponseDto.success(chatRoomService.createChatRoom(dmRequest, user)));
+			.body(GlobalResponseDto.success(chatRoomService.createChatRoom(dmRequest, userDetails)));
 	}
 
 	@GetMapping("/all")
 	@Operation(summary = "사용자 채팅방 전체 조회", description = "사용자의 모든 채팅방을 조회합니다.")
 	public ResponseEntity<GlobalResponseDto<List<DMResponse>>> findAllChatRoomByUser(
 		@AuthenticationPrincipal UserDetails userDetails) {
-		String email = userDetails.getUsername();
-		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
-
-		List<DMResponse> chatRooms = chatRoomService.findAllChatRoomByUser(user);
-
-		return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success(chatRooms));
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(GlobalResponseDto.success(chatRoomService.findAllChatRoomByUser(userDetails)));
 	}
 
 	@GetMapping("/{chatRoomId}")
 	@Operation(summary = "사용자 채팅방 조회", description = "사용자의 채팅방을 조회합니다.")
 	public ResponseEntity<GlobalResponseDto<ChatRoomDto>> findChatRoom(@PathVariable UUID chatRoomId,
 		@AuthenticationPrincipal UserDetails userDetails) {
-		String email = userDetails.getUsername();
-		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
-
-		ChatRoomDto chatRoom = chatRoomService.findChatRoom(chatRoomId, user);
-
-		return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success(chatRoom));
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(GlobalResponseDto.success(chatRoomService.findChatRoom(chatRoomId, userDetails)));
 	}
 
 	@PatchMapping("/{chatRoomId}")
 	@Operation(summary = "채팅방 삭제", description = "채팅방을 삭제합니다.")
 	public ResponseEntity<GlobalResponseDto<String>> deleteChatRoom(@PathVariable UUID chatRoomId,
 		@AuthenticationPrincipal UserDetails userDetails) {
-		String email = userDetails.getUsername();
-		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
-
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(GlobalResponseDto.success(chatRoomService.deleteChatRoom(chatRoomId, user)));
+			.body(GlobalResponseDto.success(chatRoomService.deleteChatRoom(chatRoomId, userDetails)));
 	}
 }

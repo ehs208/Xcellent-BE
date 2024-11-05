@@ -10,6 +10,7 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.leets.xcellentbe.domain.chatRoom.domain.ChatRoom;
@@ -25,7 +26,6 @@ import com.leets.xcellentbe.domain.shared.DeletedStatus;
 import com.leets.xcellentbe.domain.user.domain.User;
 import com.leets.xcellentbe.domain.user.domain.repository.UserRepository;
 import com.leets.xcellentbe.domain.user.exception.UserNotFoundException;
-
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -52,17 +52,20 @@ public class ChatRoomService {
 		topics = new HashMap<>();
 	}
 
-	public DMResponse createChatRoom(DMRequest dmRequest, User user) {
+	public DMResponse createChatRoom(DMRequest dmRequest, UserDetails userDetails) {
+		User sender = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(UserNotFoundException::new);
+
 		User receiver = userRepository.findById(dmRequest.receiverId()).orElseThrow(UserNotFoundException::new);
 
-		ChatRoom chatRoom = chatRoomRepository.findBySenderAndReceiverAndDeletedStatusNot(user, receiver, DeletedStatus.DELETED);
+		ChatRoom chatRoom = chatRoomRepository.findBySenderAndReceiverAndDeletedStatusNot(sender, receiver,
+			DeletedStatus.DELETED);
 
-		if ((chatRoom == null) || (chatRoom != null && (!user.equals(chatRoom.getSender()) && !receiver.equals(
+		if ((chatRoom == null) || (chatRoom != null && (!sender.equals(chatRoom.getSender()) && !receiver.equals(
 			chatRoom.getReceiver())))) {
-			ChatRoomDto chatRoomDto = ChatRoomDto.of(dmRequest, user);
-			opsHashMessageRoom.put(Message_Rooms, user.getUserName(), chatRoomDto);
+			ChatRoomDto chatRoomDto = ChatRoomDto.of(dmRequest, sender);
+			opsHashMessageRoom.put(Message_Rooms, sender.getUserName(), chatRoomDto);
 
-			chatRoom = chatRoomRepository.save(ChatRoom.create(user, receiver));
+			chatRoom = chatRoomRepository.save(ChatRoom.create(sender, receiver));
 
 			return new DMResponse(chatRoom);
 		} else {
@@ -70,8 +73,11 @@ public class ChatRoomService {
 		}
 	}
 
-	public List<DMResponse> findAllChatRoomByUser(User user) {
-		List<ChatRoom> chatRooms = chatRoomRepository.findBySenderOrReceiverAndDeletedStatusNot(user, user, DeletedStatus.DELETED);
+	public List<DMResponse> findAllChatRoomByUser(UserDetails userDetails) {
+		User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(UserNotFoundException::new);
+
+		List<ChatRoom> chatRooms = chatRoomRepository.findBySenderOrReceiverAndDeletedStatusNot(user, user,
+			DeletedStatus.DELETED);
 
 		List<DMResponse> dmRespons = new ArrayList<>();
 
@@ -91,7 +97,8 @@ public class ChatRoomService {
 					chatRoom.getReceiver());
 			}
 
-			latestMessage = dmRepository.findTopByChatRoomAndDeletedStatusNotOrderByCreatedAtDesc(chatRoom, DeletedStatus.DELETED);
+			latestMessage = dmRepository.findTopByChatRoomAndDeletedStatusNotOrderByCreatedAtDesc(chatRoom,
+				DeletedStatus.DELETED);
 
 			if (latestMessage != null) {
 				messageRoomDto.updateLatestMessageCreatedAt(latestMessage.getCreatedAt());
@@ -104,20 +111,25 @@ public class ChatRoomService {
 		return dmRespons;
 	}
 
-	public ChatRoomDto findChatRoom(UUID chatRoomId, User user) {
-		ChatRoom chatRoom = chatRoomRepository.findByChatRoomIdAndDeletedStatusNot(chatRoomId, DeletedStatus.DELETED).orElseThrow(ChatRoomNotFoundException::new);
+	public ChatRoomDto findChatRoom(UUID chatRoomId, UserDetails userDetails) {
+		User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(UserNotFoundException::new);
+
+		ChatRoom chatRoom = chatRoomRepository.findByChatRoomIdAndDeletedStatusNot(chatRoomId, DeletedStatus.DELETED)
+			.orElseThrow(ChatRoomNotFoundException::new);
 
 		User receiver = chatRoom.getReceiver();
 
-		chatRoom = chatRoomRepository.findByChatRoomIdAndSenderOrChatRoomIdAndReceiverAndDeletedStatusNot(chatRoomId, user,
-			chatRoomId, receiver, DeletedStatus.DELETED).orElseThrow(ChatRoomNotFoundException::new);
+		chatRoom = chatRoomRepository.findByChatRoomIdAndSenderOrChatRoomIdAndReceiverAndDeletedStatusNot(chatRoomId,
+			user, chatRoomId, receiver, DeletedStatus.DELETED).orElseThrow(ChatRoomNotFoundException::new);
 
 		return ChatRoomDto.of(chatRoom.getChatRoomId(), chatRoom.getSender(), chatRoom.getReceiver());
 	}
 
-	public String deleteChatRoom(UUID chatRoomId, User user) {
-		ChatRoom chatRoom = chatRoomRepository.findByChatRoomIdAndSenderOrChatRoomIdAndReceiverAndDeletedStatusNot(chatRoomId, user,
-			chatRoomId, user, DeletedStatus.DELETED).orElseThrow(ChatRoomNotFoundException::new);
+	public String deleteChatRoom(UUID chatRoomId, UserDetails userDetails) {
+		User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(UserNotFoundException::new);
+
+		ChatRoom chatRoom = chatRoomRepository.findByChatRoomIdAndSenderOrChatRoomIdAndReceiverAndDeletedStatusNot(
+			chatRoomId, user, chatRoomId, user, DeletedStatus.DELETED).orElseThrow(ChatRoomNotFoundException::new);
 
 		chatRoom.delete();
 		chatRoomRepository.save(chatRoom);
