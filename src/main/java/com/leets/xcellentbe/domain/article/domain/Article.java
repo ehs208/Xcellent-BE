@@ -35,7 +35,7 @@ public class Article extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-	private UUID ArticleId;
+	private UUID articleId;
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -51,10 +51,6 @@ public class Article extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	private DeletedStatus deletedStatus;
 
-	@NotNull
-	@Column
-	private Boolean isPinned;
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "repost_id")
 	private Article rePost;
@@ -63,15 +59,14 @@ public class Article extends BaseTimeEntity {
 	@JoinColumn(name = "hashtag_id")
 	private List<Hashtag> hashtags;
 
-	@OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<ArticleMedia> mediaList = new ArrayList<>();
+	@OneToMany(mappedBy = "article")
+	private List<ArticleMedia> mediaList;
 
 	@Builder
-	private Article(User writer, String content, DeletedStatus deletedStatus, Boolean isPinned) {
+	private Article(User writer, String content, DeletedStatus deletedStatus) {
 		this.writer = writer;
 		this.content = content;
 		this.deletedStatus = DeletedStatus.NOT_DELETED;
-		this.isPinned = false;
 	}
 
 	public static Article createArticle(User writer, String content){
@@ -79,7 +74,6 @@ public class Article extends BaseTimeEntity {
 			.writer(writer)
 			.content(content)
 			.deletedStatus(DeletedStatus.NOT_DELETED)
-			.isPinned(false)
 			.build();
 	}
 
@@ -94,23 +88,14 @@ public class Article extends BaseTimeEntity {
 		this.hashtags.addAll(hashtags);
 	}
 
-	public void updateArticle(String content) {
-		this.content = content;
-	}
-
 	public void deleteArticle() {
 		this.deletedStatus = DeletedStatus.DELETED;
 	}
 
-	public void pinArticle() {
-		this.isPinned = true;
-	}
-
-	public void unPinArticle() {
-		this.isPinned = false;
-	}
-
 	public void addMedia(List<ArticleMedia> mediaList) {
+		if (this.mediaList == null) {
+			this.mediaList = new ArrayList<>();
+		}
 		this.mediaList.addAll(mediaList);
 	}
 }
