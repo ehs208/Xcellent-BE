@@ -49,8 +49,4 @@ public class ArticleMedia extends BaseTimeEntity {
 			.filePath(filePath)
 			.build();
 	}
-
-	public void updateArticleMedia(String filePath) {
-		this.filePath = filePath;
-	}
 }
