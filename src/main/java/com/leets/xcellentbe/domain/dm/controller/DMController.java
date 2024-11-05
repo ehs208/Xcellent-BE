@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.leets.xcellentbe.domain.chatRoom.service.ChatRoomService;
 import com.leets.xcellentbe.domain.dm.dto.DMDto;
 import com.leets.xcellentbe.domain.dm.service.DMService;
-import com.leets.xcellentbe.global.redis.RedisPublisher;
+import com.leets.xcellentbe.domain.dm.redis.RedisPublisher;
 import com.leets.xcellentbe.global.response.GlobalResponseDto;
 
 import io.swagger.v3.oas.annotations.Operation;

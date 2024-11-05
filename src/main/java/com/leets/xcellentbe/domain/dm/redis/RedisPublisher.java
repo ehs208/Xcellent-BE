@@ -1,4 +1,4 @@
-package com.leets.xcellentbe.global.redis;
+package com.leets.xcellentbe.domain.dm.redis;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;

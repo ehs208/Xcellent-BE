@@ -20,11 +20,12 @@ import com.leets.xcellentbe.domain.dm.domain.DM;
 import com.leets.xcellentbe.domain.dm.domain.repository.DMRepository;
 import com.leets.xcellentbe.domain.dm.dto.request.DMRequest;
 import com.leets.xcellentbe.domain.dm.dto.response.DMResponse;
+import com.leets.xcellentbe.domain.dm.redis.RedisSubscriber;
 import com.leets.xcellentbe.domain.shared.DeletedStatus;
 import com.leets.xcellentbe.domain.user.domain.User;
 import com.leets.xcellentbe.domain.user.domain.repository.UserRepository;
 import com.leets.xcellentbe.domain.user.exception.UserNotFoundException;
-import com.leets.xcellentbe.global.redis.RedisSubscriber;
+
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;

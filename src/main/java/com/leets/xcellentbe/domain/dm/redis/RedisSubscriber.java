@@ -1,4 +1,4 @@
-package com.leets.xcellentbe.global.redis;
+package com.leets.xcellentbe.domain.dm.redis;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
