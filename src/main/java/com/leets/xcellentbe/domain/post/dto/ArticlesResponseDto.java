@@ -17,11 +17,11 @@ public class ArticlesResponseDto {
 	private Boolean isPinned;
 	private List<Hashtag> hashtags;
 	private Post rePost;
-	private String filePath;
+	private List<String> filePath;
 
 	@Builder
 	private ArticlesResponseDto(String writer, String content, Boolean isPinned, List<Hashtag> hashtags, Post rePost,
-		String filePath) {
+		List<String> filePath) {
 		this.writer = writer;
 		this.content = content;
 		this.isPinned = isPinned;
@@ -30,7 +30,7 @@ public class ArticlesResponseDto {
 		this.filePath = filePath;
 	}
 
-	public static ArticlesResponseDto from(Post post, String filePath) {
+	public static ArticlesResponseDto from(Post post, List<String> filePath) {
 		return ArticlesResponseDto.builder()
 			.writer(post.getWriter().getUserName())
 			.content(post.getContent())

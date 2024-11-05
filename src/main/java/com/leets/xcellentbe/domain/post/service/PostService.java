@@ -1,6 +1,7 @@
 package com.leets.xcellentbe.domain.post.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -23,23 +24,47 @@ public class PostService {
 	private final UserRepository userRepository;
 	private final PostRepository postRepository;
 
+	// 전체 게시글 조회
 	public List<ArticlesResponseDto> getArticles(String customId) {
 		User user = getUser(customId);
 		List<Object[]> posts = getPosts(user);
 
-		return posts.stream()
-			.map(post -> ArticlesResponseDto.from((Post)post[0], (String)post[1]))
+		Map<Post, List<String>> groupedPosts = groupPostsByFilePath(posts);
+
+		return groupedPosts.entrySet().stream()
+			.map(entry -> ArticlesResponseDto.from(entry.getKey(), entry.getValue()))
 			.collect(Collectors.toList());
 	}
 
+	// 미디어 있는게 게시글만 조회
 	public List<ArticlesResponseDto> getArticlesWithMedia(String customId) {
 		User user = getUser(customId);
 		List<Object[]> posts = getPosts(user);
 
+		Map<Post, List<String>> groupedPosts = groupPostsByFilePathWithMedia(posts);
+
+		return groupedPosts.entrySet().stream()
+			.map(entry -> ArticlesResponseDto.from(entry.getKey(), entry.getValue()))
+			.collect(Collectors.toList());
+	}
+
+	// 이미지만 있는 게시글 파일 경로 그룹화
+	private Map<Post, List<String>> groupPostsByFilePathWithMedia(List<Object[]> posts) {
 		return posts.stream()
 			.filter(post -> post[1] != null)
-			.map(post -> ArticlesResponseDto.from((Post)post[0], (String)post[1]))
-			.collect(Collectors.toList());
+			.collect(Collectors.groupingBy(
+				post -> (Post)post[0],
+				Collectors.mapping(post -> (String)post[1], Collectors.toList())
+			));
+	}
+
+	// 전체 게시글 파일 경로 그룹화
+	private Map<Post, List<String>> groupPostsByFilePath(List<Object[]> posts) {
+		return posts.stream()
+			.collect(Collectors.groupingBy(
+				post -> (Post)post[0],
+				Collectors.mapping(post -> (String)post[1], Collectors.toList())
+			));
 	}
 
 	// 유저 정보로 게시글 조회
@@ -54,4 +79,3 @@ public class PostService {
 		return user;
 	}
 }
-
