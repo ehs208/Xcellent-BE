@@ -79,25 +79,17 @@ public class ChatRoomService {
 		List<ChatRoom> chatRooms = chatRoomRepository.findBySenderOrReceiverAndDeletedStatusNot(user, user,
 			DeletedStatus.DELETED);
 
-		List<DMResponse> dmRespons = new ArrayList<>();
+		List<DMResponse> dmResponses = new ArrayList<>();
 
 		for (ChatRoom chatRoom : chatRooms) {
 			DMResponse messageRoomDto;
-			DM latestMessage;
 
-			if (user.equals(chatRoom.getSender())) {
-				messageRoomDto = new DMResponse(
-					chatRoom.getChatRoomId(),
-					chatRoom.getSender(),
-					chatRoom.getReceiver());
-			} else {
-				messageRoomDto = new DMResponse(
-					chatRoom.getChatRoomId(),
-					chatRoom.getSender(),
-					chatRoom.getReceiver());
-			}
+			messageRoomDto = new DMResponse(
+				chatRoom.getChatRoomId(),
+				chatRoom.getSender(),
+				chatRoom.getReceiver());
 
-			latestMessage = dmRepository.findTopByChatRoomAndDeletedStatusNotOrderByCreatedAtDesc(chatRoom,
+			DM latestMessage = dmRepository.findTopByChatRoomAndDeletedStatusNotOrderByCreatedAtDesc(chatRoom,
 				DeletedStatus.DELETED);
 
 			if (latestMessage != null) {
@@ -105,10 +97,10 @@ public class ChatRoomService {
 				messageRoomDto.updateLatestMessageContent(latestMessage.getMessage());
 			}
 
-			dmRespons.add(messageRoomDto);
+			dmResponses.add(messageRoomDto);
 		}
 
-		return dmRespons;
+		return dmResponses;
 	}
 
 	public ChatRoomDto findChatRoom(UUID chatRoomId, UserDetails userDetails) {
