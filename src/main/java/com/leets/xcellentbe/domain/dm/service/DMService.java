@@ -46,8 +46,6 @@ public class DMService {
 		chatRoom.updateLastMessage(message);
 		chatRoomRepository.save(chatRoom);
 
-		redisTemplateMessage.setValueSerializer(new Jackson2JsonRedisSerializer<>(DM.class));
-
 		String receiverName = receiver.getUserName();
 
 		redisTemplateMessage.opsForList().rightPush(receiverName, dmDto);
@@ -68,7 +66,6 @@ public class DMService {
 			for (DM dm : dbMessageList) {
 				DMDto messageDto = DMDto.from(dm);
 				messageList.add(messageDto);
-				redisTemplateMessage.setValueSerializer(new Jackson2JsonRedisSerializer<>(DM.class));
 				redisTemplateMessage.opsForList().rightPush(receiverName, messageDto);
 			}
 		} else {

@@ -67,7 +67,6 @@ public class DM extends BaseTimeEntity {
 
 	@Builder
 	private DM(User sender, User receiver, ChatRoom chatRoom, String message) {
-		super();
 		this.sender = sender;
 		this.receiver = receiver;
 		this.chatRoom = chatRoom;
