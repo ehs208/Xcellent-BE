@@ -50,7 +50,7 @@ public class ArticleService {
 		//게시글 생성
 		Article newArticle = Article.createArticle(writer, content);
 		//해시태그 처리
-		List<Hashtag> hashtags = hashtagService.extractAndSaveHashtags(content);
+		List<Hashtag> hashtags = hashtagService.extractAndSaveHashtags(newArticle, content);
 		if (!hashtags.isEmpty()) {
 			newArticle.addHashtag(hashtags);
 		}

@@ -54,8 +54,7 @@ public class Article extends BaseTimeEntity {
 	@JoinColumn(name = "repost_id")
 	private Article rePost;
 
-	@OneToMany(fetch = FetchType.LAZY)
-	@JoinColumn(name = "hashtag_id")
+	@OneToMany(mappedBy = "article")
 	private List<Hashtag> hashtags;
 
 	@OneToMany(mappedBy = "article")

@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.leets.xcellentbe.domain.article.domain.Article;
 import com.leets.xcellentbe.domain.hashtag.domain.Hashtag;
 import com.leets.xcellentbe.domain.hashtag.domain.repository.HashtagRepository;
 
@@ -34,28 +34,16 @@ public class HashtagService {
 		return hashtagNames;
 	}
 
-	public List<Hashtag> findOrCreateHashtags(List<String> hashtagNames) {
+	public List<Hashtag> createHashtags(Article article, List<String> hashtagNames) {
 		List<Hashtag> hashtags = new ArrayList<>();
 		for(String hashtagName : hashtagNames){
-			Hashtag hashtag = hashtagRepository.findByName(hashtagName)
-				.orElseGet(() -> hashtagRepository.save(Hashtag.create(hashtagName)));
-			hashtags.add(hashtag);
+			Hashtag hashtag = Hashtag.create(article, hashtagName);
 		}
-		return hashtags;
+		return hashtagRepository.saveAll(hashtags);
 	}
 
-	public List<Hashtag> extractAndSaveHashtags(String content) {
+	public List<Hashtag> extractAndSaveHashtags(Article article, String content) {
 		List<String> hashtagNames = extractHashtagNames(content);  // 해시태그 이름 추출
-		return findOrCreateHashtags(hashtagNames);  // 조회 및 생성
-	}
-	//게시글에서 해시태그 삭제
-	/*public void clearHashtags(List<Hashtag> hashtags) {
-		hashtags.clear();
-	}*/
-	//매월 해시태그 자체 삭제
-	@Scheduled(cron = "0 0 0 1 * ?")
-	public void deleteUnusedHashtags() {
-		List<Hashtag> unusedHashtags = hashtagRepository.findUnusedHashtags();
-		hashtagRepository.deleteAll(unusedHashtags);
+		return createHashtags(article, hashtagNames);  // 조회 및 생성
 	}
 }
