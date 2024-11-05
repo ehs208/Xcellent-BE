@@ -24,43 +24,22 @@ public class PostService {
 	private final UserRepository userRepository;
 	private final PostRepository postRepository;
 
-	// 전체 게시글 조회
-	public List<ArticlesResponseDto> getArticles(String customId) {
+	// 게시글 조회 (미디어 필터 옵션 추가)
+	public List<ArticlesResponseDto> getArticles(String customId, boolean mediaOnly) {
 		User user = getUser(customId);
 		List<Object[]> posts = getPosts(user);
 
-		Map<Post, List<String>> groupedPosts = groupPostsByFilePath(posts);
+		Map<Post, List<String>> groupedPosts = groupPostsByFilePath(posts, mediaOnly);
 
 		return groupedPosts.entrySet().stream()
 			.map(entry -> ArticlesResponseDto.from(entry.getKey(), entry.getValue()))
 			.collect(Collectors.toList());
 	}
 
-	// 미디어 있는게 게시글만 조회
-	public List<ArticlesResponseDto> getArticlesWithMedia(String customId) {
-		User user = getUser(customId);
-		List<Object[]> posts = getPosts(user);
-
-		Map<Post, List<String>> groupedPosts = groupPostsByFilePathWithMedia(posts);
-
-		return groupedPosts.entrySet().stream()
-			.map(entry -> ArticlesResponseDto.from(entry.getKey(), entry.getValue()))
-			.collect(Collectors.toList());
-	}
-
-	// 이미지만 있는 게시글 파일 경로 그룹화
-	private Map<Post, List<String>> groupPostsByFilePathWithMedia(List<Object[]> posts) {
+	// 게시글 파일 경로 그룹화 (미디어 필터링 조건 추가)
+	private Map<Post, List<String>> groupPostsByFilePath(List<Object[]> posts, boolean mediaOnly) {
 		return posts.stream()
-			.filter(post -> post[1] != null)
-			.collect(Collectors.groupingBy(
-				post -> (Post)post[0],
-				Collectors.mapping(post -> (String)post[1], Collectors.toList())
-			));
-	}
-
-	// 전체 게시글 파일 경로 그룹화
-	private Map<Post, List<String>> groupPostsByFilePath(List<Object[]> posts) {
-		return posts.stream()
+			.filter(post -> !mediaOnly || post[1] != null) // 미디어 있는 경우만 필터링
 			.collect(Collectors.groupingBy(
 				post -> (Post)post[0],
 				Collectors.mapping(post -> (String)post[1], Collectors.toList())
@@ -69,13 +48,11 @@ public class PostService {
 
 	// 유저 정보로 게시글 조회
 	private List<Object[]> getPosts(User user) {
-		List<Object[]> posts = postRepository.findPostsByWriter(user);
-		return posts;
+		return postRepository.findPostsByWriter(user);
 	}
 
 	// 유저 정보 조회
 	private User getUser(String customId) {
-		User user = userRepository.findByCustomId(customId).orElseThrow(UserNotFoundException::new);
-		return user;
+		return userRepository.findByCustomId(customId).orElseThrow(UserNotFoundException::new);
 	}
 }

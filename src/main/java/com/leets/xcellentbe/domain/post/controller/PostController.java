@@ -27,7 +27,7 @@ public class PostController {
 	@Operation(summary = "특정 사용자의 게시글 조회", description = "특정 사용자의 게시글을 조회합니다.")
 	public ResponseEntity<GlobalResponseDto<List<ArticlesResponseDto>>> getArticles(@PathVariable String customId) {
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(GlobalResponseDto.success(postService.getArticles(customId)));
+			.body(GlobalResponseDto.success(postService.getArticles(customId, false)));
 	}
 
 	@GetMapping("/{customId}/list/media")
@@ -35,6 +35,6 @@ public class PostController {
 	public ResponseEntity<GlobalResponseDto<List<ArticlesResponseDto>>> getMediaArticles(
 		@PathVariable String customId) {
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(GlobalResponseDto.success(postService.getArticlesWithMedia(customId)));
+			.body(GlobalResponseDto.success(postService.getArticles(customId, true)));
 	}
 }
