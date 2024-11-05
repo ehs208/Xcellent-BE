@@ -1,5 +1,6 @@
 package com.leets.xcellentbe.domain.article.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -17,22 +18,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ArticleResponseDto {
 	private UUID articleId;
-	private String content;
-	private Boolean isPinned;
-	private DeletedStatus deletedStatus;
 	private Long writerId;
+	private String content;
+	private DeletedStatus deletedStatus;
 	private List<String> hashtags;
 	private UUID rePostId;
 	private List<String> mediaUrls;
 
 	@Builder
-	private ArticleResponseDto(UUID articleId, String content, Boolean isPinned, DeletedStatus deletedStatus,
-		Long writerId, List<String> hashtags, UUID rePostId, List<String> mediaUrls) {
+	private ArticleResponseDto(UUID articleId, Long writerId, String content, DeletedStatus deletedStatus,
+								List<String> hashtags, UUID rePostId, List<String> mediaUrls) {
 		this.articleId = articleId;
-		this.content = content;
-		this.isPinned = isPinned;
-		this.deletedStatus = deletedStatus;
 		this.writerId = writerId;
+		this.content = content;
+		this.deletedStatus = deletedStatus;
 		this.hashtags = hashtags;
 		this.rePostId = rePostId;
 		this.mediaUrls = mediaUrls;
@@ -42,7 +41,6 @@ public class ArticleResponseDto {
 		return ArticleResponseDto.builder()
 			.articleId(article.getArticleId())
 			.content(article.getContent())
-			.isPinned(article.getIsPinned())
 			.deletedStatus(article.getDeletedStatus())
 			.writerId(article.getWriter().getUserId())
 			.hashtags(article.getHashtags() != null ? article.getHashtags()
