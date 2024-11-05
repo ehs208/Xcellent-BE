@@ -10,8 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.leets.xcellentbe.domain.article.domain.Article;
 import com.leets.xcellentbe.domain.articleMedia.domain.ArticleMedia;
 import com.leets.xcellentbe.domain.articleMedia.domain.repository.ArticleMediaRepository;
-import com.leets.xcellentbe.domain.articleMedia.dto.ArticleMediaRequestDto;
-import com.leets.xcellentbe.domain.articleMedia.dto.ArticleMediaResponseDto;
 import com.leets.xcellentbe.domain.articleMedia.exception.ArticleMediaNotFoundException;
 
 import lombok.RequiredArgsConstructor;
@@ -58,7 +56,7 @@ public class ArticleMediaService {
 
 		for (ArticleMedia media : mediaList) {
 			s3UploadMediaService.removeFile(media.getFilePath(), "articles/");
-			articleMediaRepository.delete(media);//상태 바꾸기로 수정 여부 결정 필요
+			articleMediaRepository.delete(media);
 		}
 	}
 }
