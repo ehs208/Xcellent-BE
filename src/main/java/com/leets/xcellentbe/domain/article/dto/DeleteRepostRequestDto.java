@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class DeleteRepostDto {
+public class DeleteRepostRequestDto {
 	private UUID rePostId;
 }
