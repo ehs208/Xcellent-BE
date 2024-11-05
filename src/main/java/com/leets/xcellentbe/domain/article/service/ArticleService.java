@@ -2,9 +2,8 @@ package com.leets.xcellentbe.domain.article.service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.leets.xcellentbe.domain.article.domain.Article;
 import com.leets.xcellentbe.domain.article.domain.repository.ArticleRepository;
 import com.leets.xcellentbe.domain.article.dto.ArticleCreateRequestDto;
+import com.leets.xcellentbe.domain.article.dto.ArticleCreateResponseDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleDeleteRequestDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleRepostDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleRequestDto;
@@ -42,7 +42,7 @@ public class ArticleService {
 	private final JwtService jwtService;
 
 	//게시글 작성
-	public ArticleResponseDto createArticle(HttpServletRequest request,
+	public ArticleCreateResponseDto createArticle(HttpServletRequest request,
 											ArticleCreateRequestDto articleCreateRequestDto,
 											List<MultipartFile> mediaFiles) {
 		User writer = getUser(request);
@@ -60,7 +60,7 @@ public class ArticleService {
 			newArticle.addMedia(mediaList);
 		}
 
-		return ArticleResponseDto.from(articleRepository.save(newArticle));
+		return ArticleCreateResponseDto.from(articleRepository.save(newArticle));
 	}
 
 	//게시글 삭제 (상태 변경)
@@ -81,26 +81,24 @@ public class ArticleService {
 		Article article = articleRepository.findById(targetId)
 			.orElseThrow(ArticleNotFoundException::new);
 
-		List<ArticleMedia> mediaUrls = articleMediaService.getArticleMedia(article);
-		article.addMedia(mediaUrls);
-
 		return ArticleResponseDto.from(article);
 	}
 
 	//게시글 전체 조회
-	public Page<ArticleResponseDto> getArticles(Pageable pageable) {
+	public List<ArticleResponseDto> getArticles(Long cursor, int size) {
 
-		return articleRepository.findAll(pageable)
-			.map(article -> {
-				ArticleResponseDto responseDto = ArticleResponseDto.from(article);
-				article.addMedia(articleMediaService.getArticleMedia(article));
+		List<Article> articles = cursor == null ?
+			articleRepository.findByCreatedAtDesc(size) : // 처음 로드 시
+			articleRepository.findByCursorCreatedAtDesc(cursor, size);
 
-				return responseDto;
-			});
+		return articles
+			.stream()
+			.map(ArticleResponseDto::from)
+			.collect(Collectors.toList());
 	}
 
 	//리포스트 작성 (인용 x, 단순)
-	public ArticleResponseDto rePostArticle(HttpServletRequest request,
+	public ArticleCreateResponseDto rePostArticle(HttpServletRequest request,
 											ArticleRepostDto articleRepostRequestDto) {
 		User writer = getUser(request);
 		UUID targetId = articleRepostRequestDto.getRePostId();
@@ -111,7 +109,7 @@ public class ArticleService {
 		Article newArticle = Article.createArticle(writer, repostedArticle.getContent());
 		repostedArticle.addRepost(repostedArticle);
 
-		return ArticleResponseDto.from(articleRepository.save(newArticle));
+		return ArticleCreateResponseDto.from(articleRepository.save(newArticle));
 	}
 
 	//리포스트 삭제
