@@ -10,7 +10,7 @@ public record DMDto(
 	UUID chatRoomId,
 	String message) {
 
-	public DMDto(DM dm) {
+	private DMDto(DM dm) {
 		this(dm.getSender().getUserId(), dm.getReceiver().getUserId(), dm.getChatRoom().getChatRoomId(),
 			dm.getMessage());
 	}
