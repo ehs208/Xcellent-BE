@@ -1,9 +1,10 @@
 package com.leets.xcellentbe.domain.article.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,11 +13,12 @@ import com.leets.xcellentbe.domain.article.domain.Article;
 import com.leets.xcellentbe.domain.article.domain.repository.ArticleRepository;
 import com.leets.xcellentbe.domain.article.dto.ArticleCreateRequestDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleDeleteRequestDto;
+import com.leets.xcellentbe.domain.article.dto.ArticleRepostDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleRequestDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleResponseDto;
+import com.leets.xcellentbe.domain.article.dto.DeleteRepostRequestDto;
 import com.leets.xcellentbe.domain.article.exception.ArticleNotFoundException;
 import com.leets.xcellentbe.domain.articleMedia.domain.ArticleMedia;
-import com.leets.xcellentbe.domain.articleMedia.dto.ArticleMediaRequestDto;
 import com.leets.xcellentbe.domain.articleMedia.service.ArticleMediaService;
 import com.leets.xcellentbe.domain.hashtag.HashtagService.HashtagService;
 import com.leets.xcellentbe.domain.hashtag.domain.Hashtag;
@@ -40,109 +42,86 @@ public class ArticleService {
 	private final JwtService jwtService;
 
 	//게시글 작성
-	public ArticleResponseDto createArticle(HttpServletRequest request, ArticleCreateRequestDto articleCreateRequestDto, List<MultipartFile> mediaFiles) {
-		User user = getUser(request);
-		Article newArticle;
-
-		if(articleCreateRequestDto.getRePostId() != null) {
-			newArticle = rePostArticle(user, articleCreateRequestDto);
-		}
-		else
-			newArticle=Article.createArticle(user, articleCreateRequestDto.getContent());
-
+	public ArticleResponseDto createArticle(HttpServletRequest request,
+											ArticleCreateRequestDto articleCreateRequestDto,
+											List<MultipartFile> mediaFiles) {
+		User writer = getUser(request);
+		String content = articleCreateRequestDto.getContent();
+		//게시글 생성
+		Article newArticle = Article.createArticle(writer, content);
 		//해시태그 처리
-		List<Hashtag> hashtags = hashtagService.extractAndSaveHashtags(articleCreateRequestDto.getContent());
-		newArticle.addHashtag(hashtags);
-
+		List<Hashtag> hashtags = hashtagService.extractAndSaveHashtags(content);
+		if (!hashtags.isEmpty()) {
+			newArticle.addHashtag(hashtags);
+		}
 		//이미지 파일 처리
 		List<ArticleMedia> mediaList = articleMediaService.saveArticleMedia(mediaFiles, newArticle);
-		newArticle.addMedia(mediaList);
+		if (!mediaList.isEmpty()) {
+			newArticle.addMedia(mediaList);
+		}
 
 		return ArticleResponseDto.from(articleRepository.save(newArticle));
 	}
-	//게시글 고정 -> 하나만 되도록 로직 검사 변경 로직 추가
-	public void pinArticle(UUID articleId, Long accountId) {
 
-		Optional<Article> nowPinnedArticle = articleRepository.findByWriterIdAndIsPinned(accountId, true);
-		nowPinnedArticle.ifPresent(pinnedArticle -> {
-			pinnedArticle.unPinArticle();
-			articleRepository.save(pinnedArticle);
-		});
+	//게시글 삭제 (상태 변경)
+	public void deleteArticle(ArticleDeleteRequestDto articleDeleteRequestDto){
+		UUID targetId = articleDeleteRequestDto.getArticleId();
 
-		Article article = articleRepository.findById(articleId)
+		Article targetArticle = articleRepository.findById(targetId)
 			.orElseThrow(ArticleNotFoundException::new);
 
-		article.pinArticle();
-
-		articleRepository.save(article);
-	}
-	//게시글 수정
-	public void updateArticle(ArticleRequestDto articleRequestDto) {
-		Article article = articleRepository.findById(articleRequestDto.getArticleId())
-			.orElseThrow(ArticleNotFoundException::new);
-
-		article.updateArticle(articleRequestDto.getContent());
-
-		//해시태그 수정
-		if (!articleRequestDto.getHashtags().isEmpty()) {
-			articleRequestDto.getHashtags().clear();
-			List<Hashtag> newHashtags = hashtagService.extractAndSaveHashtags(articleRequestDto.getContent());
-			article.addHashtag(newHashtags);
-		}
-		//미디어 파일 추가
-		if (articleRequestDto.getNewMediaFiles() != null && !articleRequestDto.getNewMediaFiles().isEmpty()) {
-			List<ArticleMedia> mediaList = articleMediaService.saveArticleMedia(articleRequestDto.getNewMediaFiles(), article);
-			article.addMedia(mediaList);
-		}
-
-		//미디어 파일 단건 삭제
-		if (articleRequestDto.getDeleteMediaIds() != null && !articleRequestDto.getDeleteMediaIds().isEmpty()) {
-			for (UUID mediaId : articleRequestDto.getDeleteMediaIds()) {
-				ArticleMediaRequestDto requestDto = new ArticleMediaRequestDto();
-				removeMedia(requestDto);
-			}
-		}
-		articleRepository.save(article);
-	}
-	//게시글에 미디어 삭제
-	public void removeMedia(ArticleMediaRequestDto requestDto) {
-		articleMediaService.deleteArticleMedia(requestDto);
+		targetArticle.deleteArticle();
+		articleMediaService.deleteMediaByArticle(targetArticle);
 	}
 
-	//게시글 삭제 (소프트 삭제 =>제상태 변경)
-	public void deleteArticle(ArticleDeleteRequestDto articleDeleteRequestDto, ArticleMediaRequestDto requestDto){
-		Article article = articleRepository.findById(articleDeleteRequestDto.getArticleId())
-			.orElseThrow(ArticleNotFoundException::new);
-
-		article.deleteArticle();
-		articleMediaService.deleteAllMediaByArticle(requestDto);
-	}
-
-	//게시글 조회
+	//게시글 단건 조회
 	public ArticleResponseDto getArticle(ArticleRequestDto articleRequestDto) {
-		Article article = articleRepository.findById(articleRequestDto.getArticleId())
+		UUID targetId = articleRequestDto.getArticleId();
+
+		Article article = articleRepository.findById(targetId)
 			.orElseThrow(ArticleNotFoundException::new);
+
+		List<ArticleMedia> mediaUrls = articleMediaService.getArticleMedia(article);
+		article.addMedia(mediaUrls);
 
 		return ArticleResponseDto.from(article);
 	}
 
-	public Article rePostArticle(User user, ArticleCreateRequestDto articleCreateRequestDto) {
+	//게시글 전체 조회
+	public Page<ArticleResponseDto> getArticles(Pageable pageable) {
+
+		return articleRepository.findAll(pageable)
+			.map(article -> {
+				ArticleResponseDto responseDto = ArticleResponseDto.from(article);
+				article.addMedia(articleMediaService.getArticleMedia(article));
+
+				return responseDto;
+			});
+	}
+
+	//리포스트 작성 (인용 x, 단순)
+	public ArticleResponseDto rePostArticle(HttpServletRequest request,
+											ArticleRepostDto articleRepostRequestDto) {
+		User writer = getUser(request);
+		UUID targetId = articleRepostRequestDto.getRePostId();
 		//원본 조회
-		Article repostedArticle = articleRepository.findById(articleCreateRequestDto.getRePostId())
+		Article repostedArticle = articleRepository.findById(targetId)
 			.orElseThrow(ArticleNotFoundException::new);
 
-		//리포스트(인용)
-		if (Boolean.TRUE.equals(articleCreateRequestDto.getIsQuoteRepost())) {
-			Article article = Article.createArticle(user, articleCreateRequestDto.getContent());
-			article.addRepost(repostedArticle);
-			return article;
-		}
-		//리포스트(단순)
-		else {
-			Article article = Article.createArticle(user, repostedArticle.getContent());
-			article.addRepost(repostedArticle);
-			return article;
-		}
+		Article newArticle = Article.createArticle(writer, repostedArticle.getContent());
+		repostedArticle.addRepost(repostedArticle);
+
+		return ArticleResponseDto.from(articleRepository.save(newArticle));
+	}
+
+	//리포스트 삭제
+	public void deleteRepost(DeleteRepostRequestDto deleteRepostRequestDto) {
+		UUID targetId = deleteRepostRequestDto.getRePostId();
+
+		Article targetArticle = articleRepository.findById(targetId)
+			.orElseThrow(ArticleNotFoundException::new);
+
+		targetArticle.deleteArticle();
 	}
 
 	//JWT 토큰 기반 사용자 정보 반환 메소드
