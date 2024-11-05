@@ -24,7 +24,7 @@ public class ArticleCreateResponseDto {
 	public static ArticleCreateResponseDto from(Article article) {
 		return ArticleCreateResponseDto.builder()
 			.articleId(article.getArticleId())
-			.message("게시글이 작성되었습니다.")
+			.message("작성이 완료되었습니다.")
 			.build();
 	}
 }

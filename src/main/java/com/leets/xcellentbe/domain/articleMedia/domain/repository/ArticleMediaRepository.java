@@ -1,14 +1,12 @@
 package com.leets.xcellentbe.domain.articleMedia.domain.repository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.leets.xcellentbe.domain.article.domain.Article;
 import com.leets.xcellentbe.domain.articleMedia.domain.ArticleMedia;
 
 @Repository
