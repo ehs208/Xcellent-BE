@@ -12,6 +12,7 @@ public enum ErrorCode {
 	INVALID_TOKEN(401, "INVALID_TOKEN", "유효하지 않은 토큰입니다."),
 	LOGIN_FAIL(401, "LOGIN_FAIL", "로그인에 실패하였습니다."),
 	CHAT_ROOM_FORBIDDEN(403, "CHAT_ROOM_FORBIDDEN", "권한이 없는 채팅방입니다."),
+	DELETE_FORBIDDEN(403, "DELETE_FORBIDDEN", "삭제 권한이 없습니다."),
 	USER_NOT_FOUND(404, "USER_NOT_FOUND", "유저를 찾을 수 없습니다."),
 	EXPIRED_TOKEN(403, "EXPIRED_TOKEN", "만료된 토큰입니다."),
 	FOLLOW_OPERATION_ERROR(409, "FOLLOW_OPERATION_ERROR", "적절하지 않은 팔로우 요청입니다."),

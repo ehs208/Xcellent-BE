@@ -12,12 +12,11 @@ import com.leets.xcellentbe.domain.article.domain.Article;
 import com.leets.xcellentbe.domain.article.domain.repository.ArticleRepository;
 import com.leets.xcellentbe.domain.article.dto.ArticleCreateRequestDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleCreateResponseDto;
-import com.leets.xcellentbe.domain.article.dto.ArticleDeleteRequestDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleRepostDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleRequestDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleResponseDto;
-import com.leets.xcellentbe.domain.article.dto.DeleteRepostRequestDto;
 import com.leets.xcellentbe.domain.article.exception.ArticleNotFoundException;
+import com.leets.xcellentbe.domain.article.exception.DeleteForbiddenException;
 import com.leets.xcellentbe.domain.articleMedia.domain.ArticleMedia;
 import com.leets.xcellentbe.domain.articleMedia.service.ArticleMediaService;
 import com.leets.xcellentbe.domain.hashtag.HashtagService.HashtagService;
@@ -63,15 +62,20 @@ public class ArticleService {
 		return ArticleCreateResponseDto.from(articleRepository.save(newArticle));
 	}
 
-	//게시글 삭제 (상태 변경)
-	public void deleteArticle(ArticleDeleteRequestDto articleDeleteRequestDto){
-		UUID targetId = articleDeleteRequestDto.getArticleId();
+	//게시글 삭제 (상태 변경) => 게시글 작성자랑 내 정보 비교 여기서 비교
+	public void deleteArticle(HttpServletRequest request, UUID articleId) {
+		User user = getUser(request);
 
-		Article targetArticle = articleRepository.findById(targetId)
+		Article targetArticle = articleRepository.findById(articleId)
 			.orElseThrow(ArticleNotFoundException::new);
 
-		targetArticle.deleteArticle();
-		articleMediaService.deleteMediaByArticle(targetArticle);
+		if(!targetArticle.getArticleId().equals(articleId)){
+			throw new DeleteForbiddenException();
+		}
+		else{
+			targetArticle.deleteArticle();
+			articleMediaService.deleteMediaByArticle(targetArticle);
+		}
 	}
 
 	//게시글 단건 조회
@@ -113,13 +117,19 @@ public class ArticleService {
 	}
 
 	//리포스트 삭제
-	public void deleteRepost(DeleteRepostRequestDto deleteRepostRequestDto) {
-		UUID targetId = deleteRepostRequestDto.getRePostId();
+	public void deleteRepost(HttpServletRequest request, UUID articleId) {
 
-		Article targetArticle = articleRepository.findById(targetId)
+		User user = getUser(request);
+
+		Article targetArticle = articleRepository.findById(articleId)
 			.orElseThrow(ArticleNotFoundException::new);
 
-		targetArticle.deleteArticle();
+		if(!targetArticle.getArticleId().equals(articleId)){
+			throw new DeleteForbiddenException();
+		}
+		else {
+			targetArticle.deleteArticle();
+		}
 	}
 
 	//JWT 토큰 기반 사용자 정보 반환 메소드

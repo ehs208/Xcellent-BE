@@ -1,11 +1,13 @@
 package com.leets.xcellentbe.domain.article.controller;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,11 +17,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.leets.xcellentbe.domain.article.dto.ArticleCreateRequestDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleCreateResponseDto;
-import com.leets.xcellentbe.domain.article.dto.ArticleDeleteRequestDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleRepostDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleRequestDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleResponseDto;
-import com.leets.xcellentbe.domain.article.dto.DeleteRepostRequestDto;
 import com.leets.xcellentbe.domain.article.service.ArticleService;
 import com.leets.xcellentbe.global.response.GlobalResponseDto;
 
@@ -48,8 +48,9 @@ public class ArticleController {
 	@PatchMapping("/{articleId}/delete")
 	@Operation(summary = "게시글 삭제", description = "게시글을 소프트 삭제(상태 변경)합니다.")
 	public ResponseEntity<GlobalResponseDto<Void>> deleteArticle(
-		@RequestBody ArticleDeleteRequestDto articleDeleteRequestDto){
-		articleService.deleteArticle(articleDeleteRequestDto);
+		HttpServletRequest request,
+		@PathVariable UUID articleId){
+		articleService.deleteArticle(request, articleId);
 		return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success());
 	}
 
@@ -86,8 +87,9 @@ public class ArticleController {
 	@PatchMapping("/{articleId}/deleteRepost")
 	@Operation(summary = "리포스트 삭제", description = "리포스트를 삭제합니다.")
 	public ResponseEntity<GlobalResponseDto<Void>> deleteRepost(
-		@RequestBody DeleteRepostRequestDto deleteRepostRequestDto){
-		articleService.deleteRepost(deleteRepostRequestDto);
+		HttpServletRequest request,
+		@PathVariable UUID articleId){
+		articleService.deleteRepost(request, articleId);
 		return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success());
 	}
 }
