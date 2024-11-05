@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.leets.xcellentbe.domain.chatRoom.domain.ChatRoom;
 import com.leets.xcellentbe.domain.user.domain.User;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -20,20 +21,35 @@ public class DMResponse {
 	private String message;
 	private LocalDateTime createdAt;
 
-	public DMResponse(ChatRoom chatRoom) {
-		this.chatRoomId = chatRoom.getChatRoomId();
-		this.senderId = chatRoom.getSender().getUserId();
-		this.receiverId = chatRoom.getReceiver().getUserId();
+	@Builder
+	private DMResponse(UUID chatRoomId, Long senderId, Long receiverId, String message, LocalDateTime createdAt) {
+		this.chatRoomId = chatRoomId;
+		this.senderId = senderId;
+		this.receiverId = receiverId;
+		this.message = message;
+		this.createdAt = createdAt;
 	}
 
-	public DMResponse(UUID chatRoomId, User sender, User receiver) {
-		this.chatRoomId = chatRoomId;
-		this.senderId = sender.getUserId();
-		this.receiverId = receiver.getUserId();
+	public static DMResponse from(UUID chatRoomId) {
+		return builder()
+			.chatRoomId(chatRoomId)
+			.build();
 	}
 
-	public DMResponse(UUID chatRoomId) {
-		this.chatRoomId = chatRoomId;
+	public static DMResponse from(ChatRoom chatRoom) {
+		return builder()
+			.chatRoomId(chatRoom.getChatRoomId())
+			.senderId(chatRoom.getSender().getUserId())
+			.receiverId(chatRoom.getReceiver().getUserId())
+			.build();
+	}
+
+	public static DMResponse of(UUID chatRoomId, User sender, User receiver) {
+		return builder()
+			.chatRoomId(chatRoomId)
+			.senderId(sender.getUserId())
+			.receiverId(receiver.getUserId())
+			.build();
 	}
 
 	public void updateLatestMessageContent(String message) {

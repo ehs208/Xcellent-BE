@@ -60,16 +60,16 @@ public class ChatRoomService {
 		ChatRoom chatRoom = chatRoomRepository.findBySenderAndReceiverAndDeletedStatusNot(sender, receiver,
 			DeletedStatus.DELETED);
 
-		if ((chatRoom == null) || (chatRoom != null && (!sender.equals(chatRoom.getSender()) && !receiver.equals(
-			chatRoom.getReceiver())))) {
+		if ((chatRoom == null) || (!sender.equals(chatRoom.getSender()) && !receiver.equals(
+			chatRoom.getReceiver()))) {
 			ChatRoomDto chatRoomDto = ChatRoomDto.of(dmRequest, sender);
 			opsHashMessageRoom.put(Message_Rooms, sender.getUserName(), chatRoomDto);
 
 			chatRoom = chatRoomRepository.save(ChatRoom.create(sender, receiver));
 
-			return new DMResponse(chatRoom);
+			return DMResponse.from(chatRoom);
 		} else {
-			return new DMResponse(chatRoom.getChatRoomId());
+			return DMResponse.from(chatRoom.getChatRoomId());
 		}
 	}
 
@@ -84,10 +84,7 @@ public class ChatRoomService {
 		for (ChatRoom chatRoom : chatRooms) {
 			DMResponse messageRoomDto;
 
-			messageRoomDto = new DMResponse(
-				chatRoom.getChatRoomId(),
-				chatRoom.getSender(),
-				chatRoom.getReceiver());
+			messageRoomDto = DMResponse.of(chatRoom.getChatRoomId(), chatRoom.getSender(), chatRoom.getReceiver());
 
 			DM latestMessage = dmRepository.findTopByChatRoomAndDeletedStatusNotOrderByCreatedAtDesc(chatRoom,
 				DeletedStatus.DELETED);
