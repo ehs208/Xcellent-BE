@@ -37,7 +37,7 @@ public class ArticleMediaService {
 
 	//미디어 조회
 	public List<ArticleMedia> getArticleMedia(Article article) {
-		List<ArticleMedia> mediaList = articleMediaRepository.findByArticleId(article.getArticleId());
+		List<ArticleMedia> mediaList = articleMediaRepository.findByArticle_ArticleId(article.getArticleId());
 
 		if (mediaList.isEmpty()) {
 			throw new ArticleMediaNotFoundException();
@@ -48,7 +48,7 @@ public class ArticleMediaService {
 
 	//미디어 삭제
 	public void deleteMediaByArticle(Article article) {
-		List<ArticleMedia> mediaList = articleMediaRepository.findByArticleId(article.getArticleId());
+		List<ArticleMedia> mediaList = articleMediaRepository.findByArticle_ArticleId(article.getArticleId());
 
 		if (mediaList.isEmpty()) {
 			throw new ArticleMediaNotFoundException();

@@ -1,8 +1,10 @@
 package com.leets.xcellentbe.domain.article.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +30,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/article")
+@RequestMapping("/api/article")
 @RequiredArgsConstructor
 public class ArticleController {
 	private final ArticleService articleService;
@@ -67,7 +69,7 @@ public class ArticleController {
 	@GetMapping
 	@Operation(summary = "게시글 목록 조회(스크롤)", description = "커서 페이징을 적용하여 게시글 목록을 조회합니다.")
 	public ResponseEntity<GlobalResponseDto<List<ArticleResponseDto>>> getArticles(
-		@RequestParam(required = false) Long cursor,
+		@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime cursor,
 		@RequestParam(defaultValue = "10") int size) {
 		List<ArticleResponseDto> articles = articleService.getArticles(cursor, size);
 		return ResponseEntity.ok(GlobalResponseDto.success(articles));

@@ -34,7 +34,7 @@ public class Article extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-	private UUID ArticleId;
+	private UUID articleId;
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)

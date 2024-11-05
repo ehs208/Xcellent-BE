@@ -1,9 +1,12 @@
 package com.leets.xcellentbe.domain.article.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -89,11 +92,12 @@ public class ArticleService {
 	}
 
 	//게시글 전체 조회
-	public List<ArticleResponseDto> getArticles(Long cursor, int size) {
+	public List<ArticleResponseDto> getArticles(LocalDateTime cursor, int size) {
+		Pageable pageable = PageRequest.of(0, size);
 
 		List<Article> articles = cursor == null ?
-			articleRepository.findByCreatedAtDesc(size) : // 처음 로드 시
-			articleRepository.findByCursorCreatedAtDesc(cursor, size);
+			articleRepository.findRecentArticles(pageable) : // 처음 로드 시
+			articleRepository.findRecentArticles(cursor, pageable);
 
 		return articles
 			.stream()

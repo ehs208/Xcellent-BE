@@ -12,5 +12,5 @@ import com.leets.xcellentbe.domain.articleMedia.domain.ArticleMedia;
 @Repository
 public interface ArticleMediaRepository extends JpaRepository<ArticleMedia, UUID> {
 
-	List<ArticleMedia> findByArticleId(UUID articleId);
+	List<ArticleMedia> findByArticle_ArticleId(UUID articleId);
 }
