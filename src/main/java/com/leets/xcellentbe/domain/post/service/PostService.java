@@ -32,7 +32,7 @@ public class PostService {
 		Map<Post, List<String>> groupedPosts = groupPostsByFilePath(posts, mediaOnly);
 
 		return groupedPosts.entrySet().stream()
-			.map(entry -> ArticlesResponseDto.from(entry.getKey(), entry.getValue()))
+			.map(entry -> ArticlesResponseDto.of(entry.getKey(), entry.getValue()))
 			.collect(Collectors.toList());
 	}
 

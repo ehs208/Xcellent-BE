@@ -30,7 +30,7 @@ public class ArticlesResponseDto {
 		this.filePath = filePath;
 	}
 
-	public static ArticlesResponseDto from(Post post, List<String> filePath) {
+	public static ArticlesResponseDto of(Post post, List<String> filePath) {
 		return ArticlesResponseDto.builder()
 			.writer(post.getWriter().getUserName())
 			.content(post.getContent())
