@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<GlobalResponseDto> handleGenericException(Exception ex) {
 		ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
 		ErrorResponse errorResponse = new ErrorResponse(errorCode);
-		showErrorLog(errorCode);
+		log.error(ex.getMessage());
 		return ResponseEntity.status(HttpStatus.valueOf(errorCode.getStatus()))
 			.body(GlobalResponseDto.fail(errorCode, errorResponse.getMessage()));
 	}
