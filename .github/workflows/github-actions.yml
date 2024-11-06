@@ -121,5 +121,5 @@ jobs:
 
             sudo docker ps
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/xcellent-be
-            sudo docker run -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/xcellent-be
+            sudo docker run -d -p 8080:8080 -e TZ=Asia/Seoul ${{ secrets.DOCKER_USERNAME }}/xcellent-be
             sudo docker image prune -f
