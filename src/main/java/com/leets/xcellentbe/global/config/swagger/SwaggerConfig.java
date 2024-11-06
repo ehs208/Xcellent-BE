@@ -43,8 +43,7 @@ public class SwaggerConfig {
 			.name("Authorization");
 	}
 
-
-	private SecurityRequirement getSecurityRequireMent() {
+	private SecurityRequirement getSecurityRequirement() {
 		return new SecurityRequirement().addList("jwt token");
 	}
 }
