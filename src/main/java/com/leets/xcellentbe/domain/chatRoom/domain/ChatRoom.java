@@ -1,8 +1,7 @@
-package com.leets.xcellentbe.domain.dm.domain;
+package com.leets.xcellentbe.domain.chatRoom.domain;
 
 import java.util.UUID;
 
-import com.leets.xcellentbe.domain.chatRoom.domain.ChatRoom;
 import com.leets.xcellentbe.domain.shared.BaseTimeEntity;
 import com.leets.xcellentbe.domain.shared.DeletedStatus;
 import com.leets.xcellentbe.domain.user.domain.User;
@@ -26,19 +25,13 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class DM extends BaseTimeEntity {
+public class ChatRoom extends BaseTimeEntity {
 
 	@Id
+	@Column(name = "chatRoom_id")
 	@GeneratedValue(strategy = GenerationType.UUID)
-	@Column(columnDefinition = "BINARY(16)")
-	private UUID DMId;
+	private UUID chatRoomId;
 
-	@NotNull
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "chatRoom_id")
-	private ChatRoom chatRoom;
-
-	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "sender_id")
 	private User sender;
@@ -47,31 +40,34 @@ public class DM extends BaseTimeEntity {
 	@JoinColumn(name = "receiver_id")
 	private User receiver;
 
-	@NotNull
 	@Column
-	private String message;
+	private String lastMessage;
 
 	@NotNull
 	@Column
 	@Enumerated(EnumType.STRING)
 	private DeletedStatus deletedStatus;
 
-	public static DM create(User sender, User receiver, ChatRoom chatRoom, String message) {
-		return DM.builder()
+	public static ChatRoom create(User sender, User receiver) {
+		return ChatRoom.builder()
 			.sender(sender)
 			.receiver(receiver)
-			.chatRoom(chatRoom)
-			.message(message)
 			.build();
 	}
 
 	@Builder
-	private DM(User sender, User receiver, ChatRoom chatRoom, String message) {
+	private ChatRoom(User sender, User receiver) {
 		this.sender = sender;
 		this.receiver = receiver;
-		this.chatRoom = chatRoom;
-		this.message = message;
 		this.deletedStatus = DeletedStatus.NOT_DELETED;
+	}
+
+	public void updateReceiver(User receiver) {
+        this.receiver = receiver;
+    }
+
+	public void updateLastMessage(String lastMessage) {
+		this.lastMessage = lastMessage;
 	}
 
 	public void delete() {
