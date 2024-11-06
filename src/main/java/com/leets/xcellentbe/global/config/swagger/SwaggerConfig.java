@@ -31,6 +31,7 @@ public class SwaggerConfig {
 			.servers(List.of(server))
 			.components(new Components().addSecuritySchemes("jwt token", securityScheme))
 			.security(List.of(securityRequirement));
+
 	}
 
 	private SecurityScheme getSecurityScheme() {
@@ -39,6 +40,6 @@ public class SwaggerConfig {
 	}
 
 	private SecurityRequirement getSecurityRequireMent() {
-		return new SecurityRequirement().addList("bearer");
+		return new SecurityRequirement().addList("jwt token");
 	}
 }

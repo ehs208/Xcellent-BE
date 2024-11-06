@@ -74,8 +74,8 @@ public class SecurityConfig {
 						.requestMatchers("/v3/api-docs", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**",
 							"/swagger/**", "/index.html", "/api/auth/**").permitAll()
 						.anyRequest().authenticated()
-			)
-			.oauth2Login(oauth2 -> oauth2.successHandler(oAuthLoginSuccessHandler));
+			);
+		// .oauth2Login(oauth2 -> oauth2.successHandler(oAuthLoginSuccessHandler));
 		// .failureHandler(oAuth2LoginFailureHandler)
 		http.addFilterAfter(customJsonAuthenticationFilter(), LogoutFilter.class);
 		http.addFilterBefore(jwtAuthenticationFilter(), CustomJsonAuthenticationFilter.class);
@@ -90,7 +90,7 @@ public class SecurityConfig {
 		configuration.setAllowedOrigins(Arrays.asList());
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE"));
 		configuration.setAllowedHeaders(Arrays.asList("*"));
-		configuration.setExposedHeaders(Arrays.asList("Authorization, Authorization_refresh"));
+		configuration.setExposedHeaders(Arrays.asList("Authorization, Authorization_refresh", "accept"));
 		configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:8080",
 			"https://develop.d333radwds380a.amplifyapp.com"));
 		configuration.setAllowCredentials(true);
