@@ -24,8 +24,8 @@ public class HashtagService {
 	//해시태그 추출 & 저장
 	public List<String> extractHashtagNames(String content){
 		List<String> hashtagNames = new ArrayList<>();
-		Pattern hastagPattern = Pattern.compile("(?<=#)(\\w+)");
-		Matcher matcher = hastagPattern.matcher(content);
+		Pattern hashtagPattern = Pattern.compile("(?<=#)(\\w+)");
+		Matcher matcher = hashtagPattern.matcher(content);
 
 		while (matcher.find()){
 			String hashtagName = matcher.group(1);
@@ -38,6 +38,7 @@ public class HashtagService {
 		List<Hashtag> hashtags = new ArrayList<>();
 		for(String hashtagName : hashtagNames){
 			Hashtag hashtag = Hashtag.create(article, hashtagName);
+			hashtags.add(hashtag);
 		}
 		return hashtagRepository.saveAll(hashtags);
 	}
@@ -45,5 +46,16 @@ public class HashtagService {
 	public List<Hashtag> extractAndSaveHashtags(Article article, String content) {
 		List<String> hashtagNames = extractHashtagNames(content);  // 해시태그 이름 추출
 		return createHashtags(article, hashtagNames);  // 조회 및 생성
+	}
+
+	//해시태그 삭제
+	public void deleteHashtags(Article article) {
+		List<Hashtag> hashtagList = hashtagRepository.findByArticle_ArticleId(article.getArticleId());
+
+		if (!(hashtagList.isEmpty())) {
+			for (Hashtag hashtag : hashtagList) {
+				hashtag.deleteHashtag();
+			}
+		}
 	}
 }
