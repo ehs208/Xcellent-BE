@@ -46,7 +46,7 @@ public class Article extends BaseTimeEntity {
 	private String content;
 
 	@NotNull
-	@Column(columnDefinition = "VARCHAR(10)")
+	@Column(columnDefinition = "VARCHAR(30)")
 	@Enumerated(EnumType.STRING)
 	private DeletedStatus deletedStatus;
 
