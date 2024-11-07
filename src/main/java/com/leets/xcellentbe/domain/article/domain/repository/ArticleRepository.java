@@ -16,10 +16,9 @@ import io.lettuce.core.dynamic.annotation.Param;
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, UUID> {
 
-	//List<Article> findByOrderByCreatedAtDesc(int size);
 	@Query("SELECT a FROM Article a ORDER BY a.createdAt DESC")
 	List<Article> findRecentArticles(Pageable pageable);
-	/*List<Article> findByCreatedAtBeforeOrderByCreatedAtDesc(LocalDateTime cursor, int size);*/
+
 	@Query("SELECT a FROM Article a WHERE a.createdAt < :cursor ORDER BY a.createdAt DESC")
 	List<Article> findRecentArticles(@Param("cursor") LocalDateTime cursor, Pageable pageable);
 }
