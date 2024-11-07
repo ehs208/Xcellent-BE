@@ -15,8 +15,6 @@ import com.leets.xcellentbe.domain.article.domain.Article;
 import com.leets.xcellentbe.domain.article.domain.repository.ArticleRepository;
 import com.leets.xcellentbe.domain.article.dto.ArticleCreateRequestDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleCreateResponseDto;
-import com.leets.xcellentbe.domain.article.dto.ArticleRepostDto;
-import com.leets.xcellentbe.domain.article.dto.ArticleRequestDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleResponseDto;
 import com.leets.xcellentbe.domain.article.exception.ArticleNotFoundException;
 import com.leets.xcellentbe.domain.article.exception.DeleteForbiddenException;
@@ -65,30 +63,30 @@ public class ArticleService {
 		return ArticleCreateResponseDto.from(articleRepository.save(newArticle));
 	}
 
-	//게시글 삭제 (상태 변경) => 게시글 작성자랑 내 정보 비교 여기서 비교
+	//게시글 삭제 (상태 변경)
 	public void deleteArticle(HttpServletRequest request, UUID articleId) {
 		User user = getUser(request);
 
 		Article targetArticle = articleRepository.findById(articleId)
 			.orElseThrow(ArticleNotFoundException::new);
 
-		if(!targetArticle.getArticleId().equals(articleId)){
+		if(!(targetArticle.getWriter().getUserId().equals(user.getUserId()))){
 			throw new DeleteForbiddenException();
 		}
 		else{
 			targetArticle.deleteArticle();
 			articleMediaService.deleteMediaByArticle(targetArticle);
+			hashtagService.deleteHashtags(targetArticle);
 		}
 	}
 
 	//게시글 단건 조회
-	public ArticleResponseDto getArticle(ArticleRequestDto articleRequestDto) {
-		UUID targetId = articleRequestDto.getArticleId();
+	public ArticleResponseDto getArticle(UUID articleId) {
 
-		Article article = articleRepository.findById(targetId)
+		Article targetArticle = articleRepository.findById(articleId)
 			.orElseThrow(ArticleNotFoundException::new);
 
-		return ArticleResponseDto.from(article);
+		return ArticleResponseDto.from(targetArticle);
 	}
 
 	//게시글 전체 조회
@@ -106,16 +104,14 @@ public class ArticleService {
 	}
 
 	//리포스트 작성 (인용 x, 단순)
-	public ArticleCreateResponseDto rePostArticle(HttpServletRequest request,
-											ArticleRepostDto articleRepostRequestDto) {
+	public ArticleCreateResponseDto rePostArticle(HttpServletRequest request, UUID articleId) {
 		User writer = getUser(request);
-		UUID targetId = articleRepostRequestDto.getRePostId();
-		//원본 조회
-		Article repostedArticle = articleRepository.findById(targetId)
-			.orElseThrow(ArticleNotFoundException::new);
 
+		//원본 조회
+		Article repostedArticle = articleRepository.findById(articleId)
+			.orElseThrow(ArticleNotFoundException::new);
 		Article newArticle = Article.createArticle(writer, repostedArticle.getContent());
-		repostedArticle.addRepost(repostedArticle);
+		repostedArticle.addRepost(newArticle);
 
 		return ArticleCreateResponseDto.from(articleRepository.save(newArticle));
 	}
@@ -124,11 +120,9 @@ public class ArticleService {
 	public void deleteRepost(HttpServletRequest request, UUID articleId) {
 
 		User user = getUser(request);
-
 		Article targetArticle = articleRepository.findById(articleId)
 			.orElseThrow(ArticleNotFoundException::new);
-
-		if(!targetArticle.getArticleId().equals(articleId)){
+		if(!(targetArticle.getWriter().getUserId().equals(user.getUserId()))){
 			throw new DeleteForbiddenException();
 		}
 		else {

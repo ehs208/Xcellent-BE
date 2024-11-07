@@ -20,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.leets.xcellentbe.domain.article.dto.ArticleCreateRequestDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleCreateResponseDto;
-import com.leets.xcellentbe.domain.article.dto.ArticleRequestDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleResponseDto;
 import com.leets.xcellentbe.domain.article.service.ArticleService;
 import com.leets.xcellentbe.global.response.GlobalResponseDto;

@@ -50,13 +50,11 @@ public class ArticleMediaService {
 	public void deleteMediaByArticle(Article article) {
 		List<ArticleMedia> mediaList = articleMediaRepository.findByArticle_ArticleId(article.getArticleId());
 
-		if (mediaList.isEmpty()) {
-			throw new ArticleMediaNotFoundException();
-		}
-
-		for (ArticleMedia media : mediaList) {
-			s3UploadMediaService.removeFile(media.getFilePath(), "articles/");
-			articleMediaRepository.delete(media);
+		if (!(mediaList.isEmpty())) {
+			for (ArticleMedia media : mediaList) {
+				s3UploadMediaService.removeFile(media.getFilePath(), "articles/");
+				articleMediaRepository.delete(media);
+			}
 		}
 	}
 }
