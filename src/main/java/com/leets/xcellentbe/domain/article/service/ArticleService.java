@@ -109,7 +109,9 @@ public class ArticleService {
 	}
 
 	//게시글 단건 조회
-	public ArticleResponseDto getArticle(UUID articleId) {
+	public ArticleResponseDto getArticle(HttpServletRequest request, UUID articleId) {
+
+		User user = getUser(request);
 
 		Article targetArticle = articleRepository.findById(articleId)
 			.orElseThrow(ArticleNotFoundException::new);
@@ -119,12 +121,16 @@ public class ArticleService {
 			throw new ArticleMediaNotFoundException();
 		}
 		targetArticle.updateViewCount();
+		boolean isOwner = targetArticle.getWriter().getUserId().equals(user.getUserId());
 
-		return ArticleResponseDto.from(targetArticle);
+		return ArticleResponseDto.from(targetArticle, isOwner);
 	}
 
 	//게시글 전체 조회
-	public List<ArticleResponseDto> getArticles(LocalDateTime cursor, int size) {
+	public List<ArticleResponseDto> getArticles(HttpServletRequest request, LocalDateTime cursor, int size) {
+
+		User user = getUser(request);
+
 		Pageable pageable = PageRequest.of(0, size);
 
 		List<Article> articles = cursor == null ?
@@ -133,7 +139,7 @@ public class ArticleService {
 
 		return articles
 			.stream()
-			.map(ArticleResponseDto::from)
+			.map(article -> ArticleResponseDto.from(article, article.getWriter().getUserId().equals(user.getUserId())))
 			.collect(Collectors.toList());
 	}
 

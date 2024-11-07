@@ -27,11 +27,12 @@ public class ArticleResponseDto {
 	private int rePostCnt;
 	private int likeCnt;
 	private int commentCnt;
+	private boolean owner;
 
 	@Builder
 	private ArticleResponseDto(UUID articleId, Long writerId, String content, DeletedStatus deletedStatus,
 								List<String> hashtags, UUID rePostId, List<String> mediaUrls, int viewCnt,
-								int rePostCnt, int likeCnt, int commentCnt) {
+								int rePostCnt, int likeCnt, int commentCnt, boolean owner) {
 		this.articleId = articleId;
 		this.writerId = writerId;
 		this.content = content;
@@ -43,9 +44,10 @@ public class ArticleResponseDto {
 		this.rePostCnt = rePostCnt;
 		this.likeCnt = likeCnt;
 		this.commentCnt = commentCnt;
+		this.owner = owner;
 	}
 
-	public static ArticleResponseDto from(Article article) {
+	public static ArticleResponseDto from(Article article, boolean isOwner) {
 		return ArticleResponseDto.builder()
 			.articleId(article.getArticleId())
 			.content(article.getContent())
@@ -64,6 +66,7 @@ public class ArticleResponseDto {
 			.rePostCnt(article.getRepostCnt())
 			.likeCnt(article.getLikeCnt())
 			.commentCnt(article.getCommentCnt())
+			.owner(isOwner)
 			.build();
 	}
 }

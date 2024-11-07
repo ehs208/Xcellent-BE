@@ -62,8 +62,9 @@ public class ArticleController {
 	@GetMapping("/{articleId}")
 	@Operation(summary = "게시글 조회", description = "해당 ID의 게시글을 조회합니다.")
 	public ResponseEntity<GlobalResponseDto<ArticleResponseDto>> getArticle(
+		HttpServletRequest request,
 		@PathVariable UUID articleId){
-		ArticleResponseDto articleResponseDto = articleService.getArticle(articleId);
+		ArticleResponseDto articleResponseDto = articleService.getArticle(request, articleId);
 		return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success(articleResponseDto));
 	}
 
@@ -71,9 +72,10 @@ public class ArticleController {
 	@GetMapping
 	@Operation(summary = "게시글 목록 조회(스크롤)", description = "페이징을 적용하여 게시글 목록을 조회합니다.")
 	public ResponseEntity<GlobalResponseDto<List<ArticleResponseDto>>> getArticles(
+		HttpServletRequest request,
 		@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime cursor,
 		@RequestParam(defaultValue = "10") int size) {
-		List<ArticleResponseDto> articles = articleService.getArticles(cursor, size);
+		List<ArticleResponseDto> articles = articleService.getArticles(request, cursor, size);
 		return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success(articles));
 	}
 
