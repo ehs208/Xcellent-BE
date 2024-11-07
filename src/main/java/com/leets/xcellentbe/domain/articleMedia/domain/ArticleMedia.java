@@ -4,9 +4,12 @@ import java.util.UUID;
 
 import com.leets.xcellentbe.domain.article.domain.Article;
 import com.leets.xcellentbe.domain.shared.BaseTimeEntity;
+import com.leets.xcellentbe.domain.shared.DeletedStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -37,16 +40,27 @@ public class ArticleMedia extends BaseTimeEntity {
 	@JoinColumn(name = "article_id")
 	private Article article;
 
+	@NotNull
+	@Column(columnDefinition = "VARCHAR(30)")
+	@Enumerated(EnumType.STRING)
+	private DeletedStatus deletedStatus;
+
 	@Builder
-	private ArticleMedia(Article article, String filePath) {
+	private ArticleMedia(Article article, String filePath, DeletedStatus deletedStatus) {
 		this.article = article;
 		this.filePath = filePath;
+		this.deletedStatus = DeletedStatus.NOT_DELETED;
 	}
 
 	public static ArticleMedia createArticleMedia (Article article, String filePath) {
 		return ArticleMedia.builder()
 			.article(article)
 			.filePath(filePath)
+			.deletedStatus(DeletedStatus.NOT_DELETED)
 			.build();
+	}
+
+	public void deleteMedia() {
+		this.deletedStatus = DeletedStatus.DELETED;
 	}
 }

@@ -1,6 +1,7 @@
 package com.leets.xcellentbe.domain.article.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -19,7 +20,8 @@ import com.leets.xcellentbe.domain.article.dto.ArticleResponseDto;
 import com.leets.xcellentbe.domain.article.exception.ArticleNotFoundException;
 import com.leets.xcellentbe.domain.article.exception.DeleteForbiddenException;
 import com.leets.xcellentbe.domain.articleMedia.domain.ArticleMedia;
-import com.leets.xcellentbe.domain.articleMedia.service.ArticleMediaService;
+import com.leets.xcellentbe.domain.articleMedia.domain.repository.ArticleMediaRepository;
+import com.leets.xcellentbe.domain.articleMedia.exception.ArticleMediaNotFoundException;
 import com.leets.xcellentbe.domain.hashtag.HashtagService.HashtagService;
 import com.leets.xcellentbe.domain.hashtag.domain.Hashtag;
 import com.leets.xcellentbe.domain.user.domain.User;
@@ -36,9 +38,10 @@ import lombok.RequiredArgsConstructor;
 public class ArticleService {
 
 	private final ArticleRepository articleRepository;
+	private final ArticleMediaRepository articleMediaRepository;
 	private final UserRepository userRepository;
 	private final HashtagService hashtagService;
-	private final ArticleMediaService articleMediaService;
+	private final S3UploadMediaService s3UploadMediaService;
 	private final JwtService jwtService;
 
 	//게시글 작성
@@ -55,12 +58,25 @@ public class ArticleService {
 			newArticle.addHashtag(hashtags);
 		}
 		//이미지 파일 처리
-		List<ArticleMedia> mediaList = articleMediaService.saveArticleMedia(mediaFiles, newArticle);
+		List<ArticleMedia> mediaList = saveArticleMedia(mediaFiles, newArticle);
 		if (!mediaList.isEmpty()) {
 			newArticle.addMedia(mediaList);
 		}
 
 		return ArticleCreateResponseDto.from(articleRepository.save(newArticle));
+	}
+
+	//미디어 생성
+	public List<ArticleMedia> saveArticleMedia(List<MultipartFile> mediaFiles, Article article) {
+		List<ArticleMedia> articleMediaList = new ArrayList<>();
+
+		for(MultipartFile multipartFile : mediaFiles) {
+			String fileUrl = s3UploadMediaService.upload(multipartFile,"article");
+			ArticleMedia media = ArticleMedia.createArticleMedia(article, fileUrl);
+			articleMediaRepository.save(media);
+			articleMediaList.add(media);
+		}
+		return articleMediaList;
 	}
 
 	//게시글 삭제 (상태 변경)
@@ -75,8 +91,20 @@ public class ArticleService {
 		}
 		else{
 			targetArticle.deleteArticle();
-			articleMediaService.deleteMediaByArticle(targetArticle);
+			deleteMediaByArticle(articleId);
 			hashtagService.deleteHashtags(targetArticle);
+		}
+	}
+
+	//미디어 삭제
+	public void deleteMediaByArticle(UUID articleId) {
+		List<ArticleMedia> mediaList = articleMediaRepository.findByArticle_ArticleId(articleId);
+
+		if (!(mediaList.isEmpty())) {
+			for (ArticleMedia media : mediaList) {
+				s3UploadMediaService.removeFile(media.getFilePath(), "articles/");
+				media.deleteMedia();
+			}
 		}
 	}
 
@@ -85,6 +113,11 @@ public class ArticleService {
 
 		Article targetArticle = articleRepository.findById(articleId)
 			.orElseThrow(ArticleNotFoundException::new);
+
+		List<ArticleMedia> mediaList = articleMediaRepository.findByArticle_ArticleId(targetArticle.getArticleId());
+		if (mediaList.isEmpty()) {
+			throw new ArticleMediaNotFoundException();
+		}
 
 		return ArticleResponseDto.from(targetArticle);
 	}

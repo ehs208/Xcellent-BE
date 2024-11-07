@@ -1,4 +1,4 @@
-package com.leets.xcellentbe.domain.articleMedia.service;
+package com.leets.xcellentbe.domain.article.service;
 
 import java.io.File;
 import java.io.FileOutputStream;
