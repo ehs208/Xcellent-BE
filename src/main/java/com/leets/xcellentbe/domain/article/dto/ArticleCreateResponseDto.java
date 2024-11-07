@@ -13,18 +13,15 @@ import lombok.NoArgsConstructor;
 public class ArticleCreateResponseDto {
 
 	private UUID articleId;
-	private String message;
 
 	@Builder
 	private ArticleCreateResponseDto(UUID articleId, String message) {
 		this.articleId = articleId;
-		this.message = message;
 	}
 
 	public static ArticleCreateResponseDto from(Article article) {
 		return ArticleCreateResponseDto.builder()
 			.articleId(article.getArticleId())
-			.message("작성이 완료되었습니다.")
 			.build();
 	}
 }
