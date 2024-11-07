@@ -23,10 +23,15 @@ public class ArticleResponseDto {
 	private List<String> hashtags;
 	private UUID rePostId;
 	private List<String> mediaUrls;
+	private int viewCnt;
+	private int rePostCnt;
+	private int likeCnt;
+	private int commentCnt;
 
 	@Builder
 	private ArticleResponseDto(UUID articleId, Long writerId, String content, DeletedStatus deletedStatus,
-								List<String> hashtags, UUID rePostId, List<String> mediaUrls) {
+								List<String> hashtags, UUID rePostId, List<String> mediaUrls, int viewCnt,
+								int rePostCnt, int likeCnt, int commentCnt) {
 		this.articleId = articleId;
 		this.writerId = writerId;
 		this.content = content;
@@ -34,6 +39,10 @@ public class ArticleResponseDto {
 		this.hashtags = hashtags;
 		this.rePostId = rePostId;
 		this.mediaUrls = mediaUrls;
+		this.viewCnt = viewCnt;
+		this.rePostCnt = rePostCnt;
+		this.likeCnt = likeCnt;
+		this.commentCnt = commentCnt;
 	}
 
 	public static ArticleResponseDto from(Article article) {
@@ -51,6 +60,10 @@ public class ArticleResponseDto {
 				.stream()
 				.map(ArticleMedia::getFilePath) // 이미지 URL로 매핑
 				.collect(Collectors.toList()) : null)
+			.viewCnt(article.getViewCnt())
+			.rePostCnt(article.getRepostCnt())
+			.likeCnt(article.getLikeCnt())
+			.commentCnt(article.getCommentCnt())
 			.build();
 	}
 }

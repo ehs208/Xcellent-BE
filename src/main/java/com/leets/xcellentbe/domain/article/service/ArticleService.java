@@ -118,6 +118,7 @@ public class ArticleService {
 		if (mediaList.isEmpty()) {
 			throw new ArticleMediaNotFoundException();
 		}
+		targetArticle.updateViewCount();
 
 		return ArticleResponseDto.from(targetArticle);
 	}
@@ -145,6 +146,7 @@ public class ArticleService {
 			.orElseThrow(ArticleNotFoundException::new);
 		Article newArticle = Article.createArticle(writer, repostedArticle.getContent());
 		repostedArticle.addRepost(newArticle);
+		repostedArticle.plusRepostCount();
 
 		return ArticleCreateResponseDto.from(articleRepository.save(newArticle));
 	}
@@ -160,6 +162,7 @@ public class ArticleService {
 		}
 		else {
 			targetArticle.deleteArticle();
+			targetArticle.getRePost().minusRepostCount();
 		}
 	}
 

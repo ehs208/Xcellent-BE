@@ -60,6 +60,9 @@ public class Article extends BaseTimeEntity {
 	@OneToMany(mappedBy = "article")
 	private List<ArticleMedia> mediaList;
 
+	private int viewCnt, repostCnt, likeCnt, commentCnt;
+
+
 	@Builder
 	private Article(User writer, String content, DeletedStatus deletedStatus) {
 		this.writer = writer;
@@ -95,5 +98,32 @@ public class Article extends BaseTimeEntity {
 			this.mediaList = new ArrayList<>();
 		}
 		this.mediaList.addAll(mediaList);
+	}
+
+	public void  updateViewCount() {
+		this.viewCnt++;
+	}
+
+	public void  plusRepostCount() {
+		this.repostCnt++;
+	}
+
+	public void minusRepostCount() {
+		this.repostCnt--;
+	}
+
+	public void  plusLikeCount() {
+		this.likeCnt++;
+	}
+
+	public void minusLikeCount() {
+		this.likeCnt--;
+	}
+	public void  plusCommentCount() {
+		this.commentCnt++;
+	}
+
+	public void minusCommentCount() {
+		this.commentCnt--;
 	}
 }
