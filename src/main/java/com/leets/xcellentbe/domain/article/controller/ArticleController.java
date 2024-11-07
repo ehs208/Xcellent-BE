@@ -1,6 +1,7 @@
 package com.leets.xcellentbe.domain.article.controller;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.leets.xcellentbe.domain.article.dto.ArticleCreateRequestDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleCreateResponseDto;
-import com.leets.xcellentbe.domain.article.dto.ArticleRepostDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleRequestDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleResponseDto;
 import com.leets.xcellentbe.domain.article.service.ArticleService;
@@ -36,19 +36,22 @@ public class ArticleController {
 	private final ArticleService articleService;
 
 	//게시글 작성
-	@PostMapping("/create")
+	@PostMapping
 	@Operation(summary = "게시글 작성", description = "새 게시글을 작성합니다.")
 	public ResponseEntity<GlobalResponseDto<ArticleCreateResponseDto>> createArticle(
 		HttpServletRequest request,
 		@RequestBody ArticleCreateRequestDto articleCreateRequestDto,
-		@RequestParam("mediaFiles") List<MultipartFile> mediaFiles){
+		@RequestParam(value = "mediaFiles", required = false) List<MultipartFile> mediaFiles){
+		if (mediaFiles == null) {
+			mediaFiles = Collections.emptyList();
+		}
 		ArticleCreateResponseDto responseDto = articleService.createArticle(request, articleCreateRequestDto, mediaFiles);
 		return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success(responseDto));
 	}
 
 	//게시글 삭제(소프트)
-	@PatchMapping("/{articleId}/delete")
-	@Operation(summary = "게시글 삭제", description = "게시글을 소프트 삭제(상태 변경)합니다.")
+	@PatchMapping("/{articleId}")
+	@Operation(summary = "게시글 삭제", description = "게시글을 삭제(상태 변경)합니다.")
 	public ResponseEntity<GlobalResponseDto<Void>> deleteArticle(
 		HttpServletRequest request,
 		@PathVariable UUID articleId){
@@ -60,19 +63,19 @@ public class ArticleController {
 	@GetMapping("/{articleId}")
 	@Operation(summary = "게시글 조회", description = "해당 ID의 게시글을 조회합니다.")
 	public ResponseEntity<GlobalResponseDto<ArticleResponseDto>> getArticle(
-		@RequestBody ArticleRequestDto articleRequestDto){
-		ArticleResponseDto articleResponseDto = articleService.getArticle(articleRequestDto);
+		@PathVariable UUID articleId){
+		ArticleResponseDto articleResponseDto = articleService.getArticle(articleId);
 		return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success(articleResponseDto));
 	}
 
 	//메인 페이지 게시글 조회
 	@GetMapping
-	@Operation(summary = "게시글 목록 조회(스크롤)", description = "커서 페이징을 적용하여 게시글 목록을 조회합니다.")
+	@Operation(summary = "게시글 목록 조회(스크롤)", description = "페이징을 적용하여 게시글 목록을 조회합니다.")
 	public ResponseEntity<GlobalResponseDto<List<ArticleResponseDto>>> getArticles(
 		@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime cursor,
 		@RequestParam(defaultValue = "10") int size) {
 		List<ArticleResponseDto> articles = articleService.getArticles(cursor, size);
-		return ResponseEntity.ok(GlobalResponseDto.success(articles));
+		return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success(articles));
 	}
 
 	//리포스트 작성
@@ -80,13 +83,13 @@ public class ArticleController {
 	@Operation(summary = "게시글 리포스트", description = "게시글을 리포스트합니다.")
 	public ResponseEntity<GlobalResponseDto<ArticleCreateResponseDto>> rePostArticle(
 		HttpServletRequest request,
-		@RequestBody ArticleRepostDto articleRepostDto){
-		ArticleCreateResponseDto responseDto = articleService.rePostArticle(request, articleRepostDto);
+		@PathVariable UUID articleId){
+		ArticleCreateResponseDto responseDto = articleService.rePostArticle(request, articleId);
 		return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success(responseDto));
 	}
 
 	//리포스트 삭제
-	@PatchMapping("/{articleId}/deleteRepost")
+	@PatchMapping("/{articleId}/unRepost")
 	@Operation(summary = "리포스트 삭제", description = "리포스트를 삭제합니다.")
 	public ResponseEntity<GlobalResponseDto<Void>> deleteRepost(
 		HttpServletRequest request,
