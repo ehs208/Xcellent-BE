@@ -1,4 +1,4 @@
-package com.leets.xcellentbe.domain.hashtag.domain;
+package com.leets.xcellentbe.domain.articleMedia.domain;
 
 import java.util.UUID;
 
@@ -25,17 +25,17 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Hashtag extends BaseTimeEntity {
+public class ArticleMedia extends BaseTimeEntity {
 
 	@Id
-	@Column(name = "hashtag_id")
 	@GeneratedValue(strategy = GenerationType.UUID)
-	private UUID HashtagId;
+	private UUID ArticleMediaId;
 
 	@NotNull
-	@Column(length = 30)
-	private String content;
+	@Column
+	private String filePath;
 
+	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "article_id")
 	private Article article;
@@ -46,20 +46,21 @@ public class Hashtag extends BaseTimeEntity {
 	private DeletedStatus deletedStatus;
 
 	@Builder
-	private Hashtag(Article article, String content, DeletedStatus deletedStatus) {
+	private ArticleMedia(Article article, String filePath, DeletedStatus deletedStatus) {
 		this.article = article;
-		this.content = content;
+		this.filePath = filePath;
 		this.deletedStatus = DeletedStatus.NOT_DELETED;
 	}
 
-	public static Hashtag create(Article article, String content) {
-		return Hashtag.builder()
+	public static ArticleMedia createArticleMedia (Article article, String filePath) {
+		return ArticleMedia.builder()
 			.article(article)
-			.content(content)
+			.filePath(filePath)
+			.deletedStatus(DeletedStatus.NOT_DELETED)
 			.build();
 	}
 
-	public void deleteHashtag() {
+	public void deleteMedia() {
 		this.deletedStatus = DeletedStatus.DELETED;
 	}
 }
