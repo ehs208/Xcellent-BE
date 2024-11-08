@@ -1,4 +1,4 @@
-package com.leets.xcellentbe.domain.postLike.domain;
+package com.leets.xcellentbe.domain.articleLike.domain;
 
 import java.util.UUID;
 
@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostLike extends BaseTimeEntity {
+public class ArticleLike extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
@@ -35,7 +35,8 @@ public class PostLike extends BaseTimeEntity {
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "post_id")
+
+	@JoinColumn(name = "article_id")
 	private Article article;
 
 	@NotNull
