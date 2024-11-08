@@ -2,7 +2,7 @@ package com.leets.xcellentbe.domain.postLike.domain;
 
 import java.util.UUID;
 
-import com.leets.xcellentbe.domain.post.domain.Post;
+import com.leets.xcellentbe.domain.article.domain.Article;
 import com.leets.xcellentbe.domain.shared.BaseTimeEntity;
 import com.leets.xcellentbe.domain.shared.DeletedStatus;
 import com.leets.xcellentbe.domain.user.domain.User;
@@ -36,7 +36,7 @@ public class PostLike extends BaseTimeEntity {
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "post_id")
-	private Post post;
+	private Article article;
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)

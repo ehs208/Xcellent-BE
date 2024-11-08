@@ -1,4 +1,4 @@
-package com.leets.xcellentbe.domain.post.domain;
+package com.leets.xcellentbe.domain.article.domain;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Post {
+public class Article {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
@@ -52,19 +52,19 @@ public class Post {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "repost_id")
-	private Post rePost;
+	private Article reArticle;
 
 	@OneToMany(fetch = FetchType.LAZY)
 	@JoinColumn(name = "hashtag_id")
 	private List<Hashtag> hashtags;
 
-	public Post(User writer, String content, DeletedStatus deletedStatus, Boolean isPinned, Post rePost,
+	public Article(User writer, String content, DeletedStatus deletedStatus, Boolean isPinned, Article reArticle,
 		List<Hashtag> hashtags) {
 		this.writer = writer;
 		this.content = content;
 		this.deletedStatus = deletedStatus;
 		this.isPinned = isPinned;
-		this.rePost = rePost;
+		this.reArticle = reArticle;
 		this.hashtags = hashtags;
 	}
 }

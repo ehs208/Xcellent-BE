@@ -1,9 +1,9 @@
-package com.leets.xcellentbe.domain.post.dto;
+package com.leets.xcellentbe.domain.article.dto;
 
 import java.util.List;
 
+import com.leets.xcellentbe.domain.article.domain.Article;
 import com.leets.xcellentbe.domain.hashtag.domain.Hashtag;
-import com.leets.xcellentbe.domain.post.domain.Post;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -16,11 +16,12 @@ public class ArticlesResponseDto {
 	private String content;
 	private Boolean isPinned;
 	private List<Hashtag> hashtags;
-	private Post rePost;
+	private Article rePost;
 	private List<String> filePath;
 
 	@Builder
-	private ArticlesResponseDto(String writer, String content, Boolean isPinned, List<Hashtag> hashtags, Post rePost,
+	private ArticlesResponseDto(String writer, String content, Boolean isPinned, List<Hashtag> hashtags,
+		Article rePost,
 		List<String> filePath) {
 		this.writer = writer;
 		this.content = content;
@@ -30,13 +31,13 @@ public class ArticlesResponseDto {
 		this.filePath = filePath;
 	}
 
-	public static ArticlesResponseDto of(Post post, List<String> filePath) {
+	public static ArticlesResponseDto of(Article article, List<String> filePath) {
 		return ArticlesResponseDto.builder()
-			.writer(post.getWriter().getUserName())
-			.content(post.getContent())
-			.isPinned(post.getIsPinned())
-			.hashtags(post.getHashtags())
-			.rePost(post.getRePost())
+			.writer(article.getWriter().getUserName())
+			.content(article.getContent())
+			.isPinned(article.getIsPinned())
+			.hashtags(article.getHashtags())
+			.rePost(article.getReArticle())
 			.filePath(filePath)
 			.build();
 	}

@@ -1,6 +1,6 @@
-package com.leets.xcellentbe.domain.post.dto;
+package com.leets.xcellentbe.domain.article.dto;
 
-import com.leets.xcellentbe.domain.post.domain.Post;
+import com.leets.xcellentbe.domain.article.domain.Article;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,6 +8,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ArticlesWithMediaDto {
-	private Post post;
+	private Article article;
 	private String filePath;
 }

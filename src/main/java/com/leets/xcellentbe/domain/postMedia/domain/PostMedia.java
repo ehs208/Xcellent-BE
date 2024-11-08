@@ -2,7 +2,7 @@ package com.leets.xcellentbe.domain.postMedia.domain;
 
 import java.util.UUID;
 
-import com.leets.xcellentbe.domain.post.domain.Post;
+import com.leets.xcellentbe.domain.article.domain.Article;
 import com.leets.xcellentbe.domain.shared.BaseTimeEntity;
 
 import jakarta.persistence.Column;
@@ -34,5 +34,5 @@ public class PostMedia extends BaseTimeEntity {
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "post_id")
-	private Post post;
+	private Article article;
 }
