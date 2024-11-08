@@ -35,9 +35,8 @@ public class ArticlesResponseDto {
 		return ArticlesResponseDto.builder()
 			.writer(article.getWriter().getUserName())
 			.content(article.getContent())
-			.isPinned(article.getIsPinned())
 			.hashtags(article.getHashtags())
-			.rePost(article.getReArticle())
+			.rePost(article.getRePost())
 			.filePath(filePath)
 			.build();
 	}

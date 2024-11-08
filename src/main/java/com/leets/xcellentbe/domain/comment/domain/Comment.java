@@ -40,11 +40,7 @@ public class Comment extends BaseTimeEntity {
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "post_id")
-<<<<<<< HEAD
-	private Article article;
-=======
 	private Article post;
->>>>>>> develop
 
 	@NotNull
 	@Column
