@@ -30,6 +30,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+
 public class Article extends BaseTimeEntity {
 
 	@Id
@@ -62,7 +63,6 @@ public class Article extends BaseTimeEntity {
 
 	private int viewCnt, repostCnt, likeCnt, commentCnt;
 
-
 	@Builder
 	private Article(User writer, String content, DeletedStatus deletedStatus) {
 		this.writer = writer;
@@ -70,7 +70,16 @@ public class Article extends BaseTimeEntity {
 		this.deletedStatus = DeletedStatus.NOT_DELETED;
 	}
 
-	public static Article createArticle(User writer, String content){
+	public Article(User writer, String content, DeletedStatus deletedStatus, Article rePost,
+		List<Hashtag> hashtags) {
+		this.writer = writer;
+		this.content = content;
+		this.deletedStatus = deletedStatus;
+		this.rePost = rePost;
+		this.hashtags = hashtags;
+	}
+
+	public static Article createArticle(User writer, String content) {
 		return Article.builder()
 			.writer(writer)
 			.content(content)
@@ -83,7 +92,7 @@ public class Article extends BaseTimeEntity {
 	}
 
 	public void addHashtag(List<Hashtag> hashtags) {
-		if(this.hashtags == null){
+		if (this.hashtags == null) {
 			this.hashtags = new ArrayList<>();
 		}
 		this.hashtags.addAll(hashtags);
@@ -100,11 +109,11 @@ public class Article extends BaseTimeEntity {
 		this.mediaList.addAll(mediaList);
 	}
 
-	public void  updateViewCount() {
+	public void updateViewCount() {
 		this.viewCnt++;
 	}
 
-	public void  plusRepostCount() {
+	public void plusRepostCount() {
 		this.repostCnt++;
 	}
 
@@ -112,18 +121,20 @@ public class Article extends BaseTimeEntity {
 		this.repostCnt--;
 	}
 
-	public void  plusLikeCount() {
+	public void plusLikeCount() {
 		this.likeCnt++;
 	}
 
 	public void minusLikeCount() {
 		this.likeCnt--;
 	}
-	public void  plusCommentCount() {
+
+	public void plusCommentCount() {
 		this.commentCnt++;
 	}
 
 	public void minusCommentCount() {
 		this.commentCnt--;
+
 	}
 }

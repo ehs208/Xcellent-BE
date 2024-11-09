@@ -2,7 +2,9 @@ package com.leets.xcellentbe.domain.article.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -17,6 +19,8 @@ import com.leets.xcellentbe.domain.article.domain.repository.ArticleRepository;
 import com.leets.xcellentbe.domain.article.dto.ArticleCreateRequestDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleCreateResponseDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleResponseDto;
+import com.leets.xcellentbe.domain.article.dto.ArticlesResponseDto;
+import com.leets.xcellentbe.domain.article.dto.ArticlesWithMediaDto;
 import com.leets.xcellentbe.domain.article.exception.ArticleNotFoundException;
 import com.leets.xcellentbe.domain.article.exception.DeleteForbiddenException;
 import com.leets.xcellentbe.domain.articleMedia.domain.ArticleMedia;
@@ -36,7 +40,6 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 @RequiredArgsConstructor
 public class ArticleService {
-
 	private final ArticleRepository articleRepository;
 	private final ArticleMediaRepository articleMediaRepository;
 	private final UserRepository userRepository;
@@ -44,10 +47,42 @@ public class ArticleService {
 	private final S3UploadMediaService s3UploadMediaService;
 	private final JwtService jwtService;
 
+	public List<ArticlesResponseDto> getArticles(String customId, boolean mediaOnly) {
+		User user = getUser(customId);
+		List<ArticlesWithMediaDto[]> posts = getPosts(user);
+
+		Map<Article, List<String>> groupedPosts = groupPostsByFilePath(posts, mediaOnly);
+
+		return groupedPosts.entrySet().stream()
+			.map(entry -> ArticlesResponseDto.of(entry.getKey(), entry.getValue()))
+			.collect(Collectors.toList());
+	}
+
+	// 게시글 파일 경로 그룹화 (미디어 필터링 조건 추가)
+	private Map<Article, List<String>> groupPostsByFilePath(List<ArticlesWithMediaDto[]> posts, boolean mediaOnly) {
+		return posts.stream()
+			.flatMap(Arrays::stream)
+			.filter(post -> !mediaOnly || post.getFilePath() != null) // 미디어 있는 경우만 필터링
+			.collect(Collectors.groupingBy(
+				ArticlesWithMediaDto::getArticle,
+				Collectors.mapping(ArticlesWithMediaDto::getFilePath, Collectors.toList())
+			));
+	}
+
+	// 유저 정보로 게시글 조회
+	private List<ArticlesWithMediaDto[]> getPosts(User user) {
+		return articleRepository.findPostsByWriter(user);
+	}
+
+	// 유저 정보 조회
+	private User getUser(String customId) {
+		return userRepository.findByCustomId(customId).orElseThrow(UserNotFoundException::new);
+	}
+
 	//게시글 작성
 	public ArticleCreateResponseDto createArticle(HttpServletRequest request,
-											ArticleCreateRequestDto articleCreateRequestDto,
-											List<MultipartFile> mediaFiles) {
+		ArticleCreateRequestDto articleCreateRequestDto,
+		List<MultipartFile> mediaFiles) {
 		User writer = getUser(request);
 		String content = articleCreateRequestDto.getContent();
 		//게시글 생성
@@ -70,8 +105,8 @@ public class ArticleService {
 	public List<ArticleMedia> saveArticleMedia(List<MultipartFile> mediaFiles, Article article) {
 		List<ArticleMedia> articleMediaList = new ArrayList<>();
 
-		for(MultipartFile multipartFile : mediaFiles) {
-			String fileUrl = s3UploadMediaService.upload(multipartFile,"article");
+		for (MultipartFile multipartFile : mediaFiles) {
+			String fileUrl = s3UploadMediaService.upload(multipartFile, "article");
 			ArticleMedia media = ArticleMedia.createArticleMedia(article, fileUrl);
 			articleMediaRepository.save(media);
 			articleMediaList.add(media);
@@ -86,10 +121,9 @@ public class ArticleService {
 		Article targetArticle = articleRepository.findById(articleId)
 			.orElseThrow(ArticleNotFoundException::new);
 
-		if(!(targetArticle.getWriter().getUserId().equals(user.getUserId()))){
+		if (!(targetArticle.getWriter().getUserId().equals(user.getUserId()))) {
 			throw new DeleteForbiddenException();
-		}
-		else{
+		} else {
 			targetArticle.deleteArticle();
 			deleteMediaByArticle(articleId);
 			hashtagService.deleteHashtags(targetArticle);
@@ -163,10 +197,9 @@ public class ArticleService {
 		User user = getUser(request);
 		Article targetArticle = articleRepository.findById(articleId)
 			.orElseThrow(ArticleNotFoundException::new);
-		if(!(targetArticle.getWriter().getUserId().equals(user.getUserId()))){
+		if (!(targetArticle.getWriter().getUserId().equals(user.getUserId()))) {
 			throw new DeleteForbiddenException();
-		}
-		else {
+		} else {
 			targetArticle.deleteArticle();
 			targetArticle.getRePost().minusRepostCount();
 		}
@@ -181,5 +214,6 @@ public class ArticleService {
 			.orElseThrow(UserNotFoundException::new);
 
 		return user;
+
 	}
 }

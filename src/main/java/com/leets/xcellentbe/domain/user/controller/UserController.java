@@ -28,8 +28,7 @@ public class UserController {
 	@GetMapping("/myinfo")
 	@Operation(summary = "본인 프로필 조회", description = "본인의 프로필 내용을 조회합니다.")
 	public ResponseEntity<GlobalResponseDto<UserProfileResponseDto>> getProfile(HttpServletRequest request) {
-		return ResponseEntity.status(HttpStatus.OK)
-			.body(GlobalResponseDto.success(userService.getProfile(request)));
+		return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success(userService.getProfile(request)));
 	}
 
 	@PatchMapping("/myinfo")
@@ -64,4 +63,5 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(GlobalResponseDto.success(userService.updateBackgroundProfileImage(file, request)));
 	}
+
 }

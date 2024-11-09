@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.leets.xcellentbe.domain.article.dto.ArticleCreateRequestDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleCreateResponseDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleResponseDto;
+import com.leets.xcellentbe.domain.article.dto.ArticlesResponseDto;
 import com.leets.xcellentbe.domain.article.service.ArticleService;
 import com.leets.xcellentbe.global.response.GlobalResponseDto;
 
@@ -34,17 +35,33 @@ import lombok.RequiredArgsConstructor;
 public class ArticleController {
 	private final ArticleService articleService;
 
+	@GetMapping("/{customId}/list")
+	@Operation(summary = "특정 사용자의 게시글 조회", description = "특정 사용자의 게시글을 조회합니다.")
+	public ResponseEntity<GlobalResponseDto<List<ArticlesResponseDto>>> getArticles(@PathVariable String customId) {
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(GlobalResponseDto.success(articleService.getArticles(customId, false)));
+	}
+
+	@GetMapping("/{customId}/list/media")
+	@Operation(summary = "특정 사용자의 미디어 게시글 조회", description = "특정 사용자의 미디어 게시글을 조회합니다.")
+	public ResponseEntity<GlobalResponseDto<List<ArticlesResponseDto>>> getMediaArticles(
+		@PathVariable String customId) {
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(GlobalResponseDto.success(articleService.getArticles(customId, true)));
+	}
+
 	//게시글 작성
 	@PostMapping
 	@Operation(summary = "게시글 작성", description = "새 게시글을 작성합니다.")
 	public ResponseEntity<GlobalResponseDto<ArticleCreateResponseDto>> createArticle(
 		HttpServletRequest request,
 		@RequestBody ArticleCreateRequestDto articleCreateRequestDto,
-		@RequestParam(value = "mediaFiles", required = false) List<MultipartFile> mediaFiles){
+		@RequestParam(value = "mediaFiles", required = false) List<MultipartFile> mediaFiles) {
 		if (mediaFiles == null) {
 			mediaFiles = Collections.emptyList();
 		}
-		ArticleCreateResponseDto responseDto = articleService.createArticle(request, articleCreateRequestDto, mediaFiles);
+		ArticleCreateResponseDto responseDto = articleService.createArticle(request, articleCreateRequestDto,
+			mediaFiles);
 		return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success(responseDto));
 	}
 
@@ -53,7 +70,7 @@ public class ArticleController {
 	@Operation(summary = "게시글 삭제", description = "게시글을 삭제(상태 변경)합니다.")
 	public ResponseEntity<GlobalResponseDto<Void>> deleteArticle(
 		HttpServletRequest request,
-		@PathVariable UUID articleId){
+		@PathVariable UUID articleId) {
 		articleService.deleteArticle(request, articleId);
 		return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success());
 	}
@@ -63,7 +80,7 @@ public class ArticleController {
 	@Operation(summary = "게시글 조회", description = "해당 ID의 게시글을 조회합니다.")
 	public ResponseEntity<GlobalResponseDto<ArticleResponseDto>> getArticle(
 		HttpServletRequest request,
-		@PathVariable UUID articleId){
+		@PathVariable UUID articleId) {
 		ArticleResponseDto articleResponseDto = articleService.getArticle(request, articleId);
 		return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success(articleResponseDto));
 	}
@@ -84,7 +101,7 @@ public class ArticleController {
 	@Operation(summary = "게시글 리포스트", description = "게시글을 리포스트합니다.")
 	public ResponseEntity<GlobalResponseDto<ArticleCreateResponseDto>> rePostArticle(
 		HttpServletRequest request,
-		@PathVariable UUID articleId){
+		@PathVariable UUID articleId) {
 		ArticleCreateResponseDto responseDto = articleService.rePostArticle(request, articleId);
 		return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success(responseDto));
 	}
@@ -94,8 +111,9 @@ public class ArticleController {
 	@Operation(summary = "리포스트 삭제", description = "리포스트를 삭제합니다.")
 	public ResponseEntity<GlobalResponseDto<Void>> deleteRepost(
 		HttpServletRequest request,
-		@PathVariable UUID articleId){
+		@PathVariable UUID articleId) {
 		articleService.deleteRepost(request, articleId);
 		return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success());
+
 	}
 }

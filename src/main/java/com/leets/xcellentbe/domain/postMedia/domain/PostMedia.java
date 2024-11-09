@@ -1,11 +1,9 @@
-package com.leets.xcellentbe.domain.articleLike.domain;
+package com.leets.xcellentbe.domain.postMedia.domain;
 
 import java.util.UUID;
 
 import com.leets.xcellentbe.domain.article.domain.Article;
 import com.leets.xcellentbe.domain.shared.BaseTimeEntity;
-import com.leets.xcellentbe.domain.shared.DeletedStatus;
-import com.leets.xcellentbe.domain.user.domain.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,24 +21,18 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ArticleLike extends BaseTimeEntity {
+public class PostMedia extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-	private UUID PostLikeId;
+	private UUID PostMediaId;
 
 	@NotNull
 	@Column
-	private DeletedStatus deletedStatus;
+	private String filePath;
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
-
-	@JoinColumn(name = "article_id")
+	@JoinColumn(name = "post_id")
 	private Article article;
-
-	@NotNull
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
-	private User user;
 }
