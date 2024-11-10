@@ -25,7 +25,7 @@ import com.leets.xcellentbe.domain.article.exception.ArticleNotFoundException;
 import com.leets.xcellentbe.domain.article.exception.DeleteForbiddenException;
 import com.leets.xcellentbe.domain.articleMedia.domain.ArticleMedia;
 import com.leets.xcellentbe.domain.articleMedia.domain.repository.ArticleMediaRepository;
-import com.leets.xcellentbe.domain.articleMedia.exception.ArticleMediaNotFoundException;
+import com.leets.xcellentbe.domain.comment.domain.repository.CommentRepository;
 import com.leets.xcellentbe.domain.hashtag.HashtagService.HashtagService;
 import com.leets.xcellentbe.domain.hashtag.domain.Hashtag;
 import com.leets.xcellentbe.domain.user.domain.User;
@@ -43,6 +43,7 @@ public class ArticleService {
 	private final ArticleRepository articleRepository;
 	private final ArticleMediaRepository articleMediaRepository;
 	private final UserRepository userRepository;
+	private final CommentRepository commentRepository;
 	private final HashtagService hashtagService;
 	private final S3UploadMediaService s3UploadMediaService;
 	private final JwtService jwtService;
@@ -150,10 +151,6 @@ public class ArticleService {
 		Article targetArticle = articleRepository.findById(articleId)
 			.orElseThrow(ArticleNotFoundException::new);
 
-		List<ArticleMedia> mediaList = articleMediaRepository.findByArticle_ArticleId(targetArticle.getArticleId());
-		if (mediaList.isEmpty()) {
-			throw new ArticleMediaNotFoundException();
-		}
 		targetArticle.updateViewCount();
 		boolean isOwner = targetArticle.getWriter().getUserId().equals(user.getUserId());
 
