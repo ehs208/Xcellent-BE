@@ -1,4 +1,10 @@
 package com.leets.xcellentbe.domain.comment.dto;
 
-public class CommentRequestDto {
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@NoArgsConstructor
+public class CommentCreateRequestDto {
+	private String content;
 }
