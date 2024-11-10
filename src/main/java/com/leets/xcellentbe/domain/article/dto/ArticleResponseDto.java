@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import com.leets.xcellentbe.domain.article.domain.Article;
 import com.leets.xcellentbe.domain.articleMedia.domain.ArticleMedia;
-import com.leets.xcellentbe.domain.comment.domain.Comment;
 import com.leets.xcellentbe.domain.comment.dto.CommentResponseDto;
 import com.leets.xcellentbe.domain.hashtag.domain.Hashtag;
 import com.leets.xcellentbe.domain.shared.DeletedStatus;

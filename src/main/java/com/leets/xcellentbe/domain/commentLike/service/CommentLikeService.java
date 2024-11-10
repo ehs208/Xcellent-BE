@@ -1,6 +1,5 @@
 package com.leets.xcellentbe.domain.commentLike.service;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;

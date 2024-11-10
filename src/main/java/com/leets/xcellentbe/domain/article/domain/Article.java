@@ -146,6 +146,5 @@ public class Article extends BaseTimeEntity {
 
 	public void minusCommentCount() {
 		this.commentCnt--;
-
 	}
 }
