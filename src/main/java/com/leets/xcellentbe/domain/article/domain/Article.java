@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.leets.xcellentbe.domain.articleMedia.domain.ArticleMedia;
+import com.leets.xcellentbe.domain.comment.domain.Comment;
 import com.leets.xcellentbe.domain.hashtag.domain.Hashtag;
 import com.leets.xcellentbe.domain.shared.BaseTimeEntity;
 import com.leets.xcellentbe.domain.shared.DeletedStatus;
@@ -61,6 +62,9 @@ public class Article extends BaseTimeEntity {
 	@OneToMany(mappedBy = "article")
 	private List<ArticleMedia> mediaList;
 
+	@OneToMany(mappedBy = "article")
+	private List<Comment> comments;
+
 	private int viewCnt, repostCnt, likeCnt, commentCnt;
 
 	@Builder
@@ -85,6 +89,13 @@ public class Article extends BaseTimeEntity {
 			.content(content)
 			.deletedStatus(DeletedStatus.NOT_DELETED)
 			.build();
+	}
+
+	public void addComments(List<Comment> Comments) {
+		if(this.comments == null){
+			this.comments = new ArrayList<>();
+		}
+		this.comments.addAll(Comments);
 	}
 
 	public void addRepost(Article rePost) {
