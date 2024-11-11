@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.leets.xcellentbe.domain.articleLike.domain.ArticleLike;
 import com.leets.xcellentbe.domain.articleMedia.domain.ArticleMedia;
 import com.leets.xcellentbe.domain.comment.domain.Comment;
 import com.leets.xcellentbe.domain.hashtag.domain.Hashtag;
@@ -65,7 +66,11 @@ public class Article extends BaseTimeEntity {
 	@OneToMany(mappedBy = "article")
 	private List<Comment> comments;
 
-	private int viewCnt, repostCnt, likeCnt, commentCnt;
+	@OneToMany(mappedBy = "article")
+	private List<ArticleLike> articleLikes;
+
+	@Column
+	private int viewCnt;
 
 	@Builder
 	private Article(User writer, String content) {
@@ -90,11 +95,18 @@ public class Article extends BaseTimeEntity {
 			.build();
 	}
 
-	public void addComments(List<Comment> Comments) {
+	public void addComments(List<Comment> comments) {
 		if(this.comments == null){
 			this.comments = new ArrayList<>();
 		}
-		this.comments.addAll(Comments);
+		this.comments.addAll(comments);
+	}
+
+	public void addArticleLike(List<ArticleLike> articleLikes) {
+		if(this.articleLikes == null){
+			this.articleLikes = new ArrayList<>();
+		}
+		this.articleLikes.addAll(articleLikes);
 	}
 
 	public void addRepost(Article rePost) {
@@ -121,29 +133,5 @@ public class Article extends BaseTimeEntity {
 
 	public void updateViewCount() {
 		this.viewCnt++;
-	}
-
-	public void plusRepostCount() {
-		this.repostCnt++;
-	}
-
-	public void minusRepostCount() {
-		this.repostCnt--;
-	}
-
-	public void plusLikeCount() {
-		this.likeCnt++;
-	}
-
-	public void minusLikeCount() {
-		this.likeCnt--;
-	}
-
-	public void plusCommentCount() {
-		this.commentCnt++;
-	}
-
-	public void minusCommentCount() {
-		this.commentCnt--;
 	}
 }

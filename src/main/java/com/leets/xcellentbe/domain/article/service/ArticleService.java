@@ -19,10 +19,11 @@ import com.leets.xcellentbe.domain.article.domain.repository.ArticleRepository;
 import com.leets.xcellentbe.domain.article.dto.ArticleCreateRequestDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleCreateResponseDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleResponseDto;
+import com.leets.xcellentbe.domain.article.dto.ArticleStatsDto;
 import com.leets.xcellentbe.domain.article.dto.ArticlesResponseDto;
 import com.leets.xcellentbe.domain.article.dto.ArticlesWithMediaDto;
 import com.leets.xcellentbe.domain.article.exception.ArticleNotFoundException;
-import com.leets.xcellentbe.domain.article.exception.DeleteForbiddenException;
+import com.leets.xcellentbe.global.error.exception.custom.DeleteForbiddenException;
 import com.leets.xcellentbe.domain.articleMedia.domain.ArticleMedia;
 import com.leets.xcellentbe.domain.articleMedia.domain.repository.ArticleMediaRepository;
 import com.leets.xcellentbe.domain.comment.domain.repository.CommentRepository;
@@ -150,11 +151,11 @@ public class ArticleService {
 
 		Article targetArticle = articleRepository.findById(articleId)
 			.orElseThrow(ArticleNotFoundException::new);
-
+		ArticleStatsDto stats = articleRepository.findArticleStats(targetArticle);
 		targetArticle.updateViewCount();
 		boolean isOwner = targetArticle.getWriter().getUserId().equals(user.getUserId());
 
-		return ArticleResponseDto.from(targetArticle, isOwner);
+		return ArticleResponseDto.from(targetArticle, isOwner, stats);
 	}
 
 	//게시글 전체 조회
@@ -170,7 +171,11 @@ public class ArticleService {
 
 		return articles
 			.stream()
-			.map(article -> ArticleResponseDto.from(article, article.getWriter().getUserId().equals(user.getUserId())))
+			.map(article -> {
+				boolean isOwner = article.getWriter().getUserId().equals(user.getUserId());
+				ArticleStatsDto stats = articleRepository.findArticleStats(article);
+				return ArticleResponseDto.from(article, isOwner, stats);
+			})
 			.collect(Collectors.toList());
 	}
 
@@ -183,7 +188,6 @@ public class ArticleService {
 			.orElseThrow(ArticleNotFoundException::new);
 		Article newArticle = Article.createArticle(writer, repostedArticle.getContent());
 		repostedArticle.addRepost(newArticle);
-		repostedArticle.plusRepostCount();
 
 		return ArticleCreateResponseDto.from(articleRepository.save(newArticle));
 	}
@@ -198,7 +202,6 @@ public class ArticleService {
 			throw new DeleteForbiddenException();
 		} else {
 			targetArticle.deleteArticle();
-			targetArticle.getRePost().minusRepostCount();
 		}
 	}
 

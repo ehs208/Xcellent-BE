@@ -1,5 +1,7 @@
 package com.leets.xcellentbe.domain.articleLike.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -12,6 +14,7 @@ import com.leets.xcellentbe.domain.articleLike.domain.ArticleLike;
 import com.leets.xcellentbe.domain.articleLike.domain.repository.ArticleLikeRepository;
 import com.leets.xcellentbe.domain.articleLike.dto.ArticleLikeResponseDto;
 import com.leets.xcellentbe.domain.articleLike.exception.ArticleLikeNotFoundException;
+import com.leets.xcellentbe.domain.comment.domain.Comment;
 import com.leets.xcellentbe.domain.user.domain.User;
 import com.leets.xcellentbe.domain.user.domain.repository.UserRepository;
 import com.leets.xcellentbe.domain.user.exception.UserNotFoundException;
@@ -31,10 +34,13 @@ public class ArticleLikeService {
 
 	public ArticleLikeResponseDto likeArticle(HttpServletRequest request, UUID articleId) {
 		User user = getUser(request);
+		List<ArticleLike> articleLikeList = new ArrayList<>();
 		Article article = articleRepository.findById(articleId)
 			.orElseThrow(ArticleNotFoundException::new);
 
 		ArticleLike articleLike = ArticleLike.create(article, user);
+		articleLikeList.add(articleLike);
+		article.addArticleLike(articleLikeList);
 
 		return ArticleLikeResponseDto.from(articleLikeRepository.save(articleLike));
 	}

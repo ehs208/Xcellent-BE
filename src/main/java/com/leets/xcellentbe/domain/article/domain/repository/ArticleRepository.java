@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.leets.xcellentbe.domain.article.domain.Article;
+import com.leets.xcellentbe.domain.article.dto.ArticleStatsDto;
 import com.leets.xcellentbe.domain.article.dto.ArticlesWithMediaDto;
 import com.leets.xcellentbe.domain.user.domain.User;
 
@@ -24,4 +25,10 @@ public interface ArticleRepository extends JpaRepository<Article, UUID> {
 	@Query("SELECT a FROM Article a WHERE a.createdAt < :cursor ORDER BY a.createdAt DESC")
 	List<Article> findRecentArticles(@Param("cursor") LocalDateTime cursor, Pageable pageable);
 
+	@Query("SELECT new com.leets.xcellentbe.domain.article.dto.ArticleStatsDto(" +
+			"(SELECT COUNT(l) FROM ArticleLike l WHERE l.article = :article and l.deletedStatus = 'NOT_DELETED')," +
+			"(SELECT COUNT(c) FROM Comment c WHERE c.article = :article and c.deletedStatus = 'NOT_DELETED')," +
+			"(SELECT COUNT(a) FROM Article a WHERE a.rePost = :article and a.deletedStatus = 'NOT_DELETED'))" +
+			"FROM Article a WHERE a = :article")
+	ArticleStatsDto findArticleStats(@Param("article") Article article);
 }

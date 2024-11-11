@@ -50,7 +50,7 @@ public class ArticleResponseDto {
 		this.comments = comments;
 	}
 
-	public static ArticleResponseDto from(Article article, boolean isOwner) {
+	public static ArticleResponseDto from(Article article, boolean isOwner, ArticleStatsDto stats) {
 		return ArticleResponseDto.builder()
 			.articleId(article.getArticleId())
 			.content(article.getContent())
@@ -70,9 +70,9 @@ public class ArticleResponseDto {
 				.map(comment -> CommentResponseDto.from(comment,comment.getWriter().getUserId().equals(article.getWriter().getUserId())))
 				.collect(Collectors.toList()) : null)
 			.viewCnt(article.getViewCnt())
-			.rePostCnt(article.getRepostCnt())
-			.likeCnt(article.getLikeCnt())
-			.commentCnt(article.getCommentCnt())
+			.rePostCnt(stats.getRepostCnt())
+			.likeCnt(stats.getLikeCnt())
+			.commentCnt(stats.getCommentCnt())
 			.owner(isOwner)
 			.build();
 	}
