@@ -17,16 +17,14 @@ public class CommentLikeResponseDto {
 	private DeletedStatus status;
 
 	@Builder
-	private CommentLikeResponseDto(UUID commentId, Long userId, DeletedStatus status) {
+	private CommentLikeResponseDto(UUID commentId, DeletedStatus status) {
 		this.commentId = commentId;
-		this.userId = userId;
 		this.status = status;
 	}
 
 	public static CommentLikeResponseDto from(CommentLike commentLike) {
 		return CommentLikeResponseDto.builder()
 			.commentId(commentLike.getComment().getCommentId())
-			.userId(commentLike.getUser().getUserId())
 			.status(commentLike.getDeletedStatus())
 			.build();
 	}

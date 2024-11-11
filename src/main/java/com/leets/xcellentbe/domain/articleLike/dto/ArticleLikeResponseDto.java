@@ -17,16 +17,14 @@ public class ArticleLikeResponseDto {
 	private DeletedStatus status;
 
 	@Builder
-	private ArticleLikeResponseDto(UUID articleId, Long userId, DeletedStatus status) {
+	private ArticleLikeResponseDto(UUID articleId, DeletedStatus status) {
 		this.articleId = articleId;
-		this.userId = userId;
 		this.status = status;
 	}
 
 	public static ArticleLikeResponseDto from(ArticleLike articleLike) {
 		return ArticleLikeResponseDto.builder()
 			.articleId(articleLike.getArticle().getArticleId())
-			.userId(articleLike.getUser().getUserId())
 			.status(articleLike.getDeletedStatus())
 			.build();
 	}
