@@ -7,28 +7,22 @@ import java.util.UUID;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.leets.xcellentbe.domain.article.domain.Article;
-import com.leets.xcellentbe.domain.article.dto.ArticleStatsDto;
 import com.leets.xcellentbe.domain.article.dto.ArticlesWithMediaDto;
 import com.leets.xcellentbe.domain.user.domain.User;
-
-import io.lettuce.core.dynamic.annotation.Param;
 
 public interface ArticleRepository extends JpaRepository<Article, UUID> {
 	@Query("SELECT new com.leets.xcellentbe.domain.article.dto.ArticlesWithMediaDto(p, pm.filePath) FROM Article p LEFT JOIN PostMedia pm ON p.articleId = pm.article.articleId WHERE p.writer = :user")
 	List<ArticlesWithMediaDto[]> findPostsByWriter(User user);
 
-	@Query("SELECT a FROM Article a ORDER BY a.createdAt DESC")
+	@Query("SELECT a FROM Article a WHERE a.deletedStatus = com.leets.xcellentbe.domain.shared.DeletedStatus.NOT_DELETED ORDER BY a.createdAt DESC")
 	List<Article> findRecentArticles(Pageable pageable);
 
-	@Query("SELECT a FROM Article a WHERE a.createdAt < :cursor ORDER BY a.createdAt DESC")
+	@Query("SELECT a FROM Article a WHERE a.createdAt < :cursor AND a.deletedStatus = com.leets.xcellentbe.domain.shared.DeletedStatus.NOT_DELETED ORDER BY a.createdAt DESC")
 	List<Article> findRecentArticles(@Param("cursor") LocalDateTime cursor, Pageable pageable);
 
-	@Query("SELECT new com.leets.xcellentbe.domain.article.dto.ArticleStatsDto(" +
-			"(SELECT COUNT(l) FROM ArticleLike l WHERE l.article = :article and l.deletedStatus = 'NOT_DELETED')," +
-			"(SELECT COUNT(c) FROM Comment c WHERE c.article = :article and c.deletedStatus = 'NOT_DELETED')," +
-			"(SELECT COUNT(a) FROM Article a WHERE a.rePost = :article and a.deletedStatus = 'NOT_DELETED'))" +
-			"FROM Article a WHERE a = :article")
-	ArticleStatsDto findArticleStats(@Param("article") Article article);
+	@Query("SELECT COUNT(a) FROM Article a WHERE a.rePost = :article AND a.deletedStatus = com.leets.xcellentbe.domain.shared.DeletedStatus.NOT_DELETED")
+	long countReposts(@Param("article") Article article);
 }

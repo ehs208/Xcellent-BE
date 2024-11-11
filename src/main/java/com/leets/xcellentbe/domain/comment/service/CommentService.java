@@ -2,7 +2,9 @@ package com.leets.xcellentbe.domain.comment.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,7 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.leets.xcellentbe.domain.article.domain.Article;
 import com.leets.xcellentbe.domain.article.domain.repository.ArticleRepository;
 import com.leets.xcellentbe.domain.article.exception.ArticleNotFoundException;
-import com.leets.xcellentbe.domain.article.exception.DeleteForbiddenException;
+import com.leets.xcellentbe.domain.comment.dto.CommentStatsDto;
+import com.leets.xcellentbe.domain.commentLike.domain.repository.CommentLikeRepository;
+import com.leets.xcellentbe.global.error.exception.custom.DeleteForbiddenException;
 import com.leets.xcellentbe.domain.comment.domain.Comment;
 import com.leets.xcellentbe.domain.comment.domain.repository.CommentRepository;
 import com.leets.xcellentbe.domain.comment.dto.CommentCreateRequestDto;
@@ -31,6 +35,7 @@ public class CommentService {
 
 	private final ArticleRepository articleRepository;
 	private final UserRepository userRepository;
+	private final CommentLikeRepository commentLikeRepository;
 	private final JwtService jwtService;
 	private final CommentRepository commentRepository;
 
@@ -49,8 +54,7 @@ public class CommentService {
 			Comment parentComment = commentRepository.findById(parentCommentId)
 				.orElseThrow(CommentNotFoundException::new);
 			Comment newComment = Comment.createComment(writer, content, targetArticle);
-			parentComment.updateParentComment(parentComment);
-			newComment.plusCommentCount();
+			newComment.updateParentComment(parentComment);
 			commentList.add(newComment);
 			parentComment.addComment(commentList);
 			commentRepository.save(newComment);
@@ -58,7 +62,6 @@ public class CommentService {
 		else {
 			// 댓글 생성
 			Comment newComment = Comment.createComment(writer, content, targetArticle);
-			targetArticle.plusCommentCount();
 			commentList.add(newComment);
 			targetArticle.addComments(commentList);
 			commentRepository.save(newComment);
@@ -78,12 +81,31 @@ public class CommentService {
 
 		if (targetComment.getParentComment() == null) {
 			targetComment.deleteComment();
-			targetComment.getArticle().minusCommentCount();
+			commentRepository.save(targetComment);
 		}
-		else{
-			targetComment.deleteComment();
-			targetComment.minusCommentCount();
+	}
+
+	//대댓글 삭제
+	public void deleteReply(HttpServletRequest request, UUID commentId, UUID replyId) {
+		User user = getUser(request);
+
+		// 부모 댓글 조회 (commentId)
+		Comment parentComment = commentRepository.findById(commentId)
+			.orElseThrow(CommentNotFoundException::new);
+		// 대댓글(replyId) 조회
+		Comment replyComment = commentRepository.findById(replyId)
+			.orElseThrow(CommentNotFoundException::new);
+
+		if (!replyComment.getWriter().getUserId().equals(user.getUserId())) {
+			throw new DeleteForbiddenException();
 		}
+
+		// 대댓글이 해당 부모 댓글의 하위에 있는지 확인
+		if (!replyComment.getParentComment().equals(parentComment)) {
+			throw new DeleteForbiddenException();
+		}
+		replyComment.deleteComment();
+		commentRepository.save(replyComment);
 	}
 
 	//댓글 단건 조회
@@ -97,7 +119,22 @@ public class CommentService {
 		targetComment.updateViewCount();
 		boolean isOwner = targetComment.getWriter().getUserId().equals(user.getUserId());
 
-		return CommentResponseDto.from(targetComment, isOwner);
+		long likeCount = commentLikeRepository.countLikesByComment(targetComment);
+		long replyCount = commentRepository.countRepliesByComment(targetComment);
+		CommentStatsDto stats = CommentStatsDto.from(likeCount, replyCount);
+
+		List<Comment> replies = commentRepository.findAllByParentCommentAndNotDeleted(targetComment);
+		Map<UUID, CommentStatsDto> replyStatsMap = replies.stream()
+			.collect(Collectors.toMap(
+				Comment::getCommentId,
+				reply -> {
+					long replyLikeCount = commentLikeRepository.countLikesByComment(reply);
+					long replyReplyCount = commentRepository.countRepliesByComment(reply);
+					return CommentStatsDto.from(replyLikeCount, replyReplyCount);
+				}
+			));
+
+		return CommentResponseDto.from(targetComment, isOwner, stats, replyStatsMap, 2);
 	}
 
 	private User getUser(HttpServletRequest request) {

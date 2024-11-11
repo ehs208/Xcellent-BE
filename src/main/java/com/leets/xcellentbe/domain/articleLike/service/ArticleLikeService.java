@@ -2,6 +2,7 @@ package com.leets.xcellentbe.domain.articleLike.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import com.leets.xcellentbe.domain.articleLike.domain.repository.ArticleLikeRepo
 import com.leets.xcellentbe.domain.articleLike.dto.ArticleLikeResponseDto;
 import com.leets.xcellentbe.domain.articleLike.exception.ArticleLikeNotFoundException;
 import com.leets.xcellentbe.domain.comment.domain.Comment;
+import com.leets.xcellentbe.domain.shared.DeletedStatus;
 import com.leets.xcellentbe.domain.user.domain.User;
 import com.leets.xcellentbe.domain.user.domain.repository.UserRepository;
 import com.leets.xcellentbe.domain.user.exception.UserNotFoundException;
@@ -38,6 +40,13 @@ public class ArticleLikeService {
 		Article article = articleRepository.findById(articleId)
 			.orElseThrow(ArticleNotFoundException::new);
 
+		Optional<ArticleLike> existingLike = articleLikeRepository.findByArticle_ArticleIdAndUser_UserIdAndDeletedStatus(
+			articleId, user.getUserId(), DeletedStatus.NOT_DELETED);
+
+		if (existingLike.isPresent()) {
+			return ArticleLikeResponseDto.from(existingLike.get());
+		}
+
 		ArticleLike articleLike = ArticleLike.create(article, user);
 		articleLikeList.add(articleLike);
 		article.addArticleLike(articleLikeList);
@@ -47,7 +56,8 @@ public class ArticleLikeService {
 
 	public void unLike(HttpServletRequest request, UUID articleId) {
 		User user = getUser(request);
-		ArticleLike articleLike = articleLikeRepository.findByArticle_ArticleIdAndUser_UserId(articleId, user.getUserId())
+		ArticleLike articleLike = articleLikeRepository.findByArticle_ArticleIdAndUser_UserIdAndDeletedStatus(
+				articleId, user.getUserId(), DeletedStatus.NOT_DELETED)
 			.orElseThrow(ArticleLikeNotFoundException::new);
 		articleLike.deleteArticleLike();
 		articleLikeRepository.save(articleLike);

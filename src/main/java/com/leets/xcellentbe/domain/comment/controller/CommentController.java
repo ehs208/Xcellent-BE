@@ -50,6 +50,17 @@ public class CommentController {
 		return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success());
 	}
 
+	//대댓글 삭제(소프트)
+	@PatchMapping("/{commentId}/{replyId}")
+	@Operation(summary = "대댓글 삭제", description = "대댓글을 소프트 삭제합니다.")
+	public ResponseEntity<GlobalResponseDto<Void>> deleteReply(
+		HttpServletRequest request,
+		@PathVariable UUID commentId,
+		@PathVariable UUID replyId) {
+		commentService.deleteReply(request, commentId, replyId);
+		return ResponseEntity.status(HttpStatus.OK).body(GlobalResponseDto.success());
+	}
+
 	//댓글 조회
 	@GetMapping("/{commentId}")
 	@Operation(summary = "댓글 조회", description = "해당 ID의 댓글을 조회합니다.")

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.UUID;
 
 import com.leets.xcellentbe.domain.article.domain.Article;
+import com.leets.xcellentbe.domain.articleLike.domain.ArticleLike;
+import com.leets.xcellentbe.domain.commentLike.domain.CommentLike;
 import com.leets.xcellentbe.domain.shared.BaseTimeEntity;
 import com.leets.xcellentbe.domain.shared.DeletedStatus;
 import com.leets.xcellentbe.domain.user.domain.User;
@@ -60,7 +62,11 @@ public class Comment extends BaseTimeEntity {
 	@OneToMany(mappedBy = "parentComment")
 	private List<Comment> comments;
 
-	private int viewCnt, likeCnt, commentCnt;
+	@OneToMany(mappedBy = "comment")
+	private List<CommentLike> commentLikes;
+
+	@Column
+	private int viewCnt;
 
 	@Builder
 	private Comment(User writer, String content, Article article) {
@@ -88,26 +94,18 @@ public class Comment extends BaseTimeEntity {
 		this.comments.addAll(comments);
 	}
 
+	public void addCommentLike(List<CommentLike> commentLikes) {
+		if(this.commentLikes == null){
+			this.commentLikes = new ArrayList<>();
+		}
+		this.commentLikes.addAll(commentLikes);
+	}
+
 	public void deleteComment() {
 		this.deletedStatus = DeletedStatus.DELETED;
 	}
 
 	public void  updateViewCount() {
 		this.viewCnt++;
-	}
-
-	public void  plusLikeCount() {
-		this.likeCnt++;
-	}
-
-	public void minusLikeCount() {
-		this.likeCnt--;
-	}
-	public void  plusCommentCount() {
-		this.commentCnt++;
-	}
-
-	public void minusCommentCount() {
-		this.commentCnt--;
 	}
 }

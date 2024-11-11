@@ -7,18 +7,18 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ArticleStatsDto {
-	private int likeCnt;
-	private int commentCnt;
-	private int repostCnt;
+	private long likeCnt;
+	private long commentCnt;
+	private long repostCnt;
 
 	@Builder
-	private ArticleStatsDto(int likeCnt, int commentCnt, int repostCnt) {
+	private ArticleStatsDto(long likeCnt, long commentCnt, long repostCnt) {
 		this.likeCnt = likeCnt;
 		this.commentCnt = commentCnt;
 		this.repostCnt = repostCnt;
 	}
 
-	public static ArticleStatsDto from(int likeCnt, int commentCnt, int repostCnt) {
+	public static ArticleStatsDto from(long likeCnt, long commentCnt, long repostCnt) {
 		return ArticleStatsDto.builder()
 			.likeCnt(likeCnt)
 			.commentCnt(commentCnt)

@@ -1,6 +1,8 @@
 package com.leets.xcellentbe.domain.comment.dto;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -20,14 +22,14 @@ public class CommentResponseDto {
 	private DeletedStatus deletedStatus;
 	private UUID rePostId;
 	private int viewCnt;
-	private int likeCnt;
-	private int commentCnt;
+	private long likeCnt;
+	private long commentCnt;
 	private boolean owner;
 	private List<CommentResponseDto> comments;
 
 	@Builder
 	private CommentResponseDto(UUID commentId, Long writerId, String content, DeletedStatus deletedStatus,
-		UUID rePostId, int viewCnt, int likeCnt, int commentCnt, boolean owner, List<CommentResponseDto> comments) {
+		UUID rePostId, int viewCnt, long likeCnt, long commentCnt, boolean owner, List<CommentResponseDto> comments) {
 		this.commentId = commentId;
 		this.writerId = writerId;
 		this.content = content;
@@ -40,19 +42,38 @@ public class CommentResponseDto {
 		this.comments = comments;
 	}
 
-	public static CommentResponseDto from(Comment comment, boolean isOwner) {
+	public static CommentResponseDto from(Comment comment, boolean isOwner, CommentStatsDto stats, Map<UUID, CommentStatsDto> replyStatsMap, int depth) {
+		if (depth <= 0 || comment == null) { // 깊이 제한 또는 null일 때 호출 중단
+			return CommentResponseDto.builder()
+				.commentId(comment.getCommentId())
+				.writerId(comment.getWriter().getUserId())
+				.content(comment.getContent())
+				.deletedStatus(comment.getDeletedStatus())
+				.viewCnt(comment.getViewCnt())
+				.likeCnt(stats.getLikeCnt())
+				.commentCnt(stats.getCommentCnt())
+				.owner(isOwner)
+				.comments(Collections.emptyList()) // 더 이상 하위 댓글 포함 안 함
+				.build();
+		}
+
 		return CommentResponseDto.builder()
 			.commentId(comment.getCommentId())
+			.writerId(comment.getWriter().getUserId())
 			.content(comment.getContent())
 			.deletedStatus(comment.getDeletedStatus())
-			.writerId(comment.getWriter().getUserId())
 			.viewCnt(comment.getViewCnt())
-			.likeCnt(comment.getLikeCnt())
-			.commentCnt(comment.getCommentCnt())
-			.comments(comment.getComments().stream()
-				.map(comments -> CommentResponseDto.from(comments, comments.getWriter().getUserId().equals(comments.getWriter().getUserId())))
-				.collect(Collectors.toList()))
+			.likeCnt(stats.getLikeCnt())
+			.commentCnt(stats.getCommentCnt())
 			.owner(isOwner)
+			.comments(comment.getComments().stream()
+				.filter(reply -> reply != null && reply.getDeletedStatus() == DeletedStatus.NOT_DELETED) // 삭제된 댓글 제외
+				.map(reply -> {
+					CommentStatsDto replyStats = replyStatsMap.getOrDefault(reply.getCommentId(), CommentStatsDto.from(0, 0));
+					boolean isReplyOwner = reply.getWriter().getUserId().equals(comment.getWriter().getUserId());
+					return CommentResponseDto.from(reply, isReplyOwner, replyStats, replyStatsMap, depth - 1); // 깊이 줄임
+				})
+				.collect(Collectors.toList()))
 			.build();
 	}
 }
