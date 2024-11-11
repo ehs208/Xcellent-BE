@@ -35,7 +35,6 @@ public class ArticleLikeService {
 			.orElseThrow(ArticleNotFoundException::new);
 
 		ArticleLike articleLike = ArticleLike.create(article, user);
-		articleLike.getArticle().plusLikeCount();
 
 		return ArticleLikeResponseDto.from(articleLikeRepository.save(articleLike));
 	}
@@ -45,7 +44,6 @@ public class ArticleLikeService {
 		ArticleLike articleLike = articleLikeRepository.findByArticle_ArticleIdAndUser_UserId(articleId, user.getUserId())
 			.orElseThrow(ArticleLikeNotFoundException::new);
 		articleLike.deleteArticleLike();
-		articleLike.getArticle().minusLikeCount();
 		articleLikeRepository.save(articleLike);
 	}
 
