@@ -15,7 +15,6 @@ import com.leets.xcellentbe.domain.articleLike.domain.ArticleLike;
 import com.leets.xcellentbe.domain.articleLike.domain.repository.ArticleLikeRepository;
 import com.leets.xcellentbe.domain.articleLike.dto.ArticleLikeResponseDto;
 import com.leets.xcellentbe.domain.articleLike.exception.ArticleLikeNotFoundException;
-import com.leets.xcellentbe.domain.comment.domain.Comment;
 import com.leets.xcellentbe.domain.shared.DeletedStatus;
 import com.leets.xcellentbe.domain.user.domain.User;
 import com.leets.xcellentbe.domain.user.domain.repository.UserRepository;
