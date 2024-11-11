@@ -68,7 +68,7 @@ public class Article extends BaseTimeEntity {
 	private int viewCnt, repostCnt, likeCnt, commentCnt;
 
 	@Builder
-	private Article(User writer, String content, DeletedStatus deletedStatus) {
+	private Article(User writer, String content) {
 		this.writer = writer;
 		this.content = content;
 		this.deletedStatus = DeletedStatus.NOT_DELETED;
@@ -87,7 +87,6 @@ public class Article extends BaseTimeEntity {
 		return Article.builder()
 			.writer(writer)
 			.content(content)
-			.deletedStatus(DeletedStatus.NOT_DELETED)
 			.build();
 	}
 
