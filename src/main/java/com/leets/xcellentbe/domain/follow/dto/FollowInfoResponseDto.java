@@ -17,8 +17,8 @@ public class FollowInfoResponseDto {
 		this.userName = userName;
 	}
 
-	public static FollowInfoResponseDto from(Follow follow) {
-		User user = follow.getFollowing();
+	public static FollowInfoResponseDto from(Follow follow, boolean isFollower) {
+		User user = isFollower ? follow.getFollower() : follow.getFollowing();
 		return FollowInfoResponseDto.builder()
 			.customId(user.getCustomId())
 			.userName(user.getUserName())
