@@ -4,7 +4,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.leets.xcellentbe.domain.article.domain.repository.ArticleRepository;
+import com.leets.xcellentbe.domain.follow.domain.repository.FollowRepository;
 import com.leets.xcellentbe.domain.user.domain.User;
 import com.leets.xcellentbe.domain.user.domain.repository.UserRepository;
 import com.leets.xcellentbe.domain.user.dto.UserProfileRequestDto;
@@ -27,7 +27,7 @@ public class UserService {
 	private final PasswordEncoder passwordEncoder;
 	private final JwtService jwtService;
 	private final S3UploadService s3UploadService;
-	private final ArticleRepository articleRepository;
+	private final FollowRepository followRepository;
 
 	// 회원가입 메소드
 	public String register(UserSignUpRequestDto userSignUpRequestDto) {
@@ -54,13 +54,25 @@ public class UserService {
 	// 본인 정보 조회 메소드
 	public UserProfileResponseDto getProfile(HttpServletRequest request) {
 		User user = getUser(request);
-		return UserProfileResponseDto.from(user);
+
+		int followerCount = followRepository.countByFollowing(user);
+		int followingCount = followRepository.countByFollower(user);
+		
+		return UserProfileResponseDto.from(user, followerCount, followingCount, false, true);
 	}
 
 	// 특정 사용자 정보 조회 메소드
-	public UserProfileResponseDto getProfileWithoutToken(String customId) {
+	public UserProfileResponseDto getProfileWithoutToken(String customId, HttpServletRequest request) {
+		User myinfo = getUser(request);
 		User user = userRepository.findByCustomId(customId).orElseThrow(UserNotFoundException::new);
-		return UserProfileResponseDto.from(user);
+
+		boolean isMyProfile = myinfo.equals(user);
+		boolean isFollowing = followRepository.findByFollowerAndFollowing(myinfo, user).isPresent();
+
+		int followerCount = followRepository.countByFollowing(user);
+		int followingCount = followRepository.countByFollower(user);
+
+		return UserProfileResponseDto.from(user, followerCount, followingCount, isFollowing, isMyProfile);
 	}
 
 	// 사용자 정보 수정 메소드

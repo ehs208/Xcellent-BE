@@ -39,6 +39,10 @@ public class FollowService {
 			throw new FollowOperationError();
 		}
 
+		if (user.equals(targetUser)) { // 자기 자신을 팔로우시 예외처리
+			throw new FollowOperationError();
+		}
+
 		Follow follow = Follow.create(user, targetUser);
 		followRepository.save(follow);
 	}
@@ -78,7 +82,7 @@ public class FollowService {
 		Pageable pageable = createPageable(pageNo);
 
 		return followRepository.findByFollower(user, pageable)
-			.map(FollowInfoResponseDto::from);
+			.map(follow -> FollowInfoResponseDto.from(follow, false));
 	}
 
 	// 팔로워 목록 조회
@@ -87,7 +91,7 @@ public class FollowService {
 		Pageable pageable = createPageable(pageNo);
 
 		return followRepository.findByFollowing(user, pageable)
-			.map(FollowInfoResponseDto::from);
+			.map(follow -> FollowInfoResponseDto.from(follow, true));
 	}
 
 	// 커스텀아이디로 유저 검색

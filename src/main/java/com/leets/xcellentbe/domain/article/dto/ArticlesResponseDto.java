@@ -1,6 +1,7 @@
 package com.leets.xcellentbe.domain.article.dto;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.leets.xcellentbe.domain.article.domain.Article;
 import com.leets.xcellentbe.domain.hashtag.domain.Hashtag;
@@ -15,19 +16,18 @@ public class ArticlesResponseDto {
 	private String writer;
 	private String content;
 	private Boolean isPinned;
-	private List<Hashtag> hashtags;
-	private Article rePost;
+	private List<String> hashtags;
+	// private Article rePost;
 	private List<String> filePath;
 
 	@Builder
-	private ArticlesResponseDto(String writer, String content, Boolean isPinned, List<Hashtag> hashtags,
-		Article rePost,
-		List<String> filePath) {
+	private ArticlesResponseDto(String writer, String content, Boolean isPinned, List<String> hashtags
+		, List<String> filePath) {
 		this.writer = writer;
 		this.content = content;
 		this.isPinned = isPinned;
 		this.hashtags = hashtags;
-		this.rePost = rePost;
+		// this.rePost = rePost;
 		this.filePath = filePath;
 	}
 
@@ -35,8 +35,10 @@ public class ArticlesResponseDto {
 		return ArticlesResponseDto.builder()
 			.writer(article.getWriter().getUserName())
 			.content(article.getContent())
-			.hashtags(article.getHashtags())
-			.rePost(article.getRePost())
+			.hashtags(article.getHashtags().stream()
+				.map(Hashtag::getContent)
+				.collect(Collectors.toList()))
+			// .rePost(article.getRePost())
 			.filePath(filePath)
 			.build();
 	}

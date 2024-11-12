@@ -42,9 +42,9 @@ public class UserController {
 	@GetMapping("/info")
 	@Operation(summary = "프로필 조회", description = "특정 사용자의 프로필 내용을 조회합니다.")
 	public ResponseEntity<GlobalResponseDto<UserProfileResponseDto>> getProfileWithoutToken(
-		@RequestParam String customId) {
+		@RequestParam String customId, HttpServletRequest request) {
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(GlobalResponseDto.success(userService.getProfileWithoutToken(customId)));
+			.body(GlobalResponseDto.success(userService.getProfileWithoutToken(customId, request)));
 	}
 
 	@PatchMapping("/profile-image")
