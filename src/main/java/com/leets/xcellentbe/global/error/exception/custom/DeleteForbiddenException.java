@@ -1,4 +1,4 @@
-package com.leets.xcellentbe.domain.article.exception;
+package com.leets.xcellentbe.global.error.exception.custom;
 
 import com.leets.xcellentbe.global.error.ErrorCode;
 import com.leets.xcellentbe.global.error.exception.CommonException;

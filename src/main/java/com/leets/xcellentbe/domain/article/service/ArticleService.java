@@ -19,13 +19,18 @@ import com.leets.xcellentbe.domain.article.domain.repository.ArticleRepository;
 import com.leets.xcellentbe.domain.article.dto.ArticleCreateRequestDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleCreateResponseDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleResponseDto;
+import com.leets.xcellentbe.domain.article.dto.ArticleStatsDto;
 import com.leets.xcellentbe.domain.article.dto.ArticlesResponseDto;
 import com.leets.xcellentbe.domain.article.dto.ArticlesWithMediaDto;
 import com.leets.xcellentbe.domain.article.exception.ArticleNotFoundException;
-import com.leets.xcellentbe.domain.article.exception.DeleteForbiddenException;
+import com.leets.xcellentbe.domain.articleLike.domain.repository.ArticleLikeRepository;
+import com.leets.xcellentbe.domain.comment.domain.Comment;
+import com.leets.xcellentbe.domain.comment.dto.CommentStatsDto;
+import com.leets.xcellentbe.domain.commentLike.domain.repository.CommentLikeRepository;
+import com.leets.xcellentbe.global.error.exception.custom.DeleteForbiddenException;
 import com.leets.xcellentbe.domain.articleMedia.domain.ArticleMedia;
 import com.leets.xcellentbe.domain.articleMedia.domain.repository.ArticleMediaRepository;
-import com.leets.xcellentbe.domain.articleMedia.exception.ArticleMediaNotFoundException;
+import com.leets.xcellentbe.domain.comment.domain.repository.CommentRepository;
 import com.leets.xcellentbe.domain.hashtag.HashtagService.HashtagService;
 import com.leets.xcellentbe.domain.hashtag.domain.Hashtag;
 import com.leets.xcellentbe.domain.user.domain.User;
@@ -43,6 +48,9 @@ public class ArticleService {
 	private final ArticleRepository articleRepository;
 	private final ArticleMediaRepository articleMediaRepository;
 	private final UserRepository userRepository;
+	private final CommentRepository commentRepository;
+	private final ArticleLikeRepository articleLikeRepository;
+	private final CommentLikeRepository commentLikeRepository;
 	private final HashtagService hashtagService;
 	private final S3UploadMediaService s3UploadMediaService;
 	private final JwtService jwtService;
@@ -149,15 +157,21 @@ public class ArticleService {
 
 		Article targetArticle = articleRepository.findById(articleId)
 			.orElseThrow(ArticleNotFoundException::new);
-
-		List<ArticleMedia> mediaList = articleMediaRepository.findByArticle_ArticleId(targetArticle.getArticleId());
-		if (mediaList.isEmpty()) {
-			throw new ArticleMediaNotFoundException();
-		}
+		ArticleStatsDto stats = findArticleStats(targetArticle);
 		targetArticle.updateViewCount();
 		boolean isOwner = targetArticle.getWriter().getUserId().equals(user.getUserId());
 
-		return ArticleResponseDto.from(targetArticle, isOwner);
+		List<Comment> comments = commentRepository.findAllByArticleAndNotDeleted(targetArticle);
+		Map<UUID, CommentStatsDto> replyStatsMap = comments.stream()
+			.collect(Collectors.toMap(
+				Comment::getCommentId,
+				reply -> {
+					long likeCount = commentLikeRepository.countLikesByComment(reply);
+					long replyCount = commentRepository.countRepliesByComment(reply);
+					return CommentStatsDto.from(likeCount, replyCount);
+				}
+			));
+		return ArticleResponseDto.from(targetArticle, isOwner, stats, replyStatsMap);
 	}
 
 	//게시글 전체 조회
@@ -167,13 +181,17 @@ public class ArticleService {
 
 		Pageable pageable = PageRequest.of(0, size);
 
-		List<Article> articles = cursor == null ?
+		List<Article> articles = (cursor == null) ?
 			articleRepository.findRecentArticles(pageable) : // 처음 로드 시
 			articleRepository.findRecentArticles(cursor, pageable);
 
 		return articles
 			.stream()
-			.map(article -> ArticleResponseDto.from(article, article.getWriter().getUserId().equals(user.getUserId())))
+			.map(article -> {
+				boolean isOwner = article.getWriter().getUserId().equals(user.getUserId());
+				ArticleStatsDto stats = findArticleStats(article);
+				return ArticleResponseDto.fromWithoutComments(article, isOwner, stats);
+			})
 			.collect(Collectors.toList());
 	}
 
@@ -185,8 +203,7 @@ public class ArticleService {
 		Article repostedArticle = articleRepository.findById(articleId)
 			.orElseThrow(ArticleNotFoundException::new);
 		Article newArticle = Article.createArticle(writer, repostedArticle.getContent());
-		repostedArticle.addRepost(newArticle);
-		repostedArticle.plusRepostCount();
+		newArticle.addRepost(repostedArticle);
 
 		return ArticleCreateResponseDto.from(articleRepository.save(newArticle));
 	}
@@ -197,12 +214,20 @@ public class ArticleService {
 		User user = getUser(request);
 		Article targetArticle = articleRepository.findById(articleId)
 			.orElseThrow(ArticleNotFoundException::new);
-		if (!(targetArticle.getWriter().getUserId().equals(user.getUserId()))) {
+		// 게시글 작성자와 현재 사용자 일치 여부 확인, 리포스트 ID가 있는 경우에만 삭제 가능
+		if ((!targetArticle.getWriter().getUserId().equals(user.getUserId()))||(targetArticle.getRePost() == null)) {
 			throw new DeleteForbiddenException();
-		} else {
-			targetArticle.deleteArticle();
-			targetArticle.getRePost().minusRepostCount();
 		}
+		// 리포스트 삭제 처리
+		targetArticle.deleteArticle();
+		articleRepository.save(targetArticle);
+	}
+
+	public ArticleStatsDto findArticleStats(Article article) {
+		long likeCount = articleLikeRepository.countLikesByArticleId(article.getArticleId());
+		long commentCount = commentRepository.countCommentsByArticle(article);
+		long repostCount = articleRepository.countReposts(article);
+		return ArticleStatsDto.from(likeCount, commentCount, repostCount);
 	}
 
 	//JWT 토큰 기반 사용자 정보 반환 메소드
@@ -214,6 +239,5 @@ public class ArticleService {
 			.orElseThrow(UserNotFoundException::new);
 
 		return user;
-
 	}
 }

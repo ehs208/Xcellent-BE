@@ -1,8 +1,8 @@
-package com.leets.xcellentbe.domain.articleLike.domain;
+package com.leets.xcellentbe.domain.commentLike.domain;
 
 import java.util.UUID;
 
-import com.leets.xcellentbe.domain.article.domain.Article;
+import com.leets.xcellentbe.domain.comment.domain.Comment;
 import com.leets.xcellentbe.domain.shared.BaseTimeEntity;
 import com.leets.xcellentbe.domain.shared.DeletedStatus;
 import com.leets.xcellentbe.domain.user.domain.User;
@@ -26,11 +26,11 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ArticleLike extends BaseTimeEntity {
+public class CommentLike extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-	private UUID ArticleLikeId;
+	private UUID CommentLikeId;
 
 	@NotNull
 	@Column(columnDefinition = "VARCHAR(30)")
@@ -39,8 +39,8 @@ public class ArticleLike extends BaseTimeEntity {
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "article_id")
-	private Article article;
+	@JoinColumn(name = "comment_id")
+	private Comment comment;
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -48,20 +48,20 @@ public class ArticleLike extends BaseTimeEntity {
 	private User user;
 
 	@Builder
-	private ArticleLike(Article article, User user) {
-		this.article = article;
+	private CommentLike(Comment comment, User user) {
+		this.comment = comment;
 		this.user = user;
 		this.deletedStatus = DeletedStatus.NOT_DELETED;
 	}
 
-	public static ArticleLike create(Article article, User user) {
-		return ArticleLike.builder()
-			.article(article)
+	public static CommentLike create(Comment comment, User user) {
+		return CommentLike.builder()
+			.comment(comment)
 			.user(user)
 			.build();
 	}
 
-	public void deleteArticleLike() {
+	public void deleteCommentLike() {
 		this.deletedStatus = DeletedStatus.DELETED;
 	}
 }
