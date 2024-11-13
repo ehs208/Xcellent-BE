@@ -6,6 +6,7 @@ import com.leets.xcellentbe.domain.article.domain.Article;
 import com.leets.xcellentbe.domain.shared.BaseTimeEntity;
 import com.leets.xcellentbe.domain.shared.DeletedStatus;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -36,7 +37,7 @@ public class ArticleMedia extends BaseTimeEntity {
 	private String filePath;
 
 	@NotNull
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "article_id")
 	private Article article;
 
@@ -52,7 +53,7 @@ public class ArticleMedia extends BaseTimeEntity {
 		this.deletedStatus = DeletedStatus.NOT_DELETED;
 	}
 
-	public static ArticleMedia createArticleMedia (Article article, String filePath) {
+	public static ArticleMedia createArticleMedia(Article article, String filePath) {
 		return ArticleMedia.builder()
 			.article(article)
 			.filePath(filePath)
