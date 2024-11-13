@@ -29,7 +29,7 @@ public class CommentController {
 	private final CommentService commentService;
 
 	//댓글 작성
-	@PostMapping()
+	@PostMapping("/{articleId}")
 	@Operation(summary = "댓글 작성", description = "새 댓글을 작성합니다.")
 	public ResponseEntity<GlobalResponseDto<Void>> createComment(
 		HttpServletRequest request,
