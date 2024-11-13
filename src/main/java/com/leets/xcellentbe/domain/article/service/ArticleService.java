@@ -188,18 +188,29 @@ public class ArticleService {
 			articleRepository.findRecentArticles(pageable) : // 처음 로드 시
 			articleRepository.findRecentArticles(cursor, pageable);
 
+		List<Comment> comments = articles.stream()
+			.flatMap(article -> commentRepository.findAllByArticleAndNotDeleted(article).stream())
+			.collect(Collectors.toList());
+
+		Map<UUID, CommentStatsDto> replyStatsMap = comments.stream()
+			.collect(Collectors.toMap(
+				Comment::getCommentId,
+				reply -> {
+					long likeCount = commentLikeRepository.countLikesByComment(reply);
+					long replyCount = commentRepository.countRepliesByComment(reply);
+					return CommentStatsDto.from(likeCount, replyCount);
+				}
+			));
+
 		return articles
 			.stream()
 			.map(article -> {
 				boolean isOwner = article.getWriter().getUserId().equals(user.getUserId());
-				boolean isLiked = articleLikeRepository.existsByArticle_ArticleIdAndUser_UserIdAndDeletedStatus(
-					article.getArticleId(), user.getUserId(), DeletedStatus.NOT_DELETED);
 				ArticleStatsDto stats = findArticleStats(article);
-				return ArticleResponseDto.fromWithoutComments(article, isOwner, isLiked, stats);
+				return ArticleResponseDto.from(article, isOwner, stats, replyStatsMap);
 			})
 			.collect(Collectors.toList());
 	}
-
 	//리포스트 작성 (인용 x, 단순)
 	public ArticleCreateResponseDto rePostArticle(HttpServletRequest request, UUID articleId) {
 		User writer = getUser(request);

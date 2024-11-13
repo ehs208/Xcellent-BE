@@ -98,32 +98,3 @@ public class ArticleResponseDto {
 			.createdAt(article.getCreatedAt())
 			.build();
 	}
-
-	public static ArticleResponseDto fromWithoutComments(Article article, boolean isOwner, boolean isLiked,
-		ArticleStatsDto stats) {
-		return ArticleResponseDto.builder()
-			.articleId(article.getArticleId())
-			.content(article.getContent())
-			.deletedStatus(article.getDeletedStatus())
-			.userName(article.getWriter().getUserName())
-			.customId(article.getWriter().getCustomId())
-			.hashtags(article.getHashtags() != null ? article.getHashtags()
-				.stream()
-				.map(Hashtag::getContent)
-				.collect(Collectors.toList()) : null)
-			.rePostId(article.getRePost() != null ? article.getRePost().getArticleId() : null)
-			.mediaUrls(article.getMediaList() != null ? article.getMediaList()
-				.stream()
-				.map(ArticleMedia::getFilePath)
-				.collect(Collectors.toList()) : null)
-			.comments(null) // 전체 조회 시 댓글 정보 제외
-			.viewCnt(article.getViewCnt())
-			.rePostCnt(stats.getRepostCnt())
-			.likeCnt(stats.getLikeCnt())
-			.commentCnt(stats.getCommentCnt())
-			.owner(isOwner)
-			.isLiked(isLiked)
-			.createdAt(article.getCreatedAt())
-			.build();
-	}
-}

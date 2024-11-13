@@ -17,7 +17,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CommentResponseDto {
 	private UUID commentId;
-	private Long writerId;
+	private String customId;
+	private String userName;
 	private String content;
 	private DeletedStatus deletedStatus;
 	private UUID rePostId;
@@ -28,10 +29,11 @@ public class CommentResponseDto {
 	private List<CommentResponseDto> comments;
 
 	@Builder
-	private CommentResponseDto(UUID commentId, Long writerId, String content, DeletedStatus deletedStatus,
+	private CommentResponseDto(UUID commentId, String userName, String customId, String content, DeletedStatus deletedStatus,
 		UUID rePostId, int viewCnt, long likeCnt, long commentCnt, boolean owner, List<CommentResponseDto> comments) {
 		this.commentId = commentId;
-		this.writerId = writerId;
+		this.userName = userName;
+		this.customId = customId;
 		this.content = content;
 		this.deletedStatus = deletedStatus;
 		this.rePostId = rePostId;
@@ -46,7 +48,8 @@ public class CommentResponseDto {
 		if (depth <= 0 || comment == null) { // 깊이 제한 또는 null일 때 호출 중단
 			return CommentResponseDto.builder()
 				.commentId(comment.getCommentId())
-				.writerId(comment.getWriter().getUserId())
+				.userName(comment.getArticle().getWriter().getUserName())
+				.customId(comment.getArticle().getWriter().getCustomId())
 				.content(comment.getContent())
 				.deletedStatus(comment.getDeletedStatus())
 				.viewCnt(comment.getViewCnt())
@@ -59,7 +62,8 @@ public class CommentResponseDto {
 
 		return CommentResponseDto.builder()
 			.commentId(comment.getCommentId())
-			.writerId(comment.getWriter().getUserId())
+			.userName(comment.getArticle().getWriter().getUserName())
+			.customId(comment.getArticle().getWriter().getCustomId())
 			.content(comment.getContent())
 			.deletedStatus(comment.getDeletedStatus())
 			.viewCnt(comment.getViewCnt())
@@ -77,3 +81,4 @@ public class CommentResponseDto {
 			.build();
 	}
 }
+
