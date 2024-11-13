@@ -1,6 +1,5 @@
 package com.leets.xcellentbe.domain.user.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.leets.xcellentbe.domain.user.domain.User;
 
 import lombok.Builder;
@@ -24,11 +23,7 @@ public class UserProfileResponseDto {
 	private int userBirthDay;
 	private int followersCount;
 	private int followingsCount;
-
-	@JsonProperty("isFollowing")
 	private Boolean isFollowing;
-
-	@JsonProperty("isMyProfile")
 	private Boolean isMyProfile;
 
 	@Builder
