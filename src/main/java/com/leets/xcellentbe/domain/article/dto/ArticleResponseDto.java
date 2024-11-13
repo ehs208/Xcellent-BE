@@ -98,3 +98,4 @@ public class ArticleResponseDto {
 			.createdAt(article.getCreatedAt())
 			.build();
 	}
+}

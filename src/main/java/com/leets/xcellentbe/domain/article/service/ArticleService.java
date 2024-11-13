@@ -207,7 +207,9 @@ public class ArticleService {
 			.map(article -> {
 				boolean isOwner = article.getWriter().getUserId().equals(user.getUserId());
 				ArticleStatsDto stats = findArticleStats(article);
-				return ArticleResponseDto.from(article, isOwner, stats, replyStatsMap);
+				boolean isLiked = articleLikeRepository.existsByArticle_ArticleIdAndUser_UserIdAndDeletedStatus(
+					article.getArticleId(), user.getUserId(), DeletedStatus.NOT_DELETED);
+				return ArticleResponseDto.from(article, isOwner, isLiked, stats, replyStatsMap);
 			})
 			.collect(Collectors.toList());
 	}
