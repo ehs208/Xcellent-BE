@@ -71,8 +71,11 @@ public class SecurityConfig {
 			.authorizeHttpRequests(
 				authorize ->
 					authorize
-						.requestMatchers("/v3/api-docs", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**",
-							"/swagger/**", "/index.html", "/api/auth/**", "/api/chat-room/**", "/dm").permitAll()
+						.requestMatchers( "/v3/api-docs/**", "/swagger-ui/**").permitAll() // swagger-ui 접근 허용
+						.requestMatchers("/api/auth/**").permitAll() // 로그인
+						.requestMatchers("/api/profile/**").permitAll() // 프로필
+						.requestMatchers("/api/article/**").permitAll() // 게시글
+						.requestMatchers( "/api/chat-room/**", "/dm/**", "/pub/**", "/sub/**").permitAll() // 채팅
 						.anyRequest().authenticated()
 			);
 		// .oauth2Login(oauth2 -> oauth2.successHandler(oAuthLoginSuccessHandler));
