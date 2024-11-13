@@ -23,7 +23,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/article/{articleId}")
+@RequestMapping("/api/comment")
 @RequiredArgsConstructor
 public class CommentController {
 	private final CommentService commentService;
@@ -42,7 +42,7 @@ public class CommentController {
 
 	//댓글 삭제(소프트)
 	@PatchMapping("/{commentId}")
-	@Operation(summary = "게시글 삭제", description = "게시글을 삭제(상태 변경)합니다.")
+	@Operation(summary = "댓글 삭제", description = "댓글 삭제(상태 변경)합니다.")
 	public ResponseEntity<GlobalResponseDto<Void>> deleteComment(
 		HttpServletRequest request,
 		@PathVariable UUID commentId){
