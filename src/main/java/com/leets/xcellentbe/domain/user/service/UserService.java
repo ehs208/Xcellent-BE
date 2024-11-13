@@ -57,7 +57,7 @@ public class UserService {
 
 		int followerCount = followRepository.countByFollowing(user);
 		int followingCount = followRepository.countByFollower(user);
-		
+
 		return UserProfileResponseDto.from(user, followerCount, followingCount, false, true);
 	}
 
@@ -66,8 +66,8 @@ public class UserService {
 		User myinfo = getUser(request);
 		User user = userRepository.findByCustomId(customId).orElseThrow(UserNotFoundException::new);
 
-		boolean isMyProfile = myinfo.equals(user);
-		boolean isFollowing = followRepository.findByFollowerAndFollowing(myinfo, user).isPresent();
+		Boolean isMyProfile = myinfo.equals(user);
+		Boolean isFollowing = followRepository.findByFollowerAndFollowing(myinfo, user).isPresent();
 
 		int followerCount = followRepository.countByFollowing(user);
 		int followingCount = followRepository.countByFollower(user);
