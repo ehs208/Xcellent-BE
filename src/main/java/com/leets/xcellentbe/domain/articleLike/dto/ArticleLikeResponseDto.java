@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ArticleLikeResponseDto {
 	private UUID articleId;
-	private Long userId;
 	private DeletedStatus status;
 
 	@Builder
