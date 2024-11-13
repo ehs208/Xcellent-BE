@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -51,7 +52,7 @@ public class ArticleController {
 	}
 
 	//게시글 작성
-	@PostMapping
+	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Operation(summary = "게시글 작성", description = "새 게시글을 작성합니다.")
 	public ResponseEntity<GlobalResponseDto<ArticleCreateResponseDto>> createArticle(
 		HttpServletRequest request,

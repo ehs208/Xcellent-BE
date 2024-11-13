@@ -34,13 +34,15 @@ public class ArticleResponseDto {
 	private long likeCnt;
 	private long commentCnt;
 	private boolean owner;
+	private boolean isLiked;
 	private LocalDateTime createdAt;
 
 	@Builder
 	private ArticleResponseDto(UUID articleId, String userName, String customId, String content,
 		DeletedStatus deletedStatus,
 		List<String> hashtags, UUID rePostId, List<String> mediaUrls, List<CommentResponseDto> comments,
-		int viewCnt, long rePostCnt, long likeCnt, long commentCnt, boolean owner, LocalDateTime createdAt) {
+		int viewCnt, long rePostCnt, long likeCnt, long commentCnt, boolean owner, boolean isLiked,
+		LocalDateTime createdAt) {
 		this.articleId = articleId;
 		this.userName = userName;
 		this.customId = customId;
@@ -55,10 +57,11 @@ public class ArticleResponseDto {
 		this.commentCnt = commentCnt;
 		this.owner = owner;
 		this.comments = comments;
+		this.isLiked = isLiked;
 		this.createdAt = createdAt;
 	}
 
-	public static ArticleResponseDto from(Article article, boolean isOwner, ArticleStatsDto stats,
+	public static ArticleResponseDto from(Article article, boolean isOwner, boolean isLiked, ArticleStatsDto stats,
 		Map<UUID, CommentStatsDto> replyStatsMap) {
 		return ArticleResponseDto.builder()
 			.articleId(article.getArticleId())
@@ -91,11 +94,13 @@ public class ArticleResponseDto {
 			.likeCnt(stats.getLikeCnt())
 			.commentCnt(stats.getCommentCnt())
 			.owner(isOwner)
+			.isLiked(isLiked)
 			.createdAt(article.getCreatedAt())
 			.build();
 	}
 
-	public static ArticleResponseDto fromWithoutComments(Article article, boolean isOwner, ArticleStatsDto stats) {
+	public static ArticleResponseDto fromWithoutComments(Article article, boolean isOwner, boolean isLiked,
+		ArticleStatsDto stats) {
 		return ArticleResponseDto.builder()
 			.articleId(article.getArticleId())
 			.content(article.getContent())
@@ -117,6 +122,7 @@ public class ArticleResponseDto {
 			.likeCnt(stats.getLikeCnt())
 			.commentCnt(stats.getCommentCnt())
 			.owner(isOwner)
+			.isLiked(isLiked)
 			.createdAt(article.getCreatedAt())
 			.build();
 	}

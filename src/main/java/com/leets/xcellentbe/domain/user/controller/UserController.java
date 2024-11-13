@@ -1,6 +1,7 @@
 package com.leets.xcellentbe.domain.user.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -56,7 +57,7 @@ public class UserController {
 
 	}
 
-	@PatchMapping("/background-image")
+	@PatchMapping(value = "/background-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Operation(summary = "배경 이미지 수정", description = "사용자의 배경 이미지를 수정합니다.")
 	public ResponseEntity<GlobalResponseDto<String>> updateBackgroundImage(@RequestParam("file") MultipartFile file,
 		HttpServletRequest request) {
