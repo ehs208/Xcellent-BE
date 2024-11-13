@@ -26,16 +26,16 @@ public class UserProfileResponseDto {
 	private int followingsCount;
 
 	@JsonProperty("isFollowing")
-	private boolean isFollowing;
+	private Boolean isFollowing;
 
 	@JsonProperty("isMyProfile")
-	private boolean isMyProfile;
+	private Boolean isMyProfile;
 
 	@Builder
 	private UserProfileResponseDto(String email, String customId, String userName, String profileImageUrl,
 		String backgroundProfileImageUrl, String phoneNumber, String description, String websiteUrl, String location,
 		int userBirthYear, int userBirthMonth, int userBirthDay, int followersCount, int followingsCount,
-		boolean isFollowing, boolean isMyProfile) {
+		Boolean isFollowing, Boolean isMyProfile) {
 		this.email = email;
 		this.customId = customId;
 		this.userName = userName;
@@ -54,8 +54,8 @@ public class UserProfileResponseDto {
 		this.isFollowing = isFollowing;
 	}
 
-	public static UserProfileResponseDto from(User user, int followersCount, int followingsCount, boolean isFollowing,
-		boolean isMyProfile) {
+	public static UserProfileResponseDto from(User user, int followersCount, int followingsCount, Boolean isFollowing,
+		Boolean isMyProfile) {
 		return UserProfileResponseDto.builder()
 			.email(user.getEmail())
 			.customId(user.getCustomId())
