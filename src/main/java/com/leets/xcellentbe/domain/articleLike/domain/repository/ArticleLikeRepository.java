@@ -17,4 +17,6 @@ public interface ArticleLikeRepository extends JpaRepository<ArticleLike, UUID> 
 	long countLikesByArticleId(@Param("articleId") UUID articleId);
 
 	Optional<ArticleLike> findByArticle_ArticleIdAndUser_UserIdAndDeletedStatus(UUID articleId, Long userId, DeletedStatus status);
+
+	Boolean existsByArticle_ArticleIdAndUser_UserIdAndDeletedStatus(UUID articleId, Long userId, DeletedStatus status);
 }
