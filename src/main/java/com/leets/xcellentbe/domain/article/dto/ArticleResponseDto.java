@@ -20,7 +20,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ArticleResponseDto {
 	private UUID articleId;
-	private Long writerId;
+	private String customId;
+	private String userName;
 	private String content;
 	private DeletedStatus deletedStatus;
 	private List<String> hashtags;
@@ -34,11 +35,13 @@ public class ArticleResponseDto {
 	private boolean owner;
 
 	@Builder
-	private ArticleResponseDto(UUID articleId, Long writerId, String content, DeletedStatus deletedStatus,
-								List<String> hashtags, UUID rePostId, List<String> mediaUrls, List<CommentResponseDto> comments,
-								int viewCnt, long rePostCnt, long likeCnt, long commentCnt, boolean owner) {
+	private ArticleResponseDto(UUID articleId, String userName, String customId, String content,
+		DeletedStatus deletedStatus,
+		List<String> hashtags, UUID rePostId, List<String> mediaUrls, List<CommentResponseDto> comments,
+		int viewCnt, long rePostCnt, long likeCnt, long commentCnt, boolean owner) {
 		this.articleId = articleId;
-		this.writerId = writerId;
+		this.userName = userName;
+		this.customId = customId;
 		this.content = content;
 		this.deletedStatus = deletedStatus;
 		this.hashtags = hashtags;
@@ -52,12 +55,14 @@ public class ArticleResponseDto {
 		this.comments = comments;
 	}
 
-	public static ArticleResponseDto from(Article article, boolean isOwner, ArticleStatsDto stats, Map<UUID, CommentStatsDto> replyStatsMap) {
+	public static ArticleResponseDto from(Article article, boolean isOwner, ArticleStatsDto stats,
+		Map<UUID, CommentStatsDto> replyStatsMap) {
 		return ArticleResponseDto.builder()
 			.articleId(article.getArticleId())
 			.content(article.getContent())
 			.deletedStatus(article.getDeletedStatus())
-			.writerId(article.getWriter().getUserId())
+			.userName(article.getWriter().getUserName())
+			.customId(article.getWriter().getCustomId())
 			.hashtags(article.getHashtags() != null ? article.getHashtags()
 				.stream()
 				.map(Hashtag::getContent)
@@ -69,9 +74,11 @@ public class ArticleResponseDto {
 				.collect(Collectors.toList()) : null)
 			.comments(article.getComments() != null ? article.getComments()
 				.stream()
-				.filter(comment -> comment != null && comment.getDeletedStatus() == DeletedStatus.NOT_DELETED) // null 및 삭제된 댓글 필터링
+				.filter(comment -> comment != null
+					&& comment.getDeletedStatus() == DeletedStatus.NOT_DELETED) // null 및 삭제된 댓글 필터링
 				.map(comment -> {
-					CommentStatsDto commentStats = replyStatsMap.getOrDefault(comment.getCommentId(), CommentStatsDto.from(0, 0));
+					CommentStatsDto commentStats = replyStatsMap.getOrDefault(comment.getCommentId(),
+						CommentStatsDto.from(0, 0));
 					boolean isCommentOwner = comment.getWriter().getUserId().equals(article.getWriter().getUserId());
 					return CommentResponseDto.from(comment, isCommentOwner, commentStats, replyStatsMap, 1); // 깊이 1로 제한
 				})
@@ -89,7 +96,8 @@ public class ArticleResponseDto {
 			.articleId(article.getArticleId())
 			.content(article.getContent())
 			.deletedStatus(article.getDeletedStatus())
-			.writerId(article.getWriter().getUserId())
+			.userName(article.getWriter().getUserName())
+			.customId(article.getWriter().getCustomId())
 			.hashtags(article.getHashtags() != null ? article.getHashtags()
 				.stream()
 				.map(Hashtag::getContent)
