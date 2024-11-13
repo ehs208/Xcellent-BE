@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,8 +55,8 @@ public class ArticleController {
 	@Operation(summary = "게시글 작성", description = "새 게시글을 작성합니다.")
 	public ResponseEntity<GlobalResponseDto<ArticleCreateResponseDto>> createArticle(
 		HttpServletRequest request,
-		@RequestBody ArticleCreateRequestDto articleCreateRequestDto,
-		@RequestParam(value = "mediaFiles", required = false) List<MultipartFile> mediaFiles) {
+		@RequestPart("content") ArticleCreateRequestDto articleCreateRequestDto,
+		@RequestPart(value = "mediaFiles", required = false) List<MultipartFile> mediaFiles) {
 		if (mediaFiles == null) {
 			mediaFiles = Collections.emptyList();
 		}
