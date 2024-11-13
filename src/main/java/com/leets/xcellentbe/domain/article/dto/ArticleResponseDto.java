@@ -1,5 +1,6 @@
 package com.leets.xcellentbe.domain.article.dto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -33,12 +34,13 @@ public class ArticleResponseDto {
 	private long likeCnt;
 	private long commentCnt;
 	private boolean owner;
+	private LocalDateTime createdAt;
 
 	@Builder
 	private ArticleResponseDto(UUID articleId, String userName, String customId, String content,
 		DeletedStatus deletedStatus,
 		List<String> hashtags, UUID rePostId, List<String> mediaUrls, List<CommentResponseDto> comments,
-		int viewCnt, long rePostCnt, long likeCnt, long commentCnt, boolean owner) {
+		int viewCnt, long rePostCnt, long likeCnt, long commentCnt, boolean owner, LocalDateTime createdAt) {
 		this.articleId = articleId;
 		this.userName = userName;
 		this.customId = customId;
@@ -53,6 +55,7 @@ public class ArticleResponseDto {
 		this.commentCnt = commentCnt;
 		this.owner = owner;
 		this.comments = comments;
+		this.createdAt = createdAt;
 	}
 
 	public static ArticleResponseDto from(Article article, boolean isOwner, ArticleStatsDto stats,
@@ -88,6 +91,7 @@ public class ArticleResponseDto {
 			.likeCnt(stats.getLikeCnt())
 			.commentCnt(stats.getCommentCnt())
 			.owner(isOwner)
+			.createdAt(article.getCreatedAt())
 			.build();
 	}
 
@@ -113,6 +117,7 @@ public class ArticleResponseDto {
 			.likeCnt(stats.getLikeCnt())
 			.commentCnt(stats.getCommentCnt())
 			.owner(isOwner)
+			.createdAt(article.getCreatedAt())
 			.build();
 	}
 }
