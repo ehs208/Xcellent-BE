@@ -27,6 +27,7 @@ import com.leets.xcellentbe.domain.articleLike.domain.repository.ArticleLikeRepo
 import com.leets.xcellentbe.domain.comment.domain.Comment;
 import com.leets.xcellentbe.domain.comment.dto.CommentStatsDto;
 import com.leets.xcellentbe.domain.commentLike.domain.repository.CommentLikeRepository;
+import com.leets.xcellentbe.domain.shared.DeletedStatus;
 import com.leets.xcellentbe.global.error.exception.custom.DeleteForbiddenException;
 import com.leets.xcellentbe.domain.articleMedia.domain.ArticleMedia;
 import com.leets.xcellentbe.domain.articleMedia.domain.repository.ArticleMediaRepository;
@@ -160,6 +161,8 @@ public class ArticleService {
 		ArticleStatsDto stats = findArticleStats(targetArticle);
 		targetArticle.updateViewCount();
 		boolean isOwner = targetArticle.getWriter().getUserId().equals(user.getUserId());
+		boolean isLiked = articleLikeRepository.existsByArticle_ArticleIdAndUser_UserIdAndDeletedStatus(
+			targetArticle.getArticleId(), user.getUserId(), DeletedStatus.NOT_DELETED);
 
 		List<Comment> comments = commentRepository.findAllByArticleAndNotDeleted(targetArticle);
 		Map<UUID, CommentStatsDto> replyStatsMap = comments.stream()
@@ -171,7 +174,7 @@ public class ArticleService {
 					return CommentStatsDto.from(likeCount, replyCount);
 				}
 			));
-		return ArticleResponseDto.from(targetArticle, isOwner, stats, replyStatsMap);
+		return ArticleResponseDto.from(targetArticle, isOwner, isLiked, stats, replyStatsMap);
 	}
 
 	//게시글 전체 조회
@@ -189,8 +192,10 @@ public class ArticleService {
 			.stream()
 			.map(article -> {
 				boolean isOwner = article.getWriter().getUserId().equals(user.getUserId());
+				boolean isLiked = articleLikeRepository.existsByArticle_ArticleIdAndUser_UserIdAndDeletedStatus(
+					article.getArticleId(), user.getUserId(), DeletedStatus.NOT_DELETED);
 				ArticleStatsDto stats = findArticleStats(article);
-				return ArticleResponseDto.fromWithoutComments(article, isOwner, stats);
+				return ArticleResponseDto.fromWithoutComments(article, isOwner, isLiked, stats);
 			})
 			.collect(Collectors.toList());
 	}
@@ -215,7 +220,7 @@ public class ArticleService {
 		Article targetArticle = articleRepository.findById(articleId)
 			.orElseThrow(ArticleNotFoundException::new);
 		// 게시글 작성자와 현재 사용자 일치 여부 확인, 리포스트 ID가 있는 경우에만 삭제 가능
-		if ((!targetArticle.getWriter().getUserId().equals(user.getUserId()))||(targetArticle.getRePost() == null)) {
+		if ((!targetArticle.getWriter().getUserId().equals(user.getUserId())) || (targetArticle.getRePost() == null)) {
 			throw new DeleteForbiddenException();
 		}
 		// 리포스트 삭제 처리
@@ -232,12 +237,11 @@ public class ArticleService {
 
 	//JWT 토큰 기반 사용자 정보 반환 메소드
 	private User getUser(HttpServletRequest request) {
-		User user = jwtService.extractAccessToken(request)
+
+		return jwtService.extractAccessToken(request)
 			.filter(jwtService::isTokenValid)
 			.flatMap(jwtService::extractEmail)
 			.flatMap(userRepository::findByEmail)
 			.orElseThrow(UserNotFoundException::new);
-
-		return user;
 	}
 }
