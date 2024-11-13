@@ -30,12 +30,13 @@ public class S3UploadMediaService {
 	public String upload(MultipartFile multipartFile, String dirName) {
 		String fileName = multipartFile.getOriginalFilename();
 
-		if (!(fileName.endsWith(".png") || fileName.endsWith(".jpg"))) {
+		if (!(fileName.endsWith(".png") || fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(
+			".gif") || fileName.endsWith(".bmp"))) {
 			throw new InvalidFileFormat();
 		}
 		try {
 			File uploadFile = convert(multipartFile)
-				.orElseThrow(()->new RuntimeException());
+				.orElseThrow(() -> new RuntimeException());
 			return upload(uploadFile, dirName);
 		} catch (IOException e) {
 			throw new InternalServerErrorException();

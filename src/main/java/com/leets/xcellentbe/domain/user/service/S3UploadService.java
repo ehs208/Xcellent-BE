@@ -30,7 +30,8 @@ public class S3UploadService {
 	// MultipartFile을 전달받아 File로 전환한 후 S3에 업로드
 	public String upload(MultipartFile multipartFile, String dirName) { // dirName의 디렉토리가 S3 Bucket 내부에 생성됨
 		String fileName = multipartFile.getOriginalFilename();
-		if ((fileName.endsWith(".png") || fileName.endsWith(".jpg"))) {
+		if (!(fileName.endsWith(".png") || fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(
+			".gif") || fileName.endsWith(".bmp"))) {
 			throw new InvalidFileFormat();
 		}
 
