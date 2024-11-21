@@ -11,3 +11,4 @@ public class ArticlesWithMediaDto {
 	private Article article;
 	private String filePath;
 }
+

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.leets.xcellentbe.domain.article.domain.Article;
+import com.leets.xcellentbe.domain.articleMedia.domain.ArticleMedia;
 import com.leets.xcellentbe.domain.hashtag.domain.Hashtag;
 
 import lombok.Builder;
@@ -31,15 +32,17 @@ public class ArticlesResponseDto {
 		this.filePath = filePath;
 	}
 
-	public static ArticlesResponseDto of(Article article, List<String> filePath) {
+	public static ArticlesResponseDto of(Article article) {
 		return ArticlesResponseDto.builder()
-			.writer(article.getWriter().getUserName())
+			.writer(article.getWriter().getCustomId())
 			.content(article.getContent())
 			.hashtags(article.getHashtags().stream()
 				.map(Hashtag::getContent)
 				.collect(Collectors.toList()))
 			// .rePost(article.getRePost())
-			.filePath(filePath)
+			.filePath(article.getMediaList().stream()
+				.map(ArticleMedia::getFilePath)
+				.collect(Collectors.toList()))
 			.build();
 	}
 }

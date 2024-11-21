@@ -10,12 +10,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.leets.xcellentbe.domain.article.domain.Article;
-import com.leets.xcellentbe.domain.article.dto.ArticlesWithMediaDto;
 import com.leets.xcellentbe.domain.user.domain.User;
 
 public interface ArticleRepository extends JpaRepository<Article, UUID> {
-	@Query("SELECT new com.leets.xcellentbe.domain.article.dto.ArticlesWithMediaDto(p, pm.filePath) FROM Article p LEFT JOIN ArticleMedia pm ON p.articleId = pm.article.articleId WHERE p.writer = :user")
-	List<ArticlesWithMediaDto[]> findPostsByWriter(User user);
+	List<Article[]> findByWriter(User user);
 
 	@Query("SELECT a FROM Article a WHERE a.deletedStatus = com.leets.xcellentbe.domain.shared.DeletedStatus.NOT_DELETED ORDER BY a.createdAt DESC")
 	List<Article> findRecentArticles(Pageable pageable);

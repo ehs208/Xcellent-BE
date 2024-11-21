@@ -21,23 +21,22 @@ import com.leets.xcellentbe.domain.article.dto.ArticleCreateResponseDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleResponseDto;
 import com.leets.xcellentbe.domain.article.dto.ArticleStatsDto;
 import com.leets.xcellentbe.domain.article.dto.ArticlesResponseDto;
-import com.leets.xcellentbe.domain.article.dto.ArticlesWithMediaDto;
 import com.leets.xcellentbe.domain.article.exception.ArticleNotFoundException;
 import com.leets.xcellentbe.domain.articleLike.domain.repository.ArticleLikeRepository;
-import com.leets.xcellentbe.domain.comment.domain.Comment;
-import com.leets.xcellentbe.domain.comment.dto.CommentStatsDto;
-import com.leets.xcellentbe.domain.commentLike.domain.repository.CommentLikeRepository;
-import com.leets.xcellentbe.domain.shared.DeletedStatus;
-import com.leets.xcellentbe.global.error.exception.custom.DeleteForbiddenException;
 import com.leets.xcellentbe.domain.articleMedia.domain.ArticleMedia;
 import com.leets.xcellentbe.domain.articleMedia.domain.repository.ArticleMediaRepository;
+import com.leets.xcellentbe.domain.comment.domain.Comment;
 import com.leets.xcellentbe.domain.comment.domain.repository.CommentRepository;
+import com.leets.xcellentbe.domain.comment.dto.CommentStatsDto;
+import com.leets.xcellentbe.domain.commentLike.domain.repository.CommentLikeRepository;
 import com.leets.xcellentbe.domain.hashtag.HashtagService.HashtagService;
 import com.leets.xcellentbe.domain.hashtag.domain.Hashtag;
+import com.leets.xcellentbe.domain.shared.DeletedStatus;
 import com.leets.xcellentbe.domain.user.domain.User;
 import com.leets.xcellentbe.domain.user.domain.repository.UserRepository;
 import com.leets.xcellentbe.domain.user.exception.UserNotFoundException;
 import com.leets.xcellentbe.global.auth.jwt.JwtService;
+import com.leets.xcellentbe.global.error.exception.custom.DeleteForbiddenException;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -58,29 +57,28 @@ public class ArticleService {
 
 	public List<ArticlesResponseDto> getArticles(String customId, boolean mediaOnly) {
 		User user = getUser(customId);
-		List<ArticlesWithMediaDto[]> posts = getPosts(user);
+		List<Article[]> posts = getPosts(user);
 
-		Map<Article, List<String>> groupedPosts = groupPostsByFilePath(posts, mediaOnly);
-
-		return groupedPosts.entrySet().stream()
-			.map(entry -> ArticlesResponseDto.of(entry.getKey(), entry.getValue()))
+		return posts.stream()
+			.flatMap(Arrays::stream)
+			.map(ArticlesResponseDto::of)
 			.collect(Collectors.toList());
 	}
 
-	// 게시글 파일 경로 그룹화 (미디어 필터링 조건 추가)
-	private Map<Article, List<String>> groupPostsByFilePath(List<ArticlesWithMediaDto[]> posts, boolean mediaOnly) {
-		return posts.stream()
-			.flatMap(Arrays::stream)
-			.filter(post -> !mediaOnly || post.getFilePath() != null) // 미디어 있는 경우만 필터링
-			.collect(Collectors.groupingBy(
-				ArticlesWithMediaDto::getArticle,
-				Collectors.mapping(ArticlesWithMediaDto::getFilePath, Collectors.toList())
-			));
-	}
+	// // 게시글 파일 경로 그룹화 (미디어 필터링 조건 추가)
+	// private Map<Article, List<String>> groupPostsByFilePath(List<Article[]> posts, boolean mediaOnly) {
+	// 	return posts.stream()
+	// 		.flatMap(Arrays::stream)
+	// 		.filter(post -> !mediaOnly || post.getMediaList() != null) // 미디어 있는 경우만 필터링
+	// 		.collect(Collectors.groupingBy(
+	// 			ArticlesWithMediaDto::getArticle,
+	// 			Collectors.mapping(ArticlesWithMediaDto::getFilePath, Collectors.toList())
+	// 		));
+	// }
 
 	// 유저 정보로 게시글 조회
-	private List<ArticlesWithMediaDto[]> getPosts(User user) {
-		return articleRepository.findPostsByWriter(user);
+	private List<Article[]> getPosts(User user) {
+		return articleRepository.findByWriter(user);
 	}
 
 	// 유저 정보 조회
@@ -213,6 +211,7 @@ public class ArticleService {
 			})
 			.collect(Collectors.toList());
 	}
+
 	//리포스트 작성 (인용 x, 단순)
 	public ArticleCreateResponseDto rePostArticle(HttpServletRequest request, UUID articleId) {
 		User writer = getUser(request);

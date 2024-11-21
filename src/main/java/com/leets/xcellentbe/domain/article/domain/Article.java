@@ -80,12 +80,15 @@ public class Article extends BaseTimeEntity {
 	}
 
 	public Article(User writer, String content, DeletedStatus deletedStatus, Article rePost,
+		List<ArticleMedia> mediaList,
 		List<Hashtag> hashtags) {
 		this.writer = writer;
 		this.content = content;
 		this.deletedStatus = deletedStatus;
 		this.rePost = rePost;
 		this.hashtags = hashtags;
+		this.mediaList = mediaList;
+
 	}
 
 	public static Article createArticle(User writer, String content) {
@@ -96,14 +99,14 @@ public class Article extends BaseTimeEntity {
 	}
 
 	public void addComments(List<Comment> comments) {
-		if(this.comments == null){
+		if (this.comments == null) {
 			this.comments = new ArrayList<>();
 		}
 		this.comments.addAll(comments);
 	}
 
 	public void addArticleLike(List<ArticleLike> articleLikes) {
-		if(this.articleLikes == null){
+		if (this.articleLikes == null) {
 			this.articleLikes = new ArrayList<>();
 		}
 		this.articleLikes.addAll(articleLikes);
