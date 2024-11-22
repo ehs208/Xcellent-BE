@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.annotations.BatchSize;
+
 import com.leets.xcellentbe.domain.articleLike.domain.ArticleLike;
 import com.leets.xcellentbe.domain.articleMedia.domain.ArticleMedia;
 import com.leets.xcellentbe.domain.comment.domain.Comment;
@@ -57,9 +59,11 @@ public class Article extends BaseTimeEntity {
 	@JoinColumn(name = "repost_id")
 	private Article rePost;
 
+	@BatchSize(size = 100)
 	@OneToMany(mappedBy = "article")
 	private List<Hashtag> hashtags;
 
+	@BatchSize(size = 100)
 	@OneToMany(mappedBy = "article")
 	private List<ArticleMedia> mediaList;
 

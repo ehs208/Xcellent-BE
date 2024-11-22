@@ -13,6 +13,8 @@ import com.leets.xcellentbe.domain.article.domain.Article;
 import com.leets.xcellentbe.domain.user.domain.User;
 
 public interface ArticleRepository extends JpaRepository<Article, UUID> {
+
+	@Query("SELECT DISTINCT a FROM Article a LEFT JOIN a.mediaList LEFT JOIN a.hashtags WHERE a.writer = :user")
 	List<Article[]> findByWriter(User user);
 
 	@Query("SELECT a FROM Article a WHERE a.deletedStatus = com.leets.xcellentbe.domain.shared.DeletedStatus.NOT_DELETED ORDER BY a.createdAt DESC")
